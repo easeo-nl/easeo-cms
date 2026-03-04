@@ -83,7 +83,7 @@ $media = array_reverse($media); // newest first
             <svg class="w-12 h-12 mx-auto text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
             </svg>
-            <p class="text-gray-400 mb-2">Sleep bestanden hierheen of klik om te uploaden</p>
+            <p class="text-gray-400 mb-2">Sleep bestanden hierheen of klik om te uploaden <span class="help-tooltip" data-help="Sleep afbeeldingen hierheen of klik om te uploaden. Maximaal 5MB per bestand. JPG, PNG, WebP en SVG.">?</span></p>
             <p class="text-gray-600 text-sm">Max 10MB — JPEG, PNG, GIF, WebP, SVG, PDF</p>
             <input type="file" name="media_file[]" multiple accept="image/*,.pdf" class="hidden" id="file-input">
         </div>

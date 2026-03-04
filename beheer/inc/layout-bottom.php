@@ -59,6 +59,32 @@ document.getElementById('media-picker-modal')?.addEventListener('click', functio
     if (e.target === this) closeMediaPicker();
 });
 </script>
+<script>
+// Help tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.help-tooltip').forEach(function(el) {
+        var text = document.createElement('span');
+        text.className = 'help-text';
+        text.textContent = el.getAttribute('data-help');
+        el.appendChild(text);
+
+        el.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.querySelectorAll('.help-tooltip.active').forEach(function(other) {
+                if (other !== el) other.classList.remove('active');
+            });
+            el.classList.toggle('active');
+        });
+    });
+
+    document.addEventListener('click', function() {
+        document.querySelectorAll('.help-tooltip.active').forEach(function(el) {
+            el.classList.remove('active');
+        });
+    });
+});
+</script>
 <div style="text-align:center;padding:1.5rem 0 0.5rem;">
     <a href="https://easeo.nl" target="_blank" rel="noopener" style="color:#64748b;font-size:0.7rem;">Powered by EASEO &mdash; Digital Agency met kracht</a>
 </div>

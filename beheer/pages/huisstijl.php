@@ -70,20 +70,20 @@ $brand = $siteData['brand'] ?? [];
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <?php
             $colors = [
-                'color_primary' => 'Primair',
-                'color_secondary' => 'Secundair',
-                'color_dark' => 'Donker',
-                'color_darker' => 'Donkerder',
-                'color_surface' => 'Oppervlak',
-                'color_success' => 'Succes',
-                'color_text' => 'Tekst',
-                'color_muted' => 'Gedempt',
+                'color_primary' => ['Primair', 'De hoofdkleur van knoppen, links en accenten op de website.'],
+                'color_secondary' => ['Secundair', 'De kleur voor highlights, prijzen en call-to-action elementen.'],
+                'color_dark' => ['Donker', 'De achtergrondkleur van de header en footer.'],
+                'color_darker' => ['Donkerder', ''],
+                'color_surface' => ['Oppervlak', ''],
+                'color_success' => ['Succes', ''],
+                'color_text' => ['Tekst', ''],
+                'color_muted' => ['Gedempt', ''],
             ];
-            foreach ($colors as $key => $label):
+            foreach ($colors as $key => [$label, $helpText]):
                 $value = $brand[$key] ?? '#000000';
             ?>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1"><?= $label ?></label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= $label ?><?php if ($helpText): ?> <span class="help-tooltip" data-help="<?= e($helpText) ?>">?</span><?php endif; ?></label>
                 <div class="flex items-center gap-2">
                     <input type="color" name="<?= $key ?>" value="<?= e($value) ?>" class="w-10 h-10 rounded cursor-pointer border-0 bg-transparent">
                     <input type="text" value="<?= e($value) ?>" class="admin-input w-24 text-sm"
@@ -98,10 +98,10 @@ $brand = $siteData['brand'] ?? [];
         <div class="mt-4 pt-4 border-t border-gray-700">
             <p class="text-sm text-gray-400 mb-2">Preview:</p>
             <div class="flex gap-2">
-                <?php foreach ($colors as $key => $label): ?>
+                <?php foreach ($colors as $key => [$clabel, $chelp]): ?>
                 <div class="text-center">
                     <div class="w-12 h-12 rounded-lg border border-gray-700" style="background-color: <?= e($brand[$key] ?? '#000') ?>"></div>
-                    <span class="text-xs text-gray-500"><?= $label ?></span>
+                    <span class="text-xs text-gray-500"><?= $clabel ?></span>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -113,7 +113,7 @@ $brand = $siteData['brand'] ?? [];
         <h2 class="text-lg font-semibold text-white mb-4">Lettertypen</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Display lettertype (titels)</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Display lettertype (titels) <span class="help-tooltip" data-help="Het lettertype voor koppen en titels.">?</span></label>
                 <select name="font_display" class="admin-input w-full">
                     <?php
                     $fonts = ['Outfit', 'Inter', 'Poppins', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Raleway', 'Playfair Display', 'Merriweather', 'Source Sans Pro', 'Nunito', 'Work Sans', 'DM Sans', 'Plus Jakarta Sans'];
@@ -124,7 +124,7 @@ $brand = $siteData['brand'] ?? [];
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Body lettertype (tekst)</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Body lettertype (tekst) <span class="help-tooltip" data-help="Het lettertype voor lopende tekst en menu-items.">?</span></label>
                 <select name="font_body" class="admin-input w-full">
                     <?php foreach ($fonts as $font): ?>
                     <option value="<?= $font ?>" <?= ($brand['font_body'] ?? 'Inter') === $font ? 'selected' : '' ?>><?= $font ?></option>

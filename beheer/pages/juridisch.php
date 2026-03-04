@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_legal'])) {
         <h2 class="text-lg font-semibold text-white"><?= e($sections[$activeSection] ?? '') ?></h2>
         <button type="submit" name="reset_legal" class="text-sm text-gray-500 hover:text-red-400"
                 onclick="return confirm('Weet u zeker dat u de standaardtekst wilt herstellen?')">
-            Standaardtekst herstellen
+            Standaardtekst herstellen <span class="help-tooltip" data-help="Zet de tekst terug naar het standaard template met je bedrijfsgegevens ingevuld. Je huidige aanpassingen gaan verloren.">?</span>
         </button>
     </div>
 

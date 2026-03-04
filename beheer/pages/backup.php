@@ -128,12 +128,13 @@ $subFiles = glob(EASEO_DATA . '/submissions/*.json') ?: [];
         <a href="/beheer/?tab=backup&action=download&csrf_token=<?= csrf_token() ?>" class="btn-admin btn-admin-primary">
             Download backup
         </a>
+        <p class="text-xs text-gray-500 mt-3"><span class="help-tooltip" data-help="Download een kopie van alle content, instellingen en uploads. Bewaar deze op een veilige plek.">?</span> Tip: bewaar backups op een veilige plek.</p>
     </div>
 
     <!-- Restore backup -->
     <div class="admin-card">
         <h2 class="text-lg font-semibold text-white mb-4">Backup herstellen</h2>
-        <p class="text-sm text-gray-400 mb-4">Upload een eerder gedownloade backup ZIP om alle data te herstellen. Dit overschrijft de huidige data.</p>
+        <p class="text-sm text-gray-400 mb-4">Upload een eerder gedownloade backup ZIP om alle data te herstellen. <span class="help-tooltip" data-help="Herstel een eerdere backup. Let op: dit overschrijft alle huidige content en instellingen.">?</span></p>
 
         <form method="POST" enctype="multipart/form-data" onsubmit="return confirm('Weet u zeker? Dit overschrijft alle huidige data.')">
             <?= csrf_field() ?>

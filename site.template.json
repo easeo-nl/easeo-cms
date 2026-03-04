@@ -46,5 +46,6 @@
         "custom_head_code": "",
         "custom_body_code": ""
     },
-    "setup_complete": false
+    "setup_complete": false,
+    "show_welcome": true
 }

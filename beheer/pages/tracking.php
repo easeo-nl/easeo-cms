@@ -39,20 +39,20 @@ if (!is_array($tracking)) $tracking = [];
     <div class="space-y-6">
         <div>
             <h2 class="text-lg font-semibold text-white mb-4">Google Tag Manager</h2>
-            <label class="block text-sm font-medium text-gray-300 mb-1">GTM Container ID</label>
+            <label class="block text-sm font-medium text-gray-300 mb-1">GTM Container ID <span class="help-tooltip" data-help="Google Tag Manager container-ID. Begint met GTM-. Hiermee kun je alle tracking centraal beheren.">?</span></label>
             <input type="text" name="gtm_id" value="<?= e($tracking['gtm_id'] ?? '') ?>" class="admin-input w-full max-w-md" placeholder="GTM-XXXXXXX">
             <p class="text-xs text-gray-500 mt-1">Wordt alleen geladen na cookie consent.</p>
         </div>
 
         <div>
             <h2 class="text-lg font-semibold text-white mb-4">Google Analytics 4</h2>
-            <label class="block text-sm font-medium text-gray-300 mb-1">GA4 Measurement ID</label>
+            <label class="block text-sm font-medium text-gray-300 mb-1">GA4 Measurement ID <span class="help-tooltip" data-help="Google Analytics 4 tracking-ID. Begint met G-. Voor websitestatistieken.">?</span></label>
             <input type="text" name="google_analytics_id" value="<?= e($tracking['google_analytics_id'] ?? '') ?>" class="admin-input w-full max-w-md" placeholder="G-XXXXXXXXXX">
         </div>
 
         <div>
             <h2 class="text-lg font-semibold text-white mb-4">Google Search Console</h2>
-            <label class="block text-sm font-medium text-gray-300 mb-1">Verificatie code</label>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Verificatie code <span class="help-tooltip" data-help="De verificatiecode van Google Search Console. Alleen de code, niet de hele meta-tag.">?</span></label>
             <input type="text" name="google_search_console" value="<?= e($tracking['google_search_console'] ?? '') ?>" class="admin-input w-full max-w-md" placeholder="google-site-verification=...">
         </div>
 
@@ -60,7 +60,7 @@ if (!is_array($tracking)) $tracking = [];
             <h2 class="text-lg font-semibold text-white mb-4">Google Ads</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Conversion ID</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1">Conversion ID <span class="help-tooltip" data-help="Voor het meten van conversies uit Google Ads campagnes.">?</span></label>
                     <input type="text" name="google_ads_conversion_id" value="<?= e($tracking['google_ads_conversion_id'] ?? '') ?>" class="admin-input w-full" placeholder="AW-XXXXXXXXX">
                 </div>
                 <div>
@@ -72,18 +72,18 @@ if (!is_array($tracking)) $tracking = [];
 
         <div>
             <h2 class="text-lg font-semibold text-white mb-4">Facebook Pixel</h2>
-            <label class="block text-sm font-medium text-gray-300 mb-1">Pixel ID</label>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Pixel ID <span class="help-tooltip" data-help="Voor het meten van websitebezoek vanuit Facebook en Instagram advertenties.">?</span></label>
             <input type="text" name="facebook_pixel_id" value="<?= e($tracking['facebook_pixel_id'] ?? '') ?>" class="admin-input w-full max-w-md" placeholder="123456789012345">
         </div>
 
         <div>
             <h2 class="text-lg font-semibold text-white mb-4">Aangepaste code</h2>
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-1">Custom code in &lt;head&gt;</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Custom code in &lt;head&gt; <span class="help-tooltip" data-help="HTML of JavaScript die in de <head> van elke pagina wordt geplaatst. Alleen voor gevorderd gebruik.">?</span></label>
                 <textarea name="custom_head_code" rows="4" class="admin-input w-full font-mono text-sm"><?= e($tracking['custom_head_code'] ?? '') ?></textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Custom code in &lt;body&gt;</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Custom code in &lt;body&gt; <span class="help-tooltip" data-help="HTML of JavaScript die vlak voor </body> wordt geplaatst. Alleen voor gevorderd gebruik.">?</span></label>
                 <textarea name="custom_body_code" rows="4" class="admin-input w-full font-mono text-sm"><?= e($tracking['custom_body_code'] ?? '') ?></textarea>
             </div>
         </div>

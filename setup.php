@@ -120,6 +120,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Mark setup as complete
             $siteData = load_json('site.json');
             $siteData['setup_complete'] = true;
+            $siteData['show_welcome'] = true;
             $siteData['company']['copyright_year'] = date('Y');
             save_json('site.json', $siteData);
 

@@ -51,6 +51,11 @@ $menuItems = $nav[$activeMenu] ?? [];
 
 <h1 class="text-2xl font-bold text-white mb-6">Navigatie</h1>
 
+<p class="text-sm text-gray-400 mb-4">
+    <strong>Label</strong> <span class="help-tooltip" data-help="De tekst die bezoekers zien in het menu.">?</span> &mdash;
+    <strong>URL</strong> <span class="help-tooltip" data-help="Het adres waar de link naartoe gaat. Kies een bestaande pagina of typ een extern adres.">?</span>
+</p>
+
 <!-- Menu tabs -->
 <div class="admin-tabs">
     <a href="/beheer/?tab=navigatie&menu=main" class="admin-tab <?= $activeMenu === 'main' ? 'active' : '' ?>">Hoofdmenu</a>
@@ -66,8 +71,8 @@ $menuItems = $nav[$activeMenu] ?? [];
         <div class="menu-item border border-gray-700 rounded-lg p-4 mb-3">
             <div class="flex items-center gap-3 mb-2">
                 <span class="text-gray-600 cursor-grab">&#9776;</span>
-                <input type="text" name="label[]" value="<?= e($item['label'] ?? '') ?>" placeholder="Label" class="admin-input flex-1">
-                <input type="text" name="url[]" value="<?= e($item['url'] ?? '') ?>" placeholder="URL" class="admin-input flex-1">
+                <input type="text" name="label[]" value="<?= e($item['label'] ?? '') ?>" placeholder="Label" class="admin-input flex-1" title="De tekst die bezoekers zien in het menu.">
+                <input type="text" name="url[]" value="<?= e($item['url'] ?? '') ?>" placeholder="URL" class="admin-input flex-1" title="Het adres waar de link naartoe gaat.">
                 <button type="button" onclick="removeMenuItem(this)" class="text-red-400 hover:text-red-300 text-lg">&times;</button>
             </div>
 

@@ -91,15 +91,15 @@ $form = $formId ? get_form($formId) : null;
     <div class="admin-card">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Formulier naam</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Formulier naam <span class="help-tooltip" data-help="Alleen voor intern gebruik. Bezoekers zien deze naam niet.">?</span></label>
                 <input type="text" name="form_naam" value="<?= e($form['naam'] ?? '') ?>" required class="admin-input w-full">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">E-mail notificatie naar</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">E-mail notificatie naar <span class="help-tooltip" data-help="Inzendingen van dit formulier worden naar dit adres gestuurd.">?</span></label>
                 <input type="email" name="email_naar" value="<?= e($form['email_naar'] ?? '') ?>" class="admin-input w-full" placeholder="Laat leeg voor site e-mail">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Bevestigingsbericht</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Bevestigingsbericht <span class="help-tooltip" data-help="De tekst die bezoekers zien na het versturen van het formulier.">?</span></label>
                 <input type="text" name="bevestiging" value="<?= e($form['bevestiging'] ?? 'Bedankt voor uw bericht.') ?>" class="admin-input w-full">
             </div>
             <div>
@@ -127,7 +127,7 @@ $form = $formId ? get_form($formId) : null;
                     <input type="text" name="veld_label[]" value="<?= e($field['label'] ?? '') ?>" class="admin-input w-full" placeholder="Label">
                 </div>
                 <div class="col-span-2">
-                    <?php if ($i === 0): ?><label class="block text-xs text-gray-500 mb-1">Type</label><?php endif; ?>
+                    <?php if ($i === 0): ?><label class="block text-xs text-gray-500 mb-1">Type <span class="help-tooltip" data-help="Tekst = korte invoer, Textarea = lang tekstveld, E-mail = met validatie, Selectie = dropdown menu.">?</span></label><?php endif; ?>
                     <select name="veld_type[]" class="admin-input w-full">
                         <?php foreach (['text', 'email', 'tel', 'number', 'textarea', 'select', 'checkbox', 'date', 'url'] as $t): ?>
                         <option value="<?= $t ?>" <?= ($field['type'] ?? '') === $t ? 'selected' : '' ?>><?= $t ?></option>
@@ -135,7 +135,7 @@ $form = $formId ? get_form($formId) : null;
                     </select>
                 </div>
                 <div class="col-span-2">
-                    <?php if ($i === 0): ?><label class="block text-xs text-gray-500 mb-1">Verplicht</label><?php endif; ?>
+                    <?php if ($i === 0): ?><label class="block text-xs text-gray-500 mb-1">Verplicht <span class="help-tooltip" data-help="Als dit aan staat, kan het formulier niet verstuurd worden zonder dit veld in te vullen.">?</span></label><?php endif; ?>
                     <select name="veld_verplicht[]" class="admin-input w-full">
                         <option value="1" <?= !empty($field['verplicht']) ? 'selected' : '' ?>>Ja</option>
                         <option value="" <?= empty($field['verplicht']) ? 'selected' : '' ?>>Nee</option>

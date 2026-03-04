@@ -41,6 +41,11 @@ $redirects = $redirectData['redirects'] ?? [];
 
 <h1 class="text-2xl font-bold text-white mb-6">Redirects</h1>
 
+<p class="text-sm text-gray-400 mb-4">
+    <strong>Oud adres</strong> <span class="help-tooltip" data-help="Het oude webadres dat niet meer bestaat. Begint met /. Voorbeeld: /oude-pagina">?</span> &rarr;
+    <strong>Nieuw adres</strong> <span class="help-tooltip" data-help="Het nieuwe webadres waar bezoekers naartoe gestuurd worden. Voorbeeld: /nieuwe-pagina">?</span>
+</p>
+
 <form method="POST" class="admin-card">
     <?= csrf_field() ?>
 

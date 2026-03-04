@@ -124,7 +124,7 @@ if (isset($_GET['edit']) && isset($users[(int)$_GET['edit']])) {
                 <input type="password" name="wachtwoord" <?= $editUser ? '' : 'required' ?> class="admin-input w-full" minlength="8">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Rol</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Rol <span class="help-tooltip" data-help="Beheerder heeft volledige toegang. Redacteur kan content en blog beheren maar geen instellingen wijzigen.">?</span></label>
                 <select name="rol" class="admin-input w-full">
                     <option value="admin" <?= ($editUser['rol'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
                     <option value="redacteur" <?= ($editUser['rol'] ?? 'redacteur') === 'redacteur' ? 'selected' : '' ?>>Redacteur</option>
