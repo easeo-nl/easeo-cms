@@ -1,0 +1,33 @@
+# EASEO CMS — Git ignore
+
+# Data files (contain site-specific content)
+data/*.json
+data/audit.log
+data/audit.log.old
+data/submissions/
+!data/.htaccess
+!data/.gitkeep
+
+# Login attempts
+data/login_attempts.json
+
+# Uploaded media
+images/uploads/*
+images/thumbs/*
+!images/uploads/.gitkeep
+!images/thumbs/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# PHP
+vendor/
+composer.lock

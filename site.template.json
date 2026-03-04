@@ -1,0 +1,50 @@
+{
+    "company": {
+        "name": "",
+        "tagline": "",
+        "email": "",
+        "phone": "",
+        "address": "",
+        "postcode": "",
+        "city": "",
+        "kvk": "",
+        "btw": "",
+        "iban": "",
+        "copyright_year": "2025"
+    },
+    "social": {
+        "linkedin": "",
+        "instagram": "",
+        "facebook": "",
+        "twitter": "",
+        "youtube": ""
+    },
+    "brand": {
+        "logo": "",
+        "favicon": "",
+        "color_primary": "#2563EB",
+        "color_secondary": "#EA580C",
+        "color_dark": "#111827",
+        "color_darker": "#0B1120",
+        "color_surface": "#1F2937",
+        "color_success": "#10B981",
+        "color_text": "#F9FAFB",
+        "color_muted": "#9CA3AF",
+        "font_display": "Outfit",
+        "font_body": "Inter",
+        "font_display_weights": "600;700;800",
+        "font_body_weights": "400;500;600",
+        "dark_mode": true
+    },
+    "tracking": {
+        "gtm_id": "",
+        "google_analytics_id": "",
+        "google_search_console": "",
+        "google_ads_conversion_id": "",
+        "google_ads_conversion_label": "",
+        "facebook_pixel_id": "",
+        "custom_head_code": "",
+        "custom_body_code": ""
+    },
+    "setup_complete": false
+}

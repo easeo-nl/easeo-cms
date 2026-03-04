@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /beheer/
+Disallow: /data/
+Disallow: /includes/
+Disallow: /templates/
+
+Sitemap: /sitemap.xml
