@@ -46,6 +46,16 @@
         "custom_head_code": "",
         "custom_body_code": ""
     },
+    "smtp": {
+        "enabled": false,
+        "host": "",
+        "port": "465",
+        "encryption": "ssl",
+        "username": "",
+        "password": "",
+        "from_email": "",
+        "from_name": ""
+    },
     "setup_complete": false,
     "show_welcome": true
 }

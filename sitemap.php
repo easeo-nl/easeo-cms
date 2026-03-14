@@ -54,6 +54,22 @@ echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
     </url>
     <?php endforeach; ?>
 
+    <!-- Dynamic pages (pages.json) -->
+    <?php
+    $dynamicPages = load_json('pages.json');
+    foreach (($dynamicPages['pages'] ?? []) as $dp):
+        if ($dp['status'] !== 'published') continue;
+        $loc = $baseUrl . '/' . $dp['slug'];
+        $lastmod = $dp['updated_at'] ?? $dp['created_at'] ?? date('Y-m-d');
+    ?>
+    <url>
+        <loc><?= e($loc) ?></loc>
+        <lastmod><?= e($lastmod) ?></lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <?php endforeach; ?>
+
     <!-- Legal pages -->
     <url>
         <loc><?= e($baseUrl) ?>/privacyverklaring</loc>

@@ -99,6 +99,28 @@ $menuItems = $nav[$activeMenu] ?? [];
     </div>
 </form>
 
+<?php
+// Show auto menu items from pages.json
+$pagesData = load_json('pages.json');
+$autoMenuPages = array_filter($pagesData['pages'] ?? [], fn($p) => !empty($p['show_in_menu']) && $p['status'] === 'published');
+if (!empty($autoMenuPages)):
+?>
+<div class="admin-card mt-6">
+    <h3 class="text-md font-semibold text-white mb-2">Automatische menu-items</h3>
+    <p class="text-sm text-gray-400 mb-3">Deze pagina's worden automatisch in het menu getoond omdat 'Tonen in menu' is aangevinkt in de pagina-instellingen.</p>
+    <ul class="space-y-1">
+        <?php foreach ($autoMenuPages as $ap): ?>
+        <li class="flex items-center gap-2 text-sm text-gray-300">
+            <span class="text-green-400">&#10003;</span>
+            <?= e($ap['menu_label'] ?: $ap['title']) ?>
+            <span class="text-gray-600">/<?= e($ap['slug']) ?></span>
+            <a href="/beheer/?tab=paginas&action=edit&id=<?= e($ap['id']) ?>" class="text-blue-400 hover:text-blue-300 text-xs ml-auto">Bewerken</a>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
+
 <script>
 var menuItemCount = <?= count($menuItems) ?>;
 var isHoofdmenu = <?= $activeMenu === 'main' ? 'true' : 'false' ?>;

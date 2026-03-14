@@ -4,9 +4,71 @@
  * Uses navigation.json with keys: main, footer
  */
 
+function get_dynamic_page_menu_items(): array {
+    $pagesData = load_json('pages.json');
+    $pages = $pagesData['pages'] ?? [];
+    $items = [];
+    $children = [];
+
+    // Sort by sort_order
+    usort($pages, fn($a, $b) => ($a['sort_order'] ?? 0) <=> ($b['sort_order'] ?? 0));
+
+    foreach ($pages as $p) {
+        if (empty($p['show_in_menu']) || $p['status'] !== 'published') continue;
+
+        $menuItem = [
+            'url' => '/' . $p['slug'],
+            'label' => $p['menu_label'] ?: $p['title'],
+        ];
+
+        if (!empty($p['parent'])) {
+            $children[$p['parent']][] = $menuItem;
+        } else {
+            $menuItem['_page_id'] = $p['id'];
+            $menuItem['children'] = [];
+            $items[] = $menuItem;
+        }
+    }
+
+    // Attach children to parents
+    foreach ($items as &$item) {
+        if (isset($children[$item['_page_id']])) {
+            $item['children'] = $children[$item['_page_id']];
+        }
+        unset($item['_page_id']);
+    }
+    unset($item);
+
+    return $items;
+}
+
+function merge_nav_with_dynamic(array $manualItems): array {
+    $dynamicItems = get_dynamic_page_menu_items();
+    if (empty($dynamicItems)) return $manualItems;
+
+    // Collect URLs already in manual menu
+    $existingUrls = [];
+    foreach ($manualItems as $item) {
+        $existingUrls[] = rtrim($item['url'] ?? '', '/');
+        foreach (($item['children'] ?? []) as $child) {
+            $existingUrls[] = rtrim($child['url'] ?? '', '/');
+        }
+    }
+
+    // Add dynamic items not already in manual menu
+    foreach ($dynamicItems as $dynItem) {
+        $dynUrl = rtrim($dynItem['url'], '/');
+        if (!in_array($dynUrl, $existingUrls)) {
+            $manualItems[] = $dynItem;
+        }
+    }
+
+    return $manualItems;
+}
+
 function render_main_nav(): string {
     global $navigation;
-    $items = $navigation['main'] ?? [];
+    $items = merge_nav_with_dynamic($navigation['main'] ?? []);
     $current = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
     $current = rtrim($current, '/') ?: '/';
 
@@ -43,7 +105,7 @@ function render_main_nav(): string {
 
 function render_mobile_nav(): string {
     global $navigation;
-    $items = $navigation['main'] ?? [];
+    $items = merge_nav_with_dynamic($navigation['main'] ?? []);
 
     $html = '<div id="mobile-menu" class="hidden md:hidden bg-white border-t">' . "\n";
     $html .= '  <div class="px-4 py-3 space-y-1">' . "\n";

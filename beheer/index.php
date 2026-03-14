@@ -55,9 +55,9 @@ require_login();
 
 // Route to pages
 $allowedTabs = [
-    'dashboard', 'content', 'blog', 'blog-edit', 'media',
+    'dashboard', 'content', 'paginas', 'blog', 'blog-edit', 'media',
     'formulieren', 'formulier-edit', 'inbox',
-    'navigatie', 'huisstijl', 'redirects', 'juridisch', 'tracking',
+    'navigatie', 'huisstijl', 'redirects', 'juridisch', 'tracking', 'email',
     'gebruikers', 'activiteit', 'backup',
 ];
 

@@ -6,6 +6,7 @@ require_once __DIR__ . '/includes/content.php';
 require_once __DIR__ . '/includes/form-engine.php';
 require_once __DIR__ . '/includes/rate-limiter.php';
 require_once __DIR__ . '/includes/audit.php';
+require_once __DIR__ . '/includes/mailer.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /');
@@ -95,18 +96,17 @@ audit_log('formulier_verzonden', "Formulier: {$form['naam']}", 'bezoeker');
 $emailTo = $form['email_naar'] ?? site('company.email');
 if ($emailTo && filter_var($emailTo, FILTER_VALIDATE_EMAIL)) {
     $subject = 'Nieuw bericht via ' . ($form['naam'] ?? 'formulier') . ' — ' . site('company.name', 'EASEO');
-    $body = "Nieuw formulier inzending:\n\n";
+    $body = '<h2>Nieuw formulier inzending</h2>';
+    $body .= '<table style="border-collapse:collapse;width:100%">';
     foreach ($data as $key => $value) {
-        $body .= ucfirst($key) . ": " . $value . "\n";
+        $body .= '<tr><td style="padding:6px 12px;border:1px solid #ddd;font-weight:bold">' . e(ucfirst($key)) . '</td>';
+        $body .= '<td style="padding:6px 12px;border:1px solid #ddd">' . e($value) . '</td></tr>';
     }
-    $body .= "\nDatum: " . $submission['datum'] . "\n";
-    $body .= "IP: " . $submission['ip'] . "\n";
+    $body .= '</table>';
+    $body .= '<p style="color:#888;font-size:12px">Datum: ' . e($submission['datum']) . ' — IP: ' . e($submission['ip']) . '</p>';
 
-    $headers = "From: noreply@" . ($_SERVER['HTTP_HOST'] ?? 'localhost') . "\r\n";
-    $headers .= "Reply-To: " . ($data['email'] ?? $emailTo) . "\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-
-    @mail($emailTo, $subject, $body, $headers);
+    $replyTo = $data['email'] ?? '';
+    send_mail($emailTo, $subject, $body, $replyTo);
 }
 
 // Regenerate CSRF token

@@ -19,6 +19,7 @@ if (!is_dir($root . '/images/thumbs')) mkdir($root . '/images/thumbs', 0755, tru
 // Default data files
 $defaults = [
     'site.json' => $root . '/site.template.json',
+    'pages.json' => null,
     'content.json' => null,
     'posts.json' => null,
     'forms.json' => null,
@@ -31,6 +32,7 @@ $defaults = [
 ];
 
 $defaultContents = [
+    'pages.json' => '{"pages":[]}',
     'content.json' => '{}',
     'posts.json' => '{"settings":{"posts_per_page":9,"seo_title":"","seo_description":""},"posts":[],"categories":["nieuws","tips","cases"]}',
     'forms.json' => '{"forms":[]}',
