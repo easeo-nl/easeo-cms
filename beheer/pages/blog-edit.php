@@ -22,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_post'])) {
             'auteur' => sanitize_input($_POST['auteur'] ?? ''),
             'status' => sanitize_input($_POST['status'] ?? 'concept'),
             'datum' => sanitize_input($_POST['datum'] ?? date('Y-m-d H:i:s')),
-            'meta_title' => sanitize_input($_POST['meta_title'] ?? ''),
-            'meta_description' => sanitize_input($_POST['meta_description'] ?? ''),
+            'meta_title' => strip_tags(sanitize_input($_POST['meta_title'] ?? '')),
+            'meta_description' => strip_tags(sanitize_input($_POST['meta_description'] ?? '')),
         ];
 
         if (empty($data['titel'])) {

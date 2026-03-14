@@ -7,17 +7,24 @@
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/') ?: '/';
 
-// Serve static files directly
-$file = __DIR__ . $uri;
-if ($uri !== '/' && is_file($file)) {
-    return false; // Let PHP serve the file
-}
-
-// Block .json, .log, .md files
+// Block .json, .log, .md files (before static file serving)
 if (preg_match('/\.(json|log|md)$/', $uri)) {
     http_response_code(403);
     echo '403 Forbidden';
     return true;
+}
+
+// Block direct access to includes/ directory
+if (preg_match('#^/includes/#', $uri)) {
+    http_response_code(403);
+    echo '403 Forbidden';
+    return true;
+}
+
+// Serve static files directly
+$file = __DIR__ . $uri;
+if ($uri !== '/' && is_file($file)) {
+    return false; // Let PHP serve the file
 }
 
 // Route mapping (simulates .htaccess)

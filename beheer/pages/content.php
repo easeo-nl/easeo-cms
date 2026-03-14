@@ -14,7 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
         if (isset($pages[$pageName])) {
             foreach ($pages[$pageName] as $key => $oldValue) {
                 if (isset($_POST['fields'][$key])) {
-                    $pages[$pageName][$key] = sanitize_input($_POST['fields'][$key]);
+                    $val = sanitize_input($_POST['fields'][$key]);
+                    // Strip HTML from SEO fields
+                    if (str_starts_with($key, 'meta_')) {
+                        $val = strip_tags($val);
+                    }
+                    $pages[$pageName][$key] = $val;
                 }
             }
             save_json('content.json', $pages);

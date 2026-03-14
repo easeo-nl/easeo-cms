@@ -1,0 +1,11 @@
+# Prevent PHP execution in upload directory
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phps
+AddType text/plain .php .phtml .php3 .php4 .php5 .php7 .phps
+
+# Only allow image files
+<FilesMatch "\.(?!(jpg|jpeg|png|gif|webp|svg|pdf)$)[^.]+$">
+    Require all denied
+</FilesMatch>

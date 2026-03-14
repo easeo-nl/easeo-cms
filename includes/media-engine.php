@@ -41,8 +41,31 @@ function upload_media(array $file): array {
     $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
     $ext = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $ext));
     if (!$ext) $ext = 'jpg';
+
+    // Block dangerous double extensions (e.g. "photo.php.jpg")
+    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'pdf'];
+    if (!in_array($ext, $allowedExtensions)) {
+        return ['success' => false, 'error' => 'Bestandsextensie niet toegestaan: .' . $ext];
+    }
+
+    // Check for PHP extensions anywhere in the filename
+    $nameLower = strtolower($file['name']);
+    if (preg_match('/\.ph(p[0-9]?|tml|ps?)\b/i', pathinfo($nameLower, PATHINFO_FILENAME))) {
+        return ['success' => false, 'error' => 'Bestandsnaam bevat een niet-toegestane extensie.'];
+    }
+
     $safeName = preg_replace('/[^a-z0-9-]/', '', strtolower(pathinfo($file['name'], PATHINFO_FILENAME)));
+    if (empty($safeName)) $safeName = 'bestand';
     $filename = $safeName . '-' . substr(md5(uniqid()), 0, 8) . '.' . $ext;
+
+    // SVG sanitization — strip scripts and event handlers
+    if ($ext === 'svg' || $mimeType === 'image/svg+xml') {
+        $svgContent = file_get_contents($file['tmp_name']);
+        $svgContent = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', '', $svgContent);
+        $svgContent = preg_replace('/\bon\w+\s*=\s*["\'][^"\']*["\']/i', '', $svgContent);
+        $svgContent = preg_replace('/href\s*=\s*["\']javascript:[^"\']*["\']/i', 'href="#"', $svgContent);
+        file_put_contents($file['tmp_name'], $svgContent);
+    }
 
     $uploadPath = MEDIA_UPLOAD_DIR . '/' . $filename;
     $thumbPath = MEDIA_THUMB_DIR . '/' . $filename;
@@ -50,6 +73,8 @@ function upload_media(array $file): array {
     if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
         return ['success' => false, 'error' => 'Kon bestand niet opslaan.'];
     }
+
+    audit_log('bestand_geupload', "Bestand: {$filename} ({$mimeType})");
 
     if (str_starts_with($mimeType, 'image/') && $mimeType !== 'image/svg+xml') {
         resize_image($uploadPath, MEDIA_MAX_WIDTH);
@@ -84,6 +109,7 @@ function delete_media(string $id): bool {
 
             array_splice($media, $idx, 1);
             save_media($media);
+            audit_log('bestand_verwijderd', "Bestand: {$item['bestandsnaam']}");
             return true;
         }
     }

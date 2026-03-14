@@ -103,8 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
         $show_in_menu = !empty($_POST['show_in_menu']);
         $menu_label = sanitize_input($_POST['menu_label'] ?? '');
         $status = sanitize_input($_POST['status'] ?? 'draft');
-        $seo_title = sanitize_input($_POST['seo_title'] ?? '');
-        $seo_description = sanitize_input($_POST['seo_description'] ?? '');
+        $seo_title = strip_tags(sanitize_input($_POST['seo_title'] ?? ''));
+        $seo_description = strip_tags(sanitize_input($_POST['seo_description'] ?? ''));
 
         if (empty($title)) {
             $_SESSION['flash_error'] = 'Titel is verplicht.';
@@ -112,6 +112,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
             if (empty($slug)) {
                 $slug = slugify($title);
             }
+            // Enforce slug pattern: only a-z, 0-9, hyphens, slashes
+            $slug = preg_replace('/[^a-z0-9\/-]/', '', strtolower($slug));
 
             // Add parent slug prefix if parent is set
             if ($parent) {

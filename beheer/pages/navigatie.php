@@ -20,6 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_nav'])) {
             $url = trim($urls[$i] ?? '');
             if (empty($label)) continue;
 
+            // Sanitize: strip HTML from label, validate URL structure
+            $label = strip_tags($label);
+            $url = strip_tags($url);
             $item = ['label' => $label, 'url' => $url];
             if ($menuType === 'main') {
                 $item['children'] = [];
@@ -30,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_nav'])) {
                     $cl = trim($childLabels[$j] ?? '');
                     $cu = trim($childUrls[$j] ?? '');
                     if (empty($cl)) continue;
-                    $item['children'][] = ['label' => $cl, 'url' => $cu];
+                    $item['children'][] = ['label' => strip_tags($cl), 'url' => strip_tags($cu)];
                 }
             }
             $items[] = $item;

@@ -9,16 +9,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_tracking'])) {
         $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
     } else {
         $siteData = load_json('site.json');
-        $siteData['tracking'] = [
-            'gtm_id' => trim($_POST['gtm_id'] ?? ''),
-            'google_analytics_id' => trim($_POST['google_analytics_id'] ?? ''),
+        // Sanitize tracking IDs: only alphanumeric + hyphens + underscores
+        $sanitizeId = fn($v) => preg_replace('/[^a-zA-Z0-9_-]/', '', trim($v ?? ''));
+
+        $tracking_data = [
+            'gtm_id' => $sanitizeId($_POST['gtm_id']),
+            'google_analytics_id' => $sanitizeId($_POST['google_analytics_id']),
             'google_search_console' => trim($_POST['google_search_console'] ?? ''),
-            'google_ads_conversion_id' => trim($_POST['google_ads_conversion_id'] ?? ''),
-            'google_ads_conversion_label' => trim($_POST['google_ads_conversion_label'] ?? ''),
-            'facebook_pixel_id' => trim($_POST['facebook_pixel_id'] ?? ''),
-            'custom_head_code' => $_POST['custom_head_code'] ?? '',
-            'custom_body_code' => $_POST['custom_body_code'] ?? '',
+            'google_ads_conversion_id' => $sanitizeId($_POST['google_ads_conversion_id']),
+            'google_ads_conversion_label' => $sanitizeId($_POST['google_ads_conversion_label']),
+            'facebook_pixel_id' => $sanitizeId($_POST['facebook_pixel_id']),
+            'custom_head_code' => '',
+            'custom_body_code' => '',
         ];
+
+        // Custom code fields: admin only
+        if (is_admin()) {
+            $tracking_data['custom_head_code'] = $_POST['custom_head_code'] ?? '';
+            $tracking_data['custom_body_code'] = $_POST['custom_body_code'] ?? '';
+        } else {
+            // Preserve existing custom code for non-admins
+            $tracking_data['custom_head_code'] = $siteData['tracking']['custom_head_code'] ?? '';
+            $tracking_data['custom_body_code'] = $siteData['tracking']['custom_body_code'] ?? '';
+        }
+
+        $siteData['tracking'] = $tracking_data;
         save_json('site.json', $siteData);
         audit_log('tracking_bewerkt', 'Tracking instellingen bijgewerkt');
         $_SESSION['flash_success'] = 'Tracking instellingen opgeslagen.';
@@ -77,14 +92,14 @@ if (!is_array($tracking)) $tracking = [];
         </div>
 
         <div>
-            <h2 class="text-lg font-semibold text-white mb-4">Aangepaste code</h2>
+            <h2 class="text-lg font-semibold text-white mb-4">Aangepaste code <?php if (!is_admin()): ?><span class="text-sm text-gray-500">(alleen beheerders)</span><?php endif; ?></h2>
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-300 mb-1">Custom code in &lt;head&gt; <span class="help-tooltip" data-help="HTML of JavaScript die in de <head> van elke pagina wordt geplaatst. Alleen voor gevorderd gebruik.">?</span></label>
-                <textarea name="custom_head_code" rows="4" class="admin-input w-full font-mono text-sm"><?= e($tracking['custom_head_code'] ?? '') ?></textarea>
+                <textarea name="custom_head_code" rows="4" class="admin-input w-full font-mono text-sm" <?= !is_admin() ? 'disabled' : '' ?>><?= e($tracking['custom_head_code'] ?? '') ?></textarea>
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Custom code in &lt;body&gt; <span class="help-tooltip" data-help="HTML of JavaScript die vlak voor </body> wordt geplaatst. Alleen voor gevorderd gebruik.">?</span></label>
-                <textarea name="custom_body_code" rows="4" class="admin-input w-full font-mono text-sm"><?= e($tracking['custom_body_code'] ?? '') ?></textarea>
+                <textarea name="custom_body_code" rows="4" class="admin-input w-full font-mono text-sm" <?= !is_admin() ? 'disabled' : '' ?>><?= e($tracking['custom_body_code'] ?? '') ?></textarea>
             </div>
         </div>
     </div>

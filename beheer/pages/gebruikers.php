@@ -29,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
                     $users[$idx]['rol'] = $rol;
                     if (!empty($password)) {
                         $users[$idx]['wachtwoord'] = password_hash($password, PASSWORD_DEFAULT);
+                        audit_log('wachtwoord_gewijzigd', "Gebruiker: {$naam}");
+                        session_regenerate_id(true);
                     }
                     save_users($users);
                     audit_log('gebruiker_bewerkt', "Gebruiker: {$naam}");
@@ -57,6 +59,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
                     audit_log('gebruiker_aangemaakt', "Gebruiker: {$naam}");
                     $_SESSION['flash_success'] = 'Gebruiker aangemaakt.';
                 }
+            }
+        }
+    }
+    header('Location: /beheer/?tab=gebruikers');
+    exit;
+}
+
+// Handle 2FA toggle
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_2fa'])) {
+    if (!verify_csrf()) {
+        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+    } else {
+        $idx = (int)($_POST['toggle_index'] ?? -1);
+        if (isset($users[$idx])) {
+            $current = !empty($users[$idx]['two_factor_enabled']);
+            $smtpEnabled = !empty(site('smtp.enabled'));
+
+            if (!$current && !$smtpEnabled) {
+                $_SESSION['flash_error'] = '2FA kan niet worden ingeschakeld zonder werkende SMTP. Configureer eerst E-mail instellingen.';
+            } else {
+                $users[$idx]['two_factor_enabled'] = !$current;
+                save_users($users);
+                $status = !$current ? 'ingeschakeld' : 'uitgeschakeld';
+                audit_log('2fa_' . $status, "Gebruiker: {$users[$idx]['naam']}");
+                $_SESSION['flash_success'] = "2FA {$status} voor {$users[$idx]['naam']}.";
+                session_regenerate_id(true);
             }
         }
     }
@@ -151,6 +179,7 @@ if (isset($_GET['edit']) && isset($users[(int)$_GET['edit']])) {
                 <th>Naam</th>
                 <th>E-mail</th>
                 <th>Rol</th>
+                <th>2FA</th>
                 <th>Aangemaakt</th>
                 <th></th>
             </tr>
@@ -161,6 +190,22 @@ if (isset($_GET['edit']) && isset($users[(int)$_GET['edit']])) {
                 <td class="text-white"><?= e($user['naam'] ?? '') ?></td>
                 <td><?= e($user['email'] ?? '') ?></td>
                 <td><span class="badge <?= $user['rol'] === 'admin' ? 'badge-primary' : 'badge-muted' ?>"><?= e($user['rol'] ?? '') ?></span></td>
+                <td>
+                    <form method="POST" class="inline">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="toggle_index" value="<?= $idx ?>">
+                        <?php
+                        $is2fa = !empty($user['two_factor_enabled']);
+                        $smtpOn = !empty(site('smtp.enabled'));
+                        $canToggle = $is2fa || $smtpOn;
+                        ?>
+                        <button type="submit" name="toggle_2fa"
+                            class="text-xs px-2 py-0.5 rounded <?= $is2fa ? 'bg-green-900/50 text-green-400' : 'bg-gray-700 text-gray-400' ?>"
+                            <?= !$canToggle ? 'disabled title="Configureer eerst SMTP bij E-mail instellingen."' : '' ?>>
+                            <?= $is2fa ? 'Aan' : 'Uit' ?>
+                        </button>
+                    </form>
+                </td>
                 <td class="text-gray-500"><?= e($user['aangemaakt'] ?? '') ?></td>
                 <td class="text-right">
                     <a href="/beheer/?tab=gebruikers&edit=<?= $idx ?>" class="text-blue-400 hover:text-blue-300 text-sm mr-2">Bewerken</a>
