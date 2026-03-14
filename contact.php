@@ -11,6 +11,9 @@ $pageTitle = ($contactData['meta_title'] ?? 'Contact') . ' | ' . site('company.n
 $metaDescription = $contactData['meta_description'] ?? '';
 $formId = $contactData['formulier_id'] ?? 'contact';
 
+require_once __DIR__ . '/includes/structured-data.php';
+$structuredSchemas = [schema_breadcrumbs('Contact', 'contact')];
+
 require_once __DIR__ . '/includes/header.php';
 ?>
 

@@ -46,6 +46,18 @@ if (!$page) {
 $pageTitle = ($page['seo_title'] ?: $page['title']) . ' | ' . site('company.name', 'EASEO');
 $metaDescription = $page['seo_description'] ?: '';
 
+require_once __DIR__ . '/includes/structured-data.php';
+$breadcrumbParents = [];
+if (!empty($page['parent'])) {
+    foreach (($pages_data['pages'] ?? []) as $pp) {
+        if ($pp['id'] === $page['parent']) {
+            $breadcrumbParents[] = ['name' => $pp['title'], 'slug' => $pp['slug']];
+            break;
+        }
+    }
+}
+$structuredSchemas = [schema_breadcrumbs($page['title'], $page['slug'], $breadcrumbParents)];
+
 require_once __DIR__ . '/includes/header.php';
 ?>
 

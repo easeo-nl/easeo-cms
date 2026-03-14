@@ -5,6 +5,7 @@
 require_once __DIR__ . '/content.php';
 require_once __DIR__ . '/brand.php';
 require_once __DIR__ . '/navigation.php';
+require_once __DIR__ . '/structured-data.php';
 
 $page_title = $pageTitle ?? site('company.name', 'EASEO CMS');
 $meta_desc = $metaDescription ?? '';
@@ -33,7 +34,22 @@ $meta_desc = $metaDescription ?? '';
     <style><?= brand_css_properties() ?></style>
     <link rel="stylesheet" href="/css/custom.css">
 
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+
     <?php include __DIR__ . '/tracking-head.php'; ?>
+
+    <?php
+    // Structured data (JSON-LD)
+    $structuredSchemas = $structuredSchemas ?? [];
+    $structuredSchemas[] = schema_organization();
+
+    $currentUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    if ($currentUri === '/' || $currentUri === '/index.php') {
+        $structuredSchemas[] = schema_website();
+    }
+
+    render_structured_data($structuredSchemas);
+    ?>
 </head>
 <body class="font-body text-dark bg-white min-h-screen flex flex-col">
     <?php include __DIR__ . '/tracking-body.php'; ?>

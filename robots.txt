@@ -1,9 +1,27 @@
+# EASEO CMS — robots.txt
 User-agent: *
 Allow: /
-
 Disallow: /beheer/
 Disallow: /data/
 Disallow: /includes/
-Disallow: /templates/
+Disallow: /setup.php
+Disallow: /install.php
 
+# AI crawlers — explicitly allowed
+User-agent: GPTBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# Sitemap
 Sitemap: /sitemap.xml

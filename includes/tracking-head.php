@@ -47,7 +47,9 @@ if (easeoHasConsent()) {
 <?php if ($custom_head): ?>
 <script>
 if (easeoHasConsent()) {
-    document.write(<?= json_encode($custom_head) ?>);
+    var div = document.createElement('div');
+    div.innerHTML = <?= json_encode($custom_head) ?>;
+    Array.from(div.childNodes).forEach(function(n) { document.head.appendChild(n.cloneNode(true)); });
 }
 </script>
 <?php endif; ?>

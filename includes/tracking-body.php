@@ -9,5 +9,5 @@ $custom_body = site('tracking.custom_body_code');
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<?= e($gtm_id) ?>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <?php endif; ?>
 <?php if ($custom_body): ?>
-<?= $custom_body ?>
+<?= $custom_body /* Intentionally unescaped: admin-only custom tracking code, validated at save time */ ?>
 <?php endif; ?>

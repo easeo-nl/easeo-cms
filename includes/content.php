@@ -25,7 +25,7 @@ function save_json(string $file, array $data): bool {
     $dir = dirname($path);
     if (!is_dir($dir)) mkdir($dir, 0755, true);
 
-    return file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) !== false;
+    return file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false;
 }
 
 // Invalidate a cached JSON file so it's re-read on next load

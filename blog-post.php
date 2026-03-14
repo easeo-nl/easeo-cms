@@ -18,34 +18,18 @@ if (!$post || ($post['status'] ?? 'concept') !== 'gepubliceerd') {
 $pageTitle = ($post['meta_title'] ?: $post['titel']) . ' | ' . site('company.name', 'EASEO');
 $metaDescription = $post['meta_description'] ?: $post['samenvatting'] ?: '';
 
+require_once __DIR__ . '/includes/structured-data.php';
+$structuredSchemas = [
+    schema_article($post),
+    schema_breadcrumbs($post['titel'], 'blog/' . $post['slug'], [
+        ['name' => 'Blog', 'slug' => 'blog'],
+    ]),
+];
+
 require_once __DIR__ . '/includes/header.php';
 
 $dateISO = date('c', strtotime($post['datum']));
-$updatedISO = date('c', strtotime($post['bijgewerkt'] ?? $post['datum']));
 ?>
-
-<!-- Schema.org Article -->
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": <?= json_encode($post['titel']) ?>,
-    "description": <?= json_encode($post['samenvatting'] ?? '') ?>,
-    <?php if ($post['afbeelding']): ?>
-    "image": "<?= e($post['afbeelding']) ?>",
-    <?php endif; ?>
-    "author": {
-        "@type": "Person",
-        "name": <?= json_encode($post['auteur'] ?? '') ?>
-    },
-    "publisher": {
-        "@type": "Organization",
-        "name": <?= json_encode(site('company.name', 'EASEO')) ?>
-    },
-    "datePublished": "<?= $dateISO ?>",
-    "dateModified": "<?= $updatedISO ?>"
-}
-</script>
 
 <article class="py-12">
     <div class="max-w-3xl mx-auto px-4 sm:px-6">

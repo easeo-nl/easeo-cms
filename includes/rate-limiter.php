@@ -64,7 +64,7 @@ class RateLimiter {
     }
 
     private function saveData(string $ip, array $data): void {
-        file_put_contents($this->getFile($ip), json_encode($data));
+        file_put_contents($this->getFile($ip), json_encode($data, JSON_UNESCAPED_UNICODE), LOCK_EX);
     }
 
     private function cleanup(): void {

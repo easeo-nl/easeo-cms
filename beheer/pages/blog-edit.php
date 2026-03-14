@@ -84,13 +84,50 @@ $categories = get_categories();
                 <h3 class="text-md font-semibold text-white mb-3">SEO</h3>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-300 mb-1">Meta titel <span class="help-tooltip" data-help="Maximaal 60 tekens. Laat leeg om de artikeltitel te gebruiken.">?</span></label>
-                    <input type="text" name="meta_title" value="<?= e($post['meta_title'] ?? '') ?>" class="admin-input w-full">
+                    <input type="text" name="meta_title" id="blog-meta-title" value="<?= e($post['meta_title'] ?? '') ?>" class="admin-input w-full" maxlength="60">
+                    <p class="text-xs text-gray-500 mt-1"><span id="blog-meta-title-count"><?= strlen($post['meta_title'] ?? '') ?></span>/60 tekens</p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1">Meta beschrijving <span class="help-tooltip" data-help="Maximaal 155 tekens. Laat leeg om het excerpt te gebruiken.">?</span></label>
-                    <textarea name="meta_description" rows="2" class="admin-input w-full"><?= e($post['meta_description'] ?? '') ?></textarea>
+                    <textarea name="meta_description" id="blog-meta-desc" rows="2" class="admin-input w-full" maxlength="155"><?= e($post['meta_description'] ?? '') ?></textarea>
+                    <p class="text-xs text-gray-500 mt-1"><span id="blog-meta-desc-count"><?= strlen($post['meta_description'] ?? '') ?></span>/155 tekens</p>
+                </div>
+
+                <!-- SEO Preview -->
+                <div class="mt-4 pt-4 border-t border-gray-700">
+                    <p class="text-xs text-gray-500 mb-2">Google preview</p>
+                    <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:16px;">
+                        <p style="color:#8ab4f8;font-size:13px;margin:0 0 4px;" id="blog-seo-url"><?= e(($_SERVER['HTTP_HOST'] ?? 'domein.nl')) ?>/blog/<?= e($post['slug'] ?? '') ?></p>
+                        <p style="color:#e8eaed;font-size:16px;margin:0 0 4px;" id="blog-seo-title"><?= e($post['meta_title'] ?? $post['titel'] ?? '') ?></p>
+                        <p style="color:#bdc1c6;font-size:13px;margin:0;line-height:1.4;" id="blog-seo-desc"><?= e($post['meta_description'] ?? $post['samenvatting'] ?? '') ?></p>
+                    </div>
                 </div>
             </div>
+
+            <script>
+            (function() {
+                var mt = document.getElementById('blog-meta-title');
+                var md = document.getElementById('blog-meta-desc');
+                var titel = document.querySelector('input[name="titel"]');
+                function updateBlogPreview() {
+                    document.getElementById('blog-seo-title').textContent = mt.value || (titel ? titel.value : '');
+                    document.getElementById('blog-seo-desc').textContent = md.value || '';
+                }
+                mt.addEventListener('input', function() {
+                    var c = document.getElementById('blog-meta-title-count');
+                    c.textContent = this.value.length;
+                    c.style.color = this.value.length > 60 ? '#ef4444' : '';
+                    updateBlogPreview();
+                });
+                md.addEventListener('input', function() {
+                    var c = document.getElementById('blog-meta-desc-count');
+                    c.textContent = this.value.length;
+                    c.style.color = this.value.length > 155 ? '#ef4444' : '';
+                    updateBlogPreview();
+                });
+                if (titel) titel.addEventListener('input', updateBlogPreview);
+            })();
+            </script>
         </div>
 
         <!-- Sidebar -->

@@ -21,6 +21,9 @@ $result = paginate_posts(array_values($posts), $page);
 $pageTitle = 'Blog' . ($filterCat ? ' — ' . $filterCat : '') . ' | ' . site('company.name', 'EASEO');
 $metaDescription = 'Bekijk onze laatste blogposts en artikelen.';
 
+require_once __DIR__ . '/includes/structured-data.php';
+$structuredSchemas = [schema_breadcrumbs('Blog', 'blog')];
+
 require_once __DIR__ . '/includes/header.php';
 ?>
 

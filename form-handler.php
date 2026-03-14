@@ -88,7 +88,7 @@ $submission = [
 $subDir = EASEO_DATA . '/submissions';
 if (!is_dir($subDir)) mkdir($subDir, 0755, true);
 file_put_contents($subDir . '/' . $submission['id'] . '.json',
-    json_encode($submission, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    json_encode($submission, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), LOCK_EX);
 
 audit_log('formulier_verzonden', "Formulier: {$form['naam']}", 'bezoeker');
 

@@ -259,6 +259,16 @@ if ($action === 'edit' || $action === 'new'):
                     <textarea name="seo_description" id="seo-desc" rows="2" class="admin-input w-full" maxlength="155"><?= e($page['seo_description'] ?? '') ?></textarea>
                     <p class="text-xs text-gray-500 mt-1"><span id="seo-desc-count"><?= strlen($page['seo_description'] ?? '') ?></span>/155 tekens</p>
                 </div>
+
+                <!-- SEO Preview -->
+                <div class="mt-4 pt-4 border-t border-gray-700">
+                    <p class="text-xs text-gray-500 mb-2">Google preview</p>
+                    <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:16px;">
+                        <p style="color:#8ab4f8;font-size:13px;margin:0 0 4px;" id="seo-preview-url"><?= e(($_SERVER['HTTP_HOST'] ?? 'domein.nl')) ?>/<?= e($page['slug'] ?? '') ?></p>
+                        <p style="color:#e8eaed;font-size:16px;margin:0 0 4px;" id="seo-preview-title"><?= e($page['seo_title'] ?? $page['title'] ?? 'Paginatitel') ?></p>
+                        <p style="color:#bdc1c6;font-size:13px;margin:0;line-height:1.4;" id="seo-preview-desc"><?= e($page['seo_description'] ?? '') ?></p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -375,13 +385,29 @@ if (isNewPage) {
     });
 }
 
-// SEO character counters
+// SEO character counters + live preview
+function updateSeoPreview() {
+    var title = document.getElementById('seo-title').value || document.getElementById('page-title').value || 'Paginatitel';
+    var desc = document.getElementById('seo-desc').value || '';
+    var slug = document.getElementById('page-slug').value || '';
+    document.getElementById('seo-preview-title').textContent = title;
+    document.getElementById('seo-preview-desc').textContent = desc;
+    document.getElementById('seo-preview-url').textContent = location.hostname + '/' + slug;
+}
 document.getElementById('seo-title').addEventListener('input', function() {
-    document.getElementById('seo-title-count').textContent = this.value.length;
+    var count = document.getElementById('seo-title-count');
+    count.textContent = this.value.length;
+    count.style.color = this.value.length > 60 ? '#ef4444' : '';
+    updateSeoPreview();
 });
 document.getElementById('seo-desc').addEventListener('input', function() {
-    document.getElementById('seo-desc-count').textContent = this.value.length;
+    var count = document.getElementById('seo-desc-count');
+    count.textContent = this.value.length;
+    count.style.color = this.value.length > 155 ? '#ef4444' : '';
+    updateSeoPreview();
 });
+document.getElementById('page-title').addEventListener('input', updateSeoPreview);
+document.getElementById('page-slug').addEventListener('input', updateSeoPreview);
 </script>
 
 <?php
