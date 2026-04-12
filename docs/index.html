@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EASEO CMS — Open-source PHP CMS zonder database</title>
+    <meta name="description" content="Lichtgewicht, veilig CMS voor MKB-websites. Geen database, geen frameworks, geen afhankelijkheden. Draait op elke shared hosting met PHP.">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --border: #222;
+            --text: #e8e8e8;
+            --text-muted: #888;
+            --accent: #3b82f6;
+            --accent-dim: #1e3a5f;
+            --green: #22c55e;
+            --green-dim: #14532d;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: rgba(10,10,10,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            padding: 16px 0;
+        }
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        nav .logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+        nav .logo span { color: var(--accent); }
+        nav .links { display: flex; gap: 28px; align-items: center; }
+        nav .links a { color: var(--text-muted); font-size: 14px; }
+        nav .links a:hover { color: var(--text); text-decoration: none; }
+
+        /* Hero */
+        .hero {
+            padding: 160px 0 100px;
+            text-align: center;
+        }
+        .hero .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--green-dim);
+            color: var(--green);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 28px;
+        }
+        .hero h1 {
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+        .hero h1 em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto 36px;
+        }
+        .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.15s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover { background: #2563eb; text-decoration: none; }
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { border-color: #444; text-decoration: none; }
+
+        /* Install snippet */
+        .install {
+            margin-top: 48px;
+            display: flex;
+            justify-content: center;
+        }
+        .install code {
+            display: block;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 24px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .install code span { color: var(--green); }
+
+        /* Features */
+        .features {
+            padding: 80px 0;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .feature {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+        }
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+        .feature h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .feature p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Comparison */
+        .comparison {
+            padding: 60px 0 80px;
+        }
+        .comparison h2 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        .comparison-table th {
+            background: var(--bg);
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table td:first-child { font-weight: 500; }
+        .yes { color: var(--green); }
+        .no { color: #666; }
+
+        /* Philosophy */
+        .philosophy {
+            padding: 60px 0 80px;
+            text-align: center;
+        }
+        .philosophy h2 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+        }
+        .philosophy p {
+            color: var(--text-muted);
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto 12px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+            text-align: center;
+        }
+        footer p {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .hero { padding: 120px 0 60px; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .comparison-table { font-size: 13px; }
+            .comparison-table th, .comparison-table td { padding: 10px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="container">
+        <div class="logo">EASEO <span>CMS</span></div>
+        <div class="links">
+            <a href="#features">Features</a>
+            <a href="#vergelijking">Vergelijking</a>
+            <a href="https://github.com/easeo-nl/easeo-cms">GitHub</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="container">
+        <div class="badge">MIT License — 100% open-source</div>
+        <h1>Een CMS dat doet wat het moet.<br><em>Meer niet.</em></h1>
+        <p>Lichtgewicht PHP CMS voor MKB-websites. Geen database, geen frameworks, geen node_modules. Draait op elke shared hosting.</p>
+        <div class="hero-buttons">
+            <a href="https://github.com/easeo-nl/easeo-cms" class="btn btn-primary">Bekijk op GitHub</a>
+            <a href="https://github.com/easeo-nl/easeo-cms/archive/refs/heads/main.zip" class="btn btn-secondary">Download .zip</a>
+        </div>
+        <div class="install">
+            <code><span>$</span> git clone https://github.com/easeo-nl/easeo-cms.git && php -S localhost:8000 router.php</code>
+        </div>
+    </div>
+</section>
+
+<section class="features" id="features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon" style="background: var(--green-dim); color: var(--green);">0</div>
+                <h3>Zero dependencies</h3>
+                <p>Geen Composer, geen npm, geen build tools. Upload de bestanden, klaar. De enige dependency is PHPMailer voor SMTP, en die zit er al in.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: var(--accent-dim); color: var(--accent);">{ }</div>
+                <h3>JSON in plaats van MySQL</h3>
+                <p>Alle data als JSON-bestanden. Geen database server nodig, geen migraties, geen ORM. Werkt op elke hosting met PHP.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: #3b1d54; color: #a855f7;">S</div>
+                <h3>Veilig by design</h3>
+                <p>2FA, CSRF-tokens, bcrypt, rate limiting, account lockout, CSP headers, SVG sanitization. Security is geen plugin.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: #1a3329; color: #4ade80;">5m</div>
+                <h3>Setup in 5 minuten</h3>
+                <p>Upload, bezoek het domein, doorloop de wizard. Bedrijfsinfo, branding, content en admin account in vijf stappen.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: #2a1f0d; color: #f59e0b;">SEO</div>
+                <h3>SEO uit de doos</h3>
+                <p>Auto-sitemap, JSON-LD structured data, meta tags, breadcrumbs, Open Graph. Geen plugin nodig.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: #1e293b; color: #64748b;">NL</div>
+                <h3>Nederlands admin panel</h3>
+                <p>Donker thema, responsive design, contextual help tooltips. Gebouwd voor MKB-ondernemers die geen technische achtergrond hebben.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="comparison" id="vergelijking">
+    <div class="container">
+        <h2>WordPress vs. EASEO CMS</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>WordPress</th>
+                    <th>EASEO CMS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Database vereist</td>
+                    <td>MySQL / MariaDB</td>
+                    <td class="yes">Geen — JSON bestanden</td>
+                </tr>
+                <tr>
+                    <td>Dependencies</td>
+                    <td>PHP + MySQL + plugins</td>
+                    <td class="yes">Alleen PHP</td>
+                </tr>
+                <tr>
+                    <td>Installatie</td>
+                    <td>Database aanmaken, wp-config, wizard</td>
+                    <td class="yes">Upload + wizard</td>
+                </tr>
+                <tr>
+                    <td>Updates</td>
+                    <td>Core + thema + 10-30 plugins</td>
+                    <td class="yes">git pull</td>
+                </tr>
+                <tr>
+                    <td>Beveiliging</td>
+                    <td>Afhankelijk van plugins</td>
+                    <td class="yes">Ingebouwd: 2FA, CSRF, CSP</td>
+                </tr>
+                <tr>
+                    <td>Laadtijd</td>
+                    <td>Database queries + plugin overhead</td>
+                    <td class="yes">Direct file reads</td>
+                </tr>
+                <tr>
+                    <td>Hosting kosten</td>
+                    <td>MySQL-hosting vereist</td>
+                    <td class="yes">Elke PHP-hosting</td>
+                </tr>
+                <tr>
+                    <td>Ecosysteem</td>
+                    <td class="yes">60.000+ plugins</td>
+                    <td class="no">Handmatig uitbreiden</td>
+                </tr>
+                <tr>
+                    <td>Complexe sites</td>
+                    <td class="yes">Webshops, membership, LMS</td>
+                    <td class="no">MKB-websites, blogs</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="philosophy">
+    <div class="container">
+        <h2>Tegen de monopolies</h2>
+        <p>WordPress draait op 40% van het web. Dat is geen vrije keuze — het is vendor lock-in via plugins, thema's en een ecosysteem dat steeds commerciëler wordt.</p>
+        <p>EASEO CMS is gebouwd vanuit de overtuiging dat een MKB-website geen 50 plugins en een database nodig heeft. Fork het, pas het aan, maak het van jezelf.</p>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>EASEO CMS — MIT License — Gebouwd door <a href="https://www.easeo.nl">Nick Aldewereld</a></p>
+    </div>
+</footer>
+
+</body>
+</html>
