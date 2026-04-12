@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_submission']))
         $file = EASEO_DATA . '/submissions/' . basename($sid) . '.json';
         if (file_exists($file)) {
             unlink($file);
-            $_SESSION['flash_success'] = 'Bericht verwijderd.';
+            $_SESSION['flash_success'] = t('success_message_deleted');
         }
     }
     header('Location: /beheer/?tab=inbox');
@@ -62,8 +62,8 @@ if ($viewId) {
 ?>
 
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-white">Inbox</h1>
-    <span class="text-sm text-gray-500"><?= count($submissions) ?> berichten</span>
+    <h1 class="text-2xl font-bold text-white"><?= t('inbox_title') ?></h1>
+    <span class="text-sm text-gray-500"><?= count($submissions) ?> <?= t('inbox_messages_count_unit') ?></span>
 </div>
 
 <?php if ($viewSub): ?>
@@ -74,7 +74,7 @@ if ($viewId) {
             <h2 class="text-lg font-semibold text-white"><?= e($viewSub['formulier_naam'] ?? '') ?></h2>
             <p class="text-sm text-gray-500"><?= e($viewSub['datum'] ?? '') ?> — IP: <?= e($viewSub['ip'] ?? '') ?></p>
         </div>
-        <a href="/beheer/?tab=inbox" class="btn-admin btn-admin-outline text-sm">&larr; Terug</a>
+        <a href="/beheer/?tab=inbox" class="btn-admin btn-admin-outline text-sm">&larr; <?= t('button_back') ?></a>
     </div>
 
     <div class="space-y-3">
@@ -88,12 +88,12 @@ if ($viewId) {
 
     <div class="flex gap-2 mt-6 pt-4 border-t border-gray-700">
         <?php if (!empty($viewSub['data']['email'])): ?>
-        <a href="mailto:<?= e($viewSub['data']['email']) ?>" class="btn-admin btn-admin-primary text-sm">Beantwoorden</a>
+        <a href="mailto:<?= e($viewSub['data']['email']) ?>" class="btn-admin btn-admin-primary text-sm"><?= t('button_reply') ?></a>
         <?php endif; ?>
-        <form method="POST" class="inline" onsubmit="return confirm('Verwijderen?')">
+        <form method="POST" class="inline" onsubmit="return confirm('<?= t('confirm_delete') ?>')">
             <?= csrf_field() ?>
             <input type="hidden" name="submission_id" value="<?= e($viewSub['id'] ?? '') ?>">
-            <button type="submit" name="delete_submission" class="btn-admin btn-admin-danger text-sm">Verwijderen</button>
+            <button type="submit" name="delete_submission" class="btn-admin btn-admin-danger text-sm"><?= t('action_delete') ?></button>
         </form>
     </div>
 </div>
@@ -102,15 +102,15 @@ if ($viewId) {
 <!-- Submission list -->
 <div class="admin-card">
     <?php if (empty($submissions)): ?>
-        <p class="text-gray-500">Nog geen berichten ontvangen.</p>
+        <p class="text-gray-500"><?= t('inbox_no_messages') ?></p>
     <?php else: ?>
     <table class="admin-table">
         <thead>
             <tr>
                 <th style="width:20px"></th>
-                <th>Formulier</th>
-                <th>Afzender</th>
-                <th>Datum</th>
+                <th><?= t('table_header_form') ?></th>
+                <th><?= t('table_header_sender') ?></th>
+                <th><?= t('table_header_date') ?></th>
                 <th></th>
             </tr>
         </thead>
@@ -120,7 +120,7 @@ if ($viewId) {
                 <td><?= empty($sub['gelezen']) ? '<span class="unread-dot"></span>' : '' ?></td>
                 <td>
                     <a href="/beheer/?tab=inbox&view=<?= e($sub['id']) ?>" class="text-white hover:text-blue-400">
-                        <?= e($sub['formulier_naam'] ?? 'Onbekend') ?>
+                        <?= e($sub['formulier_naam'] ?? t('unknown_form_name')) ?>
                     </a>
                 </td>
                 <td class="text-gray-400">
@@ -128,10 +128,10 @@ if ($viewId) {
                 </td>
                 <td class="text-gray-500"><?= e($sub['datum'] ?? '') ?></td>
                 <td class="text-right">
-                    <form method="POST" class="inline" onsubmit="return confirm('Verwijderen?')">
+                    <form method="POST" class="inline" onsubmit="return confirm('<?= t('confirm_delete') ?>')">
                         <?= csrf_field() ?>
                         <input type="hidden" name="submission_id" value="<?= e($sub['id']) ?>">
-                        <button type="submit" name="delete_submission" class="text-red-400 hover:text-red-300 text-sm">Verwijderen</button>
+                        <button type="submit" name="delete_submission" class="text-red-400 hover:text-red-300 text-sm"><?= t('action_delete') ?></button>
                     </form>
                 </td>
             </tr>

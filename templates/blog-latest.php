@@ -5,7 +5,7 @@
  */
 require_once EASEO_ROOT . '/includes/blog-engine.php';
 
-$titel = e($data['titel'] ?? 'Laatste berichten');
+$titel = e($data['titel'] ?? t('blog_latest_default_title'));
 $tekst = e($data['tekst'] ?? '');
 $aantal = (int)($data['aantal'] ?? 3);
 
@@ -30,7 +30,7 @@ $posts = array_slice($posts, 0, $aantal);
         </div>
 
         <div class="text-center mt-8">
-            <a href="/blog" class="text-primary font-medium hover:underline">Bekijk alle berichten &rarr;</a>
+            <a href="/blog" class="text-primary font-medium hover:underline"><?= t('blog_latest_view_all_link') ?></a>
         </div>
     </div>
 </section>

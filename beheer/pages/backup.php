@@ -6,7 +6,7 @@
 // Handle download backup
 if (isset($_GET['action']) && $_GET['action'] === 'download') {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
         header('Location: /beheer/?tab=backup');
         exit;
     }
@@ -15,7 +15,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'download') {
     $zip = new ZipArchive();
 
     if ($zip->open($zipFile, ZipArchive::OVERWRITE) !== true) {
-        $_SESSION['flash_error'] = 'Kon backup niet aanmaken.';
+        $_SESSION['flash_error'] = t('error_backup_create_failed');
         header('Location: /beheer/?tab=backup');
         exit;
     }
@@ -51,15 +51,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'download') {
 // Handle restore
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_backup'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } elseif (!isset($_FILES['backup_file']) || $_FILES['backup_file']['error'] !== UPLOAD_ERR_OK) {
-        $_SESSION['flash_error'] = 'Upload fout.';
+        $_SESSION['flash_error'] = t('error_upload_failed');
     } else {
         $file = $_FILES['backup_file'];
         $zip = new ZipArchive();
 
         if ($zip->open($file['tmp_name']) !== true) {
-            $_SESSION['flash_error'] = 'Ongeldig ZIP bestand.';
+            $_SESSION['flash_error'] = t('error_invalid_zip');
         } else {
             // Validate contents — must contain data/ JSON files
             $valid = false;
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_backup'])) {
             }
 
             if (!$valid) {
-                $_SESSION['flash_error'] = 'Ongeldige backup: geen data bestanden gevonden.';
+                $_SESSION['flash_error'] = t('error_invalid_backup_no_data');
             } else {
                 // Extract JSON files only (safety measure)
                 for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_backup'])) {
 
                 $zip->close();
                 audit_log('backup_hersteld', $file['name']);
-                $_SESSION['flash_success'] = 'Backup hersteld. Data is bijgewerkt.';
+                $_SESSION['flash_success'] = t('success_backup_restored');
             }
         }
     }
@@ -111,35 +111,35 @@ foreach ($dataFiles as $f) $totalSize += filesize($f);
 $subFiles = glob(EASEO_DATA . '/submissions/*.json') ?: [];
 ?>
 
-<h1 class="text-2xl font-bold text-white mb-6">Backup & Herstel</h1>
+<h1 class="text-2xl font-bold text-white mb-6"><?= t('backup_title') ?></h1>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <!-- Download backup -->
     <div class="admin-card">
-        <h2 class="text-lg font-semibold text-white mb-4">Backup downloaden</h2>
-        <p class="text-sm text-gray-400 mb-4">Download een ZIP met alle data bestanden (content, gebruikers, instellingen, formulieren, berichten).</p>
+        <h2 class="text-lg font-semibold text-white mb-4"><?= t('backup_download_heading') ?></h2>
+        <p class="text-sm text-gray-400 mb-4"><?= t('backup_download_desc') ?></p>
 
         <div class="text-sm text-gray-500 mb-4">
-            <p><?= count($dataFiles) ?> data bestanden</p>
-            <p><?= count($subFiles) ?> formulier inzendingen</p>
-            <p>Totale grootte: ~<?= round($totalSize / 1024, 1) ?> KB</p>
+            <p><?= count($dataFiles) ?> <?= t('backup_data_files_count') ?></p>
+            <p><?= count($subFiles) ?> <?= t('backup_form_submissions_count') ?></p>
+            <p><?= t('backup_total_size') ?> ~<?= round($totalSize / 1024, 1) ?> KB</p>
         </div>
 
         <a href="/beheer/?tab=backup&action=download&csrf_token=<?= csrf_token() ?>" class="btn-admin btn-admin-primary">
-            Download backup
+            <?= t('backup_download_button') ?>
         </a>
-        <p class="text-xs text-gray-500 mt-3"><span class="help-tooltip" data-help="Download een kopie van alle content, instellingen en uploads. Bewaar deze op een veilige plek.">?</span> Tip: bewaar backups op een veilige plek.</p>
+        <p class="text-xs text-gray-500 mt-3"><span class="help-tooltip" data-help="<?= t('tooltip_backup_download') ?>">?</span> <?= t('backup_tip') ?></p>
     </div>
 
     <!-- Restore backup -->
     <div class="admin-card">
-        <h2 class="text-lg font-semibold text-white mb-4">Backup herstellen</h2>
-        <p class="text-sm text-gray-400 mb-4">Upload een eerder gedownloade backup ZIP om alle data te herstellen. <span class="help-tooltip" data-help="Herstel een eerdere backup. Let op: dit overschrijft alle huidige content en instellingen.">?</span></p>
+        <h2 class="text-lg font-semibold text-white mb-4"><?= t('backup_restore_heading') ?></h2>
+        <p class="text-sm text-gray-400 mb-4"><?= t('backup_restore_desc') ?> <span class="help-tooltip" data-help="<?= t('tooltip_backup_restore') ?>">?</span></p>
 
-        <form method="POST" enctype="multipart/form-data" onsubmit="return confirm('Weet u zeker? Dit overschrijft alle huidige data.')">
+        <form method="POST" enctype="multipart/form-data" onsubmit="return confirm('<?= t('confirm_restore_backup') ?>')">
             <?= csrf_field() ?>
             <input type="file" name="backup_file" accept=".zip" required class="admin-input w-full mb-3">
-            <button type="submit" name="restore_backup" class="btn-admin btn-admin-danger">Backup herstellen</button>
+            <button type="submit" name="restore_backup" class="btn-admin btn-admin-danger"><?= t('backup_restore_button') ?></button>
         </form>
     </div>
 </div>

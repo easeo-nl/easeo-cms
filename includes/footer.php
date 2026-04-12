@@ -19,7 +19,7 @@
                 </div>
 
                 <div>
-                    <h3 class="text-white font-display font-bold text-lg mb-3">Contact</h3>
+                    <h3 class="text-white font-display font-bold text-lg mb-3"><?= t('footer_contact_heading') ?></h3>
                     <div class="space-y-1 text-sm text-gray-400">
                         <?php if (site('company.email')): ?>
                         <p><a href="mailto:<?= e(site('company.email')) ?>" class="hover:text-white transition-colors"><?= e(site('company.email')) ?></a></p>
@@ -31,7 +31,7 @@
                 </div>
 
                 <div>
-                    <h3 class="text-white font-display font-bold text-lg mb-3">Links</h3>
+                    <h3 class="text-white font-display font-bold text-lg mb-3"><?= t('footer_links_heading') ?></h3>
                     <div class="flex flex-col space-y-1">
                         <?= render_footer_nav() ?>
                     </div>
@@ -39,7 +39,7 @@
             </div>
 
             <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p class="text-sm text-gray-500">&copy; <?= e(site('company.copyright_year', date('Y'))) ?> <?= e(site('company.name', 'EASEO')) ?>. Alle rechten voorbehouden.</p>
+                <p class="text-sm text-gray-500">&copy; <?= e(site('company.copyright_year', date('Y'))) ?> <?= e(site('company.name', 'EASEO')) ?>. <?= t('footer_all_rights_reserved') ?></p>
 
                 <?php
                 $socials = [
@@ -67,7 +67,7 @@
 
             <div class="text-center mt-4">
                 <p class="text-xs" style="color: var(--color-muted); opacity: 0.5;">
-                    Powered by <a href="https://easeo.nl" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;">EASEO</a>
+                    <a href="https://easeo.nl" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;"><?= t('footer_powered_by') ?></a>
                 </p>
             </div>
         </div>

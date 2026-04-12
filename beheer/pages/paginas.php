@@ -56,11 +56,11 @@ function has_children(array $pages, string $id): bool {
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $deleteId = $_POST['delete_id'] ?? '';
         if (has_children($pages, $deleteId)) {
-            $_SESSION['flash_error'] = 'Deze pagina heeft subpagina\'s. Verwijder eerst de subpagina\'s.';
+            $_SESSION['flash_error'] = t('error_page_has_children');
         } else {
             $deletedPage = find_page($pages, $deleteId);
             $pages = array_values(array_filter($pages, fn($p) => $p['id'] !== $deleteId));
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
                 }
             }
 
-            $_SESSION['flash_success'] = 'Pagina verwijderd.';
+            $_SESSION['flash_success'] = t('success_page_deleted');
         }
     }
     header('Location: /beheer/?tab=paginas');
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $title = sanitize_input($_POST['title'] ?? '');
         $slug = sanitize_input($_POST['slug'] ?? '');
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
         $seo_description = strip_tags(sanitize_input($_POST['seo_description'] ?? ''));
 
         if (empty($title)) {
-            $_SESSION['flash_error'] = 'Titel is verplicht.';
+            $_SESSION['flash_error'] = t('error_title_required');
         } else {
             if (empty($slug)) {
                 $slug = slugify($title);
@@ -168,13 +168,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
                     }
                 }
                 audit_log('pagina_bewerkt', "Pagina: {$title}");
-                $_SESSION['flash_success'] = 'Pagina bijgewerkt.';
+                $_SESSION['flash_success'] = t('success_page_updated');
             } else {
                 // Create new
                 $pageData['created_at'] = date('Y-m-d');
                 $pages[] = $pageData;
                 audit_log('pagina_aangemaakt', "Pagina: {$title}");
-                $_SESSION['flash_success'] = 'Pagina aangemaakt.';
+                $_SESSION['flash_success'] = t('success_page_created');
             }
 
             $pagesData['pages'] = $pages;
@@ -213,8 +213,8 @@ if ($action === 'edit' || $action === 'new'):
 ?>
 
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-white"><?= $page ? 'Pagina bewerken' : 'Nieuwe pagina' ?></h1>
-    <a href="/beheer/?tab=paginas" class="btn-admin btn-admin-outline text-sm">&larr; Terug</a>
+    <h1 class="text-2xl font-bold text-white"><?= $page ? t('page_edit_title') : t('page_new_title') ?></h1>
+    <a href="/beheer/?tab=paginas" class="btn-admin btn-admin-outline text-sm">&larr; <?= t('button_back') ?></a>
 </div>
 
 <form method="POST" class="space-y-6">
@@ -225,47 +225,47 @@ if ($action === 'edit' || $action === 'new'):
         <div class="lg:col-span-2 space-y-6">
             <div class="admin-card">
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Titel <span class="help-tooltip" data-help="De titel van de pagina. Wordt getoond als heading bovenaan de pagina.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_title') ?> <span class="help-tooltip" data-help="<?= t('tooltip_page_title') ?>">?</span></label>
                     <input type="text" name="title" id="page-title" value="<?= e($page['title'] ?? '') ?>" required class="admin-input w-full text-lg">
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Slug <span class="help-tooltip" data-help="Het webadres van deze pagina. Wordt automatisch aangemaakt. Pas alleen aan als je een goede reden hebt.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_slug') ?> <span class="help-tooltip" data-help="<?= t('tooltip_page_slug') ?>">?</span></label>
                     <div class="flex items-center gap-2">
                         <span class="text-gray-500 text-sm">/</span>
-                        <input type="text" name="slug" id="page-slug" value="<?= e($page['slug'] ?? '') ?>" class="admin-input flex-1" placeholder="wordt-automatisch-ingevuld">
+                        <input type="text" name="slug" id="page-slug" value="<?= e($page['slug'] ?? '') ?>" class="admin-input flex-1" placeholder="<?= t('placeholder_slug_auto') ?>">
                     </div>
                     <?php if ($page): ?>
-                    <p class="text-xs text-yellow-500 mt-1">Let op: het wijzigen van de slug breekt bestaande links. Stel een redirect in.</p>
+                    <p class="text-xs text-yellow-500 mt-1"><?= t('warning_slug_change') ?></p>
                     <?php endif; ?>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Content <span class="help-tooltip" data-help="De inhoud van de pagina in HTML. Gebruik &lt;p&gt; voor alinea's, &lt;h2&gt; voor tussenkopjes, &lt;strong&gt; voor vet, &lt;a href=&quot;...&quot;&gt; voor links.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_content') ?> <span class="help-tooltip" data-help="<?= t('tooltip_page_content') ?>">?</span></label>
                     <textarea name="content" rows="15" class="admin-input w-full"><?= e($page['content'] ?? '') ?></textarea>
                 </div>
             </div>
 
             <!-- SEO -->
             <div class="admin-card">
-                <h3 class="text-md font-semibold text-white mb-3">SEO</h3>
+                <h3 class="text-md font-semibold text-white mb-3"><?= t('section_seo') ?></h3>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">SEO titel <span class="help-tooltip" data-help="Maximaal 60 tekens. Dit is wat Google toont als paginatitel.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_seo_title') ?> <span class="help-tooltip" data-help="<?= t('tooltip_seo_title') ?>">?</span></label>
                     <input type="text" name="seo_title" id="seo-title" value="<?= e($page['seo_title'] ?? '') ?>" class="admin-input w-full" maxlength="60">
-                    <p class="text-xs text-gray-500 mt-1"><span id="seo-title-count"><?= strlen($page['seo_title'] ?? '') ?></span>/60 tekens</p>
+                    <p class="text-xs text-gray-500 mt-1"><span id="seo-title-count"><?= strlen($page['seo_title'] ?? '') ?></span><?= t('char_count_of_60') ?></p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">SEO omschrijving <span class="help-tooltip" data-help="Maximaal 155 tekens. De beschrijving onder de paginatitel in Google.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_seo_description') ?> <span class="help-tooltip" data-help="<?= t('tooltip_seo_description') ?>">?</span></label>
                     <textarea name="seo_description" id="seo-desc" rows="2" class="admin-input w-full" maxlength="155"><?= e($page['seo_description'] ?? '') ?></textarea>
-                    <p class="text-xs text-gray-500 mt-1"><span id="seo-desc-count"><?= strlen($page['seo_description'] ?? '') ?></span>/155 tekens</p>
+                    <p class="text-xs text-gray-500 mt-1"><span id="seo-desc-count"><?= strlen($page['seo_description'] ?? '') ?></span><?= t('char_count_of_155') ?></p>
                 </div>
 
                 <!-- SEO Preview -->
                 <div class="mt-4 pt-4 border-t border-gray-700">
-                    <p class="text-xs text-gray-500 mb-2">Google preview</p>
+                    <p class="text-xs text-gray-500 mb-2"><?= t('google_preview_label') ?></p>
                     <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:16px;">
                         <p style="color:#8ab4f8;font-size:13px;margin:0 0 4px;" id="seo-preview-url"><?= e(($_SERVER['HTTP_HOST'] ?? 'domein.nl')) ?>/<?= e($page['slug'] ?? '') ?></p>
-                        <p style="color:#e8eaed;font-size:16px;margin:0 0 4px;" id="seo-preview-title"><?= e($page['seo_title'] ?? $page['title'] ?? 'Paginatitel') ?></p>
+                        <p style="color:#e8eaed;font-size:16px;margin:0 0 4px;" id="seo-preview-title"><?= e($page['seo_title'] ?? $page['title'] ?? t('placeholder_page_title_preview')) ?></p>
                         <p style="color:#bdc1c6;font-size:13px;margin:0;line-height:1.4;" id="seo-preview-desc"><?= e($page['seo_description'] ?? '') ?></p>
                     </div>
                 </div>
@@ -275,18 +275,18 @@ if ($action === 'edit' || $action === 'new'):
         <!-- Sidebar -->
         <div class="space-y-6">
             <div class="admin-card">
-                <h3 class="text-md font-semibold text-white mb-3">Publiceren</h3>
+                <h3 class="text-md font-semibold text-white mb-3"><?= t('section_publish') ?></h3>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Status <span class="help-tooltip" data-help="Concept-pagina's zijn alleen zichtbaar in het beheerpanel.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_status') ?> <span class="help-tooltip" data-help="<?= t('tooltip_page_status') ?>">?</span></label>
                     <select name="status" class="admin-input w-full">
-                        <option value="draft" <?= ($page['status'] ?? '') === 'draft' ? 'selected' : '' ?>>Concept</option>
-                        <option value="published" <?= ($page['status'] ?? '') === 'published' ? 'selected' : '' ?>>Gepubliceerd</option>
+                        <option value="draft" <?= ($page['status'] ?? '') === 'draft' ? 'selected' : '' ?>><?= t('status_draft') ?></option>
+                        <option value="published" <?= ($page['status'] ?? '') === 'published' ? 'selected' : '' ?>><?= t('status_published') ?></option>
                     </select>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Template <span class="help-tooltip" data-help="Default = standaard pagina. Contact = pagina met contactformulier onderaan.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_template') ?> <span class="help-tooltip" data-help="<?= t('tooltip_page_template') ?>">?</span></label>
                     <select name="template" class="admin-input w-full">
                         <option value="default" <?= ($page['template'] ?? '') === 'default' ? 'selected' : '' ?>>Default</option>
                         <option value="contact" <?= ($page['template'] ?? '') === 'contact' ? 'selected' : '' ?>>Contact</option>
@@ -294,9 +294,9 @@ if ($action === 'edit' || $action === 'new'):
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Parent <span class="help-tooltip" data-help="Maak dit een subpagina van een andere pagina. Laat leeg voor een hoofdpagina.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_parent') ?> <span class="help-tooltip" data-help="<?= t('tooltip_page_parent') ?>">?</span></label>
                     <select name="parent" id="page-parent" class="admin-input w-full">
-                        <option value="">— Geen (hoofdpagina) —</option>
+                        <option value=""><?= t('option_no_parent') ?></option>
                         <?php foreach ($parentPages as $pp): ?>
                         <option value="<?= e($pp['id']) ?>" <?= ($page['parent'] ?? '') === $pp['id'] ? 'selected' : '' ?>><?= e($pp['title']) ?></option>
                         <?php endforeach; ?>
@@ -304,39 +304,39 @@ if ($action === 'edit' || $action === 'new'):
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Volgorde</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_sort_order') ?></label>
                     <input type="number" name="sort_order" value="<?= (int)($page['sort_order'] ?? 0) ?>" class="admin-input w-full" min="0">
                 </div>
 
                 <button type="submit" name="save_page" class="btn-admin btn-admin-primary w-full">
-                    <?= $page ? 'Bijwerken' : 'Aanmaken' ?>
+                    <?= $page ? t('button_update') : t('button_create') ?>
                 </button>
             </div>
 
             <div class="admin-card">
-                <h3 class="text-md font-semibold text-white mb-3">Menu</h3>
+                <h3 class="text-md font-semibold text-white mb-3"><?= t('section_menu') ?></h3>
 
                 <div class="mb-4">
                     <label class="flex items-center gap-2 cursor-pointer">
                         <input type="hidden" name="show_in_menu" value="0">
                         <input type="checkbox" name="show_in_menu" value="1" <?= !empty($page['show_in_menu']) ? 'checked' : '' ?> class="w-4 h-4 rounded">
-                        <span class="text-sm text-gray-300">Tonen in menu <span class="help-tooltip" data-help="Vink aan om deze pagina automatisch in het hoofdmenu te tonen.">?</span></span>
+                        <span class="text-sm text-gray-300"><?= t('field_label_show_in_menu') ?> <span class="help-tooltip" data-help="<?= t('tooltip_show_in_menu') ?>">?</span></span>
                     </label>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Menu label <span class="help-tooltip" data-help="De tekst die in het menu verschijnt. Laat leeg om de paginatitel te gebruiken.">?</span></label>
-                    <input type="text" name="menu_label" value="<?= e($page['menu_label'] ?? '') ?>" class="admin-input w-full" placeholder="Paginatitel wordt gebruikt">
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_menu_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_menu_label') ?>">?</span></label>
+                    <input type="text" name="menu_label" value="<?= e($page['menu_label'] ?? '') ?>" class="admin-input w-full" placeholder="<?= t('placeholder_menu_label') ?>">
                 </div>
             </div>
 
             <div class="admin-card">
-                <h3 class="text-md font-semibold text-white mb-3">Afbeelding</h3>
+                <h3 class="text-md font-semibold text-white mb-3"><?= t('section_image') ?></h3>
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Uitgelichte afbeelding <span class="help-tooltip" data-help="Een optionele uitgelichte afbeelding voor deze pagina.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_featured_image') ?> <span class="help-tooltip" data-help="<?= t('tooltip_page_image') ?>">?</span></label>
                     <div class="flex items-center gap-2">
                         <input type="text" name="image" id="page-image" value="<?= e($page['image'] ?? '') ?>" class="admin-input flex-1" placeholder="/images/uploads/...">
-                        <button type="button" onclick="openMediaPicker('page-image')" class="btn-admin-sm">Kies</button>
+                        <button type="button" onclick="openMediaPicker('page-image')" class="btn-admin-sm"><?= t('button_choose_media') ?></button>
                     </div>
                     <?php if (!empty($page['image'])): ?>
                     <img src="<?= e($page['image']) ?>" class="mt-2 w-full h-32 object-cover rounded" alt="">
@@ -346,11 +346,11 @@ if ($action === 'edit' || $action === 'new'):
 
             <?php if ($page): ?>
             <div class="admin-card">
-                <p class="text-xs text-gray-500">ID: <?= e($page['id']) ?></p>
-                <p class="text-xs text-gray-500 mt-1">Aangemaakt: <?= e($page['created_at'] ?? '') ?></p>
-                <p class="text-xs text-gray-500 mt-1">Bijgewerkt: <?= e($page['updated_at'] ?? '') ?></p>
+                <p class="text-xs text-gray-500"><?= t('label_page_id') ?> <?= e($page['id']) ?></p>
+                <p class="text-xs text-gray-500 mt-1"><?= t('label_created') ?> <?= e($page['created_at'] ?? '') ?></p>
+                <p class="text-xs text-gray-500 mt-1"><?= t('label_updated') ?> <?= e($page['updated_at'] ?? '') ?></p>
                 <?php if ($page['status'] === 'published'): ?>
-                <a href="/<?= e($page['slug']) ?>" target="_blank" class="text-sm text-blue-400 hover:text-blue-300 mt-2 inline-block">Bekijk pagina &rarr;</a>
+                <a href="/<?= e($page['slug']) ?>" target="_blank" class="text-sm text-blue-400 hover:text-blue-300 mt-2 inline-block"><?= t('link_view_page') ?></a>
                 <?php endif; ?>
             </div>
             <?php endif; ?>
@@ -387,7 +387,7 @@ if (isNewPage) {
 
 // SEO character counters + live preview
 function updateSeoPreview() {
-    var title = document.getElementById('seo-title').value || document.getElementById('page-title').value || 'Paginatitel';
+    var title = document.getElementById('seo-title').value || document.getElementById('page-title').value || '<?= t('placeholder_page_title_preview') ?>';
     var desc = document.getElementById('seo-desc').value || '';
     var slug = document.getElementById('page-slug').value || '';
     document.getElementById('seo-preview-title').textContent = title;
@@ -417,25 +417,25 @@ else:
 ?>
 
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-white">Pagina's</h1>
-    <a href="/beheer/?tab=paginas&action=new" class="btn-admin btn-admin-primary text-sm">+ Nieuwe pagina</a>
+    <h1 class="text-2xl font-bold text-white"><?= t('pages_list_title') ?></h1>
+    <a href="/beheer/?tab=paginas&action=new" class="btn-admin btn-admin-primary text-sm"><?= t('button_new_page') ?></a>
 </div>
 
 <?php if (empty($pages)): ?>
 <div class="admin-card">
-    <p class="text-gray-400">Nog geen pagina's aangemaakt. Maak je eerste pagina aan.</p>
+    <p class="text-gray-400"><?= t('pages_no_pages') ?></p>
 </div>
 <?php else: ?>
 <div class="admin-card overflow-x-auto">
     <table class="w-full text-sm">
         <thead>
             <tr class="text-left text-gray-400 border-b border-gray-700">
-                <th class="pb-3 font-medium">Titel</th>
-                <th class="pb-3 font-medium">Slug</th>
-                <th class="pb-3 font-medium">Status</th>
-                <th class="pb-3 font-medium">Menu</th>
-                <th class="pb-3 font-medium">Volgorde</th>
-                <th class="pb-3 font-medium text-right">Acties</th>
+                <th class="pb-3 font-medium"><?= t('table_header_title') ?></th>
+                <th class="pb-3 font-medium"><?= t('table_header_slug') ?></th>
+                <th class="pb-3 font-medium"><?= t('table_header_status') ?></th>
+                <th class="pb-3 font-medium"><?= t('table_header_menu') ?></th>
+                <th class="pb-3 font-medium"><?= t('table_header_sort_order') ?></th>
+                <th class="pb-3 font-medium text-right"><?= t('table_header_actions') ?></th>
             </tr>
         </thead>
         <tbody class="text-gray-300">
@@ -452,9 +452,9 @@ else:
                 <td class="py-3 text-gray-500">/<?= e($p['slug']) ?></td>
                 <td class="py-3">
                     <?php if ($p['status'] === 'published'): ?>
-                        <span class="inline-block px-2 py-0.5 bg-green-900/50 text-green-400 text-xs rounded">Gepubliceerd</span>
+                        <span class="inline-block px-2 py-0.5 bg-green-900/50 text-green-400 text-xs rounded"><?= t('status_published') ?></span>
                     <?php else: ?>
-                        <span class="inline-block px-2 py-0.5 bg-yellow-900/50 text-yellow-400 text-xs rounded">Concept</span>
+                        <span class="inline-block px-2 py-0.5 bg-yellow-900/50 text-yellow-400 text-xs rounded"><?= t('status_draft') ?></span>
                     <?php endif; ?>
                 </td>
                 <td class="py-3">
@@ -466,14 +466,14 @@ else:
                 </td>
                 <td class="py-3 text-gray-500"><?= (int)($p['sort_order'] ?? 0) ?></td>
                 <td class="py-3 text-right">
-                    <a href="/beheer/?tab=paginas&action=edit&id=<?= e($p['id']) ?>" class="text-blue-400 hover:text-blue-300 text-xs mr-3">Bewerken</a>
-                    <form method="POST" class="inline" onsubmit="return confirm('Weet je zeker dat je deze pagina wilt verwijderen?');">
+                    <a href="/beheer/?tab=paginas&action=edit&id=<?= e($p['id']) ?>" class="text-blue-400 hover:text-blue-300 text-xs mr-3"><?= t('action_edit') ?></a>
+                    <form method="POST" class="inline" onsubmit="return confirm('<?= t('confirm_delete_page_msg') ?>');">
                         <?= csrf_field() ?>
                         <input type="hidden" name="delete_id" value="<?= e($p['id']) ?>">
                         <label class="inline-flex items-center gap-1 text-xs text-gray-500 mr-2">
-                            <input type="checkbox" name="create_redirect" value="1" class="w-3 h-3"> Redirect
+                            <input type="checkbox" name="create_redirect" value="1" class="w-3 h-3"> <?= t('label_redirect_checkbox') ?>
                         </label>
-                        <button type="submit" name="delete_page" class="text-red-400 hover:text-red-300 text-xs">Verwijderen</button>
+                        <button type="submit" name="delete_page" class="text-red-400 hover:text-red-300 text-xs"><?= t('action_delete') ?></button>
                     </form>
                 </td>
             </tr>

@@ -35,9 +35,9 @@ $dateISO = date('c', strtotime($post['datum']));
     <div class="max-w-3xl mx-auto px-4 sm:px-6">
         <!-- Breadcrumb -->
         <nav class="text-sm text-muted mb-6">
-            <a href="/" class="hover:text-primary">Home</a>
+            <a href="/" class="hover:text-primary"><?= t('breadcrumb_home') ?></a>
             <span class="mx-2">/</span>
-            <a href="/blog" class="hover:text-primary">Blog</a>
+            <a href="/blog" class="hover:text-primary"><?= t('breadcrumb_blog') ?></a>
             <span class="mx-2">/</span>
             <span><?= e($post['titel']) ?></span>
         </nav>
@@ -50,7 +50,7 @@ $dateISO = date('c', strtotime($post['datum']));
 
         <div class="flex items-center gap-4 text-sm text-muted mb-8">
             <?php if ($post['auteur']): ?>
-            <span>Door <?= e($post['auteur']) ?></span>
+            <span><?= t('blog_post_author_prefix', ['author' => e($post['auteur'])]) ?></span>
             <span class="text-gray-300">|</span>
             <?php endif; ?>
             <time datetime="<?= $dateISO ?>"><?= date('d F Y', strtotime($post['datum'])) ?></time>
@@ -76,7 +76,7 @@ $dateISO = date('c', strtotime($post['datum']));
 
         <!-- Back link -->
         <div class="mt-10 pt-6 border-t">
-            <a href="/blog" class="text-primary hover:underline">&larr; Terug naar blog</a>
+            <a href="/blog" class="text-primary hover:underline">&larr; <?= t('blog_post_back_link') ?></a>
         </div>
     </div>
 </article>

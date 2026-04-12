@@ -7,7 +7,7 @@ $siteData = load_json('site.json');
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_brand'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $siteData['brand']['logo'] = sanitize_input($_POST['logo'] ?? '');
         $siteData['brand']['favicon'] = sanitize_input($_POST['favicon'] ?? '');
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_brand'])) {
 
         save_json('site.json', $siteData);
         audit_log('huisstijl_bewerkt', 'Huisstijl bijgewerkt');
-        $_SESSION['flash_success'] = 'Huisstijl opgeslagen.';
+        $_SESSION['flash_success'] = t('success_branding_saved');
     }
     header('Location: /beheer/?tab=huisstijl');
     exit;
@@ -35,30 +35,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_brand'])) {
 $brand = $siteData['brand'] ?? [];
 ?>
 
-<h1 class="text-2xl font-bold text-white mb-6">Huisstijl</h1>
+<h1 class="text-2xl font-bold text-white mb-6"><?= t('branding_title') ?></h1>
 
 <form method="POST" class="space-y-6">
     <?= csrf_field() ?>
 
     <!-- Logo & Favicon -->
     <div class="admin-card">
-        <h2 class="text-lg font-semibold text-white mb-4">Logo & Favicon</h2>
+        <h2 class="text-lg font-semibold text-white mb-4"><?= t('branding_logo_section') ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Logo</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_logo') ?></label>
                 <div class="flex items-center gap-2">
                     <input type="text" name="logo" id="brand-logo" value="<?= e($brand['logo'] ?? '') ?>" class="admin-input flex-1" placeholder="/images/uploads/logo.png">
-                    <button type="button" onclick="openMediaPicker('brand-logo')" class="btn-admin-sm">Kies</button>
+                    <button type="button" onclick="openMediaPicker('brand-logo')" class="btn-admin-sm"><?= t('button_choose_media') ?></button>
                 </div>
                 <?php if (!empty($brand['logo'])): ?>
                 <img src="<?= e($brand['logo']) ?>" class="mt-2 h-12 bg-white p-1 rounded" alt="Logo">
                 <?php endif; ?>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Favicon</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_favicon') ?></label>
                 <div class="flex items-center gap-2">
                     <input type="text" name="favicon" id="brand-favicon" value="<?= e($brand['favicon'] ?? '') ?>" class="admin-input flex-1" placeholder="/images/uploads/favicon.ico">
-                    <button type="button" onclick="openMediaPicker('brand-favicon')" class="btn-admin-sm">Kies</button>
+                    <button type="button" onclick="openMediaPicker('brand-favicon')" class="btn-admin-sm"><?= t('button_choose_media') ?></button>
                 </div>
             </div>
         </div>
@@ -66,24 +66,24 @@ $brand = $siteData['brand'] ?? [];
 
     <!-- Colors -->
     <div class="admin-card">
-        <h2 class="text-lg font-semibold text-white mb-4">Kleuren</h2>
+        <h2 class="text-lg font-semibold text-white mb-4"><?= t('branding_colors_section') ?></h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <?php
             $colors = [
-                'color_primary' => ['Primair', 'De hoofdkleur van knoppen, links en accenten op de website.'],
-                'color_secondary' => ['Secundair', 'De kleur voor highlights, prijzen en call-to-action elementen.'],
-                'color_dark' => ['Donker', 'De achtergrondkleur van de header en footer.'],
-                'color_darker' => ['Donkerder', ''],
-                'color_surface' => ['Oppervlak', ''],
-                'color_success' => ['Succes', ''],
-                'color_text' => ['Tekst', ''],
-                'color_muted' => ['Gedempt', ''],
+                'color_primary'   => ['color_primary_label',   'tooltip_color_primary'],
+                'color_secondary' => ['color_secondary_label', 'tooltip_color_secondary'],
+                'color_dark'      => ['color_dark_label',      'tooltip_color_dark'],
+                'color_darker'    => ['color_darker_label',    ''],
+                'color_surface'   => ['color_surface_label',   ''],
+                'color_success'   => ['color_success_label',   ''],
+                'color_text'      => ['color_text_label',      ''],
+                'color_muted'     => ['color_muted_label',     ''],
             ];
-            foreach ($colors as $key => [$label, $helpText]):
+            foreach ($colors as $key => [$labelKey, $tooltipKey]):
                 $value = $brand[$key] ?? '#000000';
             ?>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1"><?= $label ?><?php if ($helpText): ?> <span class="help-tooltip" data-help="<?= e($helpText) ?>">?</span><?php endif; ?></label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t($labelKey) ?><?php if ($tooltipKey): ?> <span class="help-tooltip" data-help="<?= t($tooltipKey) ?>">?</span><?php endif; ?></label>
                 <div class="flex items-center gap-2">
                     <input type="color" name="<?= $key ?>" value="<?= e($value) ?>" class="w-10 h-10 rounded cursor-pointer border-0 bg-transparent">
                     <input type="text" value="<?= e($value) ?>" class="admin-input w-24 text-sm"
@@ -96,12 +96,12 @@ $brand = $siteData['brand'] ?? [];
 
         <!-- Preview -->
         <div class="mt-4 pt-4 border-t border-gray-700">
-            <p class="text-sm text-gray-400 mb-2">Preview:</p>
+            <p class="text-sm text-gray-400 mb-2"><?= t('color_preview_label') ?></p>
             <div class="flex gap-2">
-                <?php foreach ($colors as $key => [$clabel, $chelp]): ?>
+                <?php foreach ($colors as $key => [$labelKey, $tooltipKey]): ?>
                 <div class="text-center">
                     <div class="w-12 h-12 rounded-lg border border-gray-700" style="background-color: <?= e($brand[$key] ?? '#000') ?>"></div>
-                    <span class="text-xs text-gray-500"><?= $clabel ?></span>
+                    <span class="text-xs text-gray-500"><?= t($labelKey) ?></span>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -110,10 +110,10 @@ $brand = $siteData['brand'] ?? [];
 
     <!-- Fonts -->
     <div class="admin-card">
-        <h2 class="text-lg font-semibold text-white mb-4">Lettertypen</h2>
+        <h2 class="text-lg font-semibold text-white mb-4"><?= t('branding_fonts_section') ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Display lettertype (titels) <span class="help-tooltip" data-help="Het lettertype voor koppen en titels.">?</span></label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('font_display_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_font_display') ?>">?</span></label>
                 <select name="font_display" class="admin-input w-full">
                     <?php
                     $fonts = ['Outfit', 'Inter', 'Poppins', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Raleway', 'Playfair Display', 'Merriweather', 'Source Sans Pro', 'Nunito', 'Work Sans', 'DM Sans', 'Plus Jakarta Sans'];
@@ -124,7 +124,7 @@ $brand = $siteData['brand'] ?? [];
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Body lettertype (tekst) <span class="help-tooltip" data-help="Het lettertype voor lopende tekst en menu-items.">?</span></label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('font_body_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_font_body') ?>">?</span></label>
                 <select name="font_body" class="admin-input w-full">
                     <?php foreach ($fonts as $font): ?>
                     <option value="<?= $font ?>" <?= ($brand['font_body'] ?? 'Inter') === $font ? 'selected' : '' ?>><?= $font ?></option>
@@ -135,6 +135,6 @@ $brand = $siteData['brand'] ?? [];
     </div>
 
     <div class="flex justify-end">
-        <button type="submit" name="save_brand" class="btn-admin btn-admin-primary">Opslaan</button>
+        <button type="submit" name="save_brand" class="btn-admin btn-admin-primary"><?= t('button_save') ?></button>
     </div>
 </form>

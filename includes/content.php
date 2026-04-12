@@ -6,6 +6,8 @@
 define('EASEO_ROOT', dirname(__DIR__));
 define('EASEO_DATA', EASEO_ROOT . '/data');
 
+require_once __DIR__ . '/lang.php';
+
 // Load JSON file with caching
 function load_json(string $file): array {
     static $cache = [];

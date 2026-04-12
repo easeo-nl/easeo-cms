@@ -7,7 +7,7 @@ $users = get_users();
 // Handle create/edit user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $email = strtolower(trim($_POST['email'] ?? ''));
         $naam = trim($_POST['naam'] ?? '');
@@ -16,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
         $editIndex = $_POST['edit_index'] ?? '';
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['flash_error'] = 'Ongeldig e-mailadres.';
+            $_SESSION['flash_error'] = t('error_invalid_email');
         } elseif (empty($naam)) {
-            $_SESSION['flash_error'] = 'Naam is verplicht.';
+            $_SESSION['flash_error'] = t('error_name_required');
         } else {
             if ($editIndex !== '') {
                 // Edit existing
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
                     }
                     save_users($users);
                     audit_log('gebruiker_bewerkt', "Gebruiker: {$naam}");
-                    $_SESSION['flash_success'] = 'Gebruiker bijgewerkt.';
+                    $_SESSION['flash_success'] = t('success_user_updated');
                 }
             } else {
                 // Check duplicate email
@@ -44,9 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
                 }
 
                 if ($exists) {
-                    $_SESSION['flash_error'] = 'E-mailadres is al in gebruik.';
+                    $_SESSION['flash_error'] = t('error_email_in_use');
                 } elseif (empty($password)) {
-                    $_SESSION['flash_error'] = 'Wachtwoord is verplicht voor nieuwe gebruikers.';
+                    $_SESSION['flash_error'] = t('error_password_required');
                 } else {
                     $users[] = [
                         'email' => $email,
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
                     ];
                     save_users($users);
                     audit_log('gebruiker_aangemaakt', "Gebruiker: {$naam}");
-                    $_SESSION['flash_success'] = 'Gebruiker aangemaakt.';
+                    $_SESSION['flash_success'] = t('success_user_created');
                 }
             }
         }
@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
 // Handle 2FA toggle
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_2fa'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $idx = (int)($_POST['toggle_index'] ?? -1);
         if (isset($users[$idx])) {
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_2fa'])) {
             $smtpEnabled = !empty(site('smtp.enabled'));
 
             if (!$current && !$smtpEnabled) {
-                $_SESSION['flash_error'] = '2FA kan niet worden ingeschakeld zonder werkende SMTP. Configureer eerst E-mail instellingen.';
+                $_SESSION['flash_error'] = t('error_2fa_requires_smtp');
             } else {
                 $users[$idx]['two_factor_enabled'] = !$current;
                 save_users($users);
@@ -95,19 +95,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_2fa'])) {
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_user'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $idx = (int)($_POST['delete_index'] ?? -1);
         if (isset($users[$idx])) {
             // Don't allow deleting yourself
             if (strcasecmp($users[$idx]['email'], current_user()['email']) === 0) {
-                $_SESSION['flash_error'] = 'U kunt uzelf niet verwijderen.';
+                $_SESSION['flash_error'] = t('error_cannot_delete_self');
             } else {
                 $naam = $users[$idx]['naam'];
                 array_splice($users, $idx, 1);
                 save_users($users);
                 audit_log('gebruiker_verwijderd', "Gebruiker: {$naam}");
-                $_SESSION['flash_success'] = 'Gebruiker verwijderd.';
+                $_SESSION['flash_success'] = t('success_user_deleted');
             }
         }
     }
@@ -126,12 +126,12 @@ if (isset($_GET['edit']) && isset($users[(int)$_GET['edit']])) {
 ?>
 
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-white">Gebruikers</h1>
+    <h1 class="text-2xl font-bold text-white"><?= t('users_title') ?></h1>
 </div>
 
 <!-- User form -->
 <div class="admin-card mb-6">
-    <h2 class="text-lg font-semibold text-white mb-4"><?= $editUser ? 'Gebruiker bewerken' : 'Nieuwe gebruiker' ?></h2>
+    <h2 class="text-lg font-semibold text-white mb-4"><?= $editUser ? t('user_edit_heading') : t('user_new_heading') ?></h2>
     <form method="POST">
         <?= csrf_field() ?>
         <?php if ($editUser): ?>
@@ -140,32 +140,32 @@ if (isset($_GET['edit']) && isset($users[(int)$_GET['edit']])) {
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Naam</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_name') ?></label>
                 <input type="text" name="naam" value="<?= e($editUser['naam'] ?? '') ?>" required class="admin-input w-full">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">E-mailadres</label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_email_address') ?></label>
                 <input type="email" name="email" value="<?= e($editUser['email'] ?? '') ?>" required class="admin-input w-full">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Wachtwoord <?= $editUser ? '(laat leeg om niet te wijzigen)' : '' ?></label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_password') ?> <?= $editUser ? t('hint_password_leave_blank') : '' ?></label>
                 <input type="password" name="wachtwoord" <?= $editUser ? '' : 'required' ?> class="admin-input w-full" minlength="8">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Rol <span class="help-tooltip" data-help="Beheerder heeft volledige toegang. Redacteur kan content en blog beheren maar geen instellingen wijzigen.">?</span></label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_role') ?> <span class="help-tooltip" data-help="<?= t('tooltip_user_role') ?>">?</span></label>
                 <select name="rol" class="admin-input w-full">
-                    <option value="admin" <?= ($editUser['rol'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
-                    <option value="redacteur" <?= ($editUser['rol'] ?? 'redacteur') === 'redacteur' ? 'selected' : '' ?>>Redacteur</option>
+                    <option value="admin" <?= ($editUser['rol'] ?? '') === 'admin' ? 'selected' : '' ?>><?= t('role_admin') ?></option>
+                    <option value="redacteur" <?= ($editUser['rol'] ?? 'redacteur') === 'redacteur' ? 'selected' : '' ?>><?= t('role_editor') ?></option>
                 </select>
             </div>
         </div>
 
         <div class="flex gap-2 mt-4">
             <button type="submit" name="save_user" class="btn-admin btn-admin-primary">
-                <?= $editUser ? 'Bijwerken' : 'Aanmaken' ?>
+                <?= $editUser ? t('button_update') : t('button_create') ?>
             </button>
             <?php if ($editUser): ?>
-            <a href="/beheer/?tab=gebruikers" class="btn-admin btn-admin-outline">Annuleren</a>
+            <a href="/beheer/?tab=gebruikers" class="btn-admin btn-admin-outline"><?= t('button_cancel') ?></a>
             <?php endif; ?>
         </div>
     </form>
@@ -176,11 +176,11 @@ if (isset($_GET['edit']) && isset($users[(int)$_GET['edit']])) {
     <table class="admin-table">
         <thead>
             <tr>
-                <th>Naam</th>
-                <th>E-mail</th>
-                <th>Rol</th>
-                <th>2FA</th>
-                <th>Aangemaakt</th>
+                <th><?= t('field_label_name') ?></th>
+                <th><?= t('table_header_email') ?></th>
+                <th><?= t('table_header_role') ?></th>
+                <th><?= t('table_header_2fa') ?></th>
+                <th><?= t('table_header_created') ?></th>
                 <th></th>
             </tr>
         </thead>
@@ -201,18 +201,18 @@ if (isset($_GET['edit']) && isset($users[(int)$_GET['edit']])) {
                         ?>
                         <button type="submit" name="toggle_2fa"
                             class="text-xs px-2 py-0.5 rounded <?= $is2fa ? 'bg-green-900/50 text-green-400' : 'bg-gray-700 text-gray-400' ?>"
-                            <?= !$canToggle ? 'disabled title="Configureer eerst SMTP bij E-mail instellingen."' : '' ?>>
-                            <?= $is2fa ? 'Aan' : 'Uit' ?>
+                            <?= !$canToggle ? 'disabled title="' . t('tooltip_2fa_smtp_required') . '"' : '' ?>>
+                            <?= $is2fa ? t('toggle_2fa_on') : t('toggle_2fa_off') ?>
                         </button>
                     </form>
                 </td>
                 <td class="text-gray-500"><?= e($user['aangemaakt'] ?? '') ?></td>
                 <td class="text-right">
-                    <a href="/beheer/?tab=gebruikers&edit=<?= $idx ?>" class="text-blue-400 hover:text-blue-300 text-sm mr-2">Bewerken</a>
-                    <form method="POST" class="inline" onsubmit="return confirm('Weet u zeker dat u deze gebruiker wilt verwijderen?')">
+                    <a href="/beheer/?tab=gebruikers&edit=<?= $idx ?>" class="text-blue-400 hover:text-blue-300 text-sm mr-2"><?= t('action_edit') ?></a>
+                    <form method="POST" class="inline" onsubmit="return confirm('<?= t('confirm_delete_user') ?>')">
                         <?= csrf_field() ?>
                         <input type="hidden" name="delete_index" value="<?= $idx ?>">
-                        <button type="submit" name="delete_user" class="text-red-400 hover:text-red-300 text-sm">Verwijderen</button>
+                        <button type="submit" name="delete_user" class="text-red-400 hover:text-red-300 text-sm"><?= t('action_delete') ?></button>
                     </form>
                 </td>
             </tr>

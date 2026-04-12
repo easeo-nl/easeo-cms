@@ -96,14 +96,14 @@ function generate_label(string $key): string {
  */
 function get_field_tooltip(string $key, string $type): string {
     $tooltips = [
-        'meta_title' => 'Maximaal 60 tekens. Dit is wat Google toont als paginatitel in de zoekresultaten.',
-        'meta_description' => 'Maximaal 155 tekens. De korte beschrijving onder de paginatitel in Google.',
+        'meta_title' => t('tooltip_meta_title'),
+        'meta_description' => t('tooltip_meta_description'),
     ];
     if (isset($tooltips[$key])) {
         return ' <span class="help-tooltip" data-help="' . e($tooltips[$key]) . '">?</span>';
     }
     if ($type === 'image') {
-        return ' <span class="help-tooltip" data-help="Klik om een afbeelding te kiezen uit de mediabibliotheek.">?</span>';
+        return ' <span class="help-tooltip" data-help="' . e(t('tooltip_image_picker')) . '">?</span>';
     }
     return '';
 }
@@ -132,7 +132,7 @@ function render_field(array $config, $value = '', string $prefix = ''): string {
             $html .= '  <label class="block text-sm font-medium text-gray-300 mb-1">' . $label . $tooltip . '</label>' . "\n";
             $html .= '  <div class="flex items-center gap-3">' . "\n";
             $html .= '    <input type="text" id="' . $id . '" name="' . $name . '" value="' . $val . '" class="admin-input flex-1" placeholder="/images/uploads/...">' . "\n";
-            $html .= '    <button type="button" onclick="openMediaPicker(\'' . $id . '\')" class="btn-admin-sm">Kies</button>' . "\n";
+            $html .= '    <button type="button" onclick="openMediaPicker(\'' . $id . '\')" class="btn-admin-sm">' . t('button_choose_media') . '</button>' . "\n";
             if ($value) {
                 $html .= '    <img src="' . $val . '" class="h-10 w-10 object-cover rounded" alt="">' . "\n";
             }

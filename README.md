@@ -1,89 +1,101 @@
 # EASEO CMS
 
-Een lichtgewicht, open-source PHP CMS gebouwd als alternatief voor WordPress. Geen database, geen frameworks, geen afhankelijkheden — draait op elke shared hosting met PHP 8.x.
+A lightweight, open-source PHP CMS built as an alternative to WordPress. No database, no frameworks, no dependencies — runs on any shared hosting with PHP 8.x.
 
-## Waarom EASEO CMS?
+**[Website](https://easeo-nl.github.io/easeo-cms)** · **[Documentation](https://easeo-nl.github.io/easeo-cms/en/docs)** · **[Nederlands](https://easeo-nl.github.io/easeo-cms/nl/)**
 
-WordPress is overkill voor de meeste MKB-websites. Het is traag, kwetsbaar, en vereist constante updates van plugins en thema's. EASEO CMS is gebouwd vanuit de praktijk: een CMS dat doet wat het moet doen, zonder de bloat.
+## Why EASEO CMS?
 
-- **Zero dependencies** — geen Composer, geen npm, geen build tools
-- **JSON in plaats van MySQL** — geen database nodig, werkt overal
-- **Veilig by design** — 2FA, CSRF, rate limiting, CSP headers, bcrypt
-- **Klaar in 5 minuten** — upload, doorloop de wizard, klaar
+WordPress is overkill for most small business websites. It's slow, vulnerable, and requires constant updates of plugins and themes. EASEO CMS is built from practice: a CMS that does what it should — nothing more.
 
-## Kenmerken
+- **Zero dependencies** — no Composer, no npm, no build tools
+- **JSON instead of MySQL** — no database needed, works everywhere
+- **Secure by design** — 2FA, CSRF, rate limiting, CSP headers, bcrypt
+- **Ready in 5 minutes** — upload, run the wizard, done
+- **Multilingual** — built-in i18n with JSON language files
 
-- Admin panel met donker thema en responsive design
-- Blog engine met RSS feed en Schema.org structured data
-- Dynamische pagina's met parent/child structuur en menu-integratie
-- Formulieren builder met inbox, e-mail notificaties (SMTP) en CSV export
+## Digital Sovereignty
+
+Your data, your server, your rules:
+
+- **No cloud dependencies** — no AWS, no Google Cloud, no Cloudflare required
+- **No external APIs** — all functionality is self-contained
+- **No telemetry** — zero data sent to third parties
+- **GDPR by design** — no tracking unless explicitly enabled
+- **Self-hosted** — runs on any European hosting provider
+- **EU-developed** — Amsterdam, Netherlands
+
+## Features
+
+- Admin panel with dark theme and responsive design
+- Blog engine with RSS feed and Schema.org structured data
+- Dynamic pages with parent/child structure and menu integration
+- Form builder with inbox, email notifications (SMTP) and CSV export
 - SEO: auto-sitemap, JSON-LD, meta tags, breadcrumbs
-- Beveiliging: 2FA, CSRF, bcrypt, rate limiting, account lockout, CSP headers
-- Huisstijl editor: kleuren, fonts en logo via admin
-- Media library met upload, resize en thumbnails
+- Security: 2FA, CSRF, bcrypt, rate limiting, account lockout, CSP headers
+- Branding editor: colors, fonts and logo via admin
+- Media library with upload, resize and thumbnails
 - Backup, audit logging, cookie consent, tracking (GTM/GA4/Pixel)
+- i18n: English and Dutch included, add any language with one file
 
-## Vereisten
+## Requirements
 
-- PHP 8.1+ met extensies: `gd`, `json`, `openssl`, `mbstring`, `fileinfo`
-- Apache met `mod_rewrite` (of PHP built-in server voor lokaal testen)
-- Schrijfrechten op `data/` en `images/`
+- PHP 8.1+ with extensions: `gd`, `json`, `openssl`, `mbstring`, `fileinfo`
+- Apache with `mod_rewrite` (or PHP built-in server for local testing)
+- Write permissions on `data/` and `images/`
 
-## Installatie
+## Installation
 
 ```bash
-# Clone het repository
 git clone https://github.com/easeo-nl/easeo-cms.git
 cd easeo-cms
-
-# Lokaal testen
 php -S localhost:8000 router.php
 ```
 
-Bezoek `http://localhost:8000` in de browser. De setup wizard begeleidt je door de configuratie.
+Visit `http://localhost:8000` — the setup wizard guides you through configuration.
 
-### Productie (shared hosting)
+### Production (shared hosting)
 
-1. Upload de bestanden naar je webserver (FTP of git deploy)
-2. Bezoek het domein — `install.php` maakt de data bestanden aan
-3. Doorloop de 5-stappen setup wizard
-4. Configureer SMTP in admin voor e-mail notificaties
+1. Upload the files to your web server (FTP or git deploy)
+2. Visit the domain — `install.php` creates the data files
+3. Complete the 5-step setup wizard
+4. Configure SMTP in admin for email notifications
 
-## Architectuur
+## Architecture
 
 ```
 index.php              Homepage
 blog.php / blog-post.php   Blog
-contact.php            Contactpagina
-pagina-router.php      Dynamische pagina's
+contact.php            Contact page
+pagina-router.php      Dynamic pages
 
-includes/              Core PHP (content, auth, forms, media, mail)
-beheer/                Admin panel (donker thema)
-templates/             Herbruikbare frontend sections
-data/                  JSON data bestanden (git-ignored)
+includes/              Core PHP (content, auth, forms, media, mail, i18n)
+beheer/                Admin panel (dark theme)
+templates/             Reusable frontend sections
+lang/                  Language files (en.json, nl.json, ...)
+data/                  JSON data files (git-ignored)
 ```
 
-Alle data wordt opgeslagen als JSON in `data/`. Geen database setup, geen migraties, geen ORM. Content laden gaat via `load_json()`, opslaan via `save_json()` met file locking.
+All data is stored as JSON in `data/`. No database setup, no migrations, no ORM.
 
-## Bijdragen
+## Contributing
 
-Pull requests zijn welkom. Fork het repository, maak je wijzigingen, en open een PR.
+Pull requests are welcome. Fork the repository, make your changes, and open a PR.
 
-Conventies:
-- PHP: `snake_case` voor variabelen en functies
+Conventions:
+- PHP: `snake_case` for variables and functions
 - JSON keys: `snake_case`
 - URL slugs: `kebab-case`
-- Admin UI: Nederlands
-- Commit messages: Nederlands, kort en beschrijvend
+- Commit messages: English, short and descriptive
 
-## Licentie
+## License
 
-MIT License — zie [LICENSE.txt](LICENSE.txt)
+MIT License — see [LICENSE.txt](LICENSE.txt)
 
-## Auteur
+## Author
 
 **Nick Aldewereld** — [EASEO](https://www.easeo.nl)
 
 ---
 
-Gebouwd als open-source alternatief voor de CMS-monopolies. Gebruik het, fork het, maak het beter.
+Built as an open-source alternative to the CMS monopolies. Use it, fork it, make it better.

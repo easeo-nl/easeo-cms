@@ -7,15 +7,15 @@
 <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-dark text-white p-4 z-[9999] shadow-lg transform translate-y-full transition-transform duration-300" style="display:none;">
     <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="text-sm flex-1">
-            Wij gebruiken cookies om uw ervaring te verbeteren. Door deze site te gebruiken gaat u akkoord met ons
-            <a href="/cookiebeleid" class="underline hover:text-primary">cookiebeleid</a>.
+            <?= t('cookie_banner_text') ?>
+            <a href="/cookiebeleid" class="underline hover:text-primary"><?= t('cookie_policy_link_label') ?></a>.
         </div>
         <div class="flex gap-3 shrink-0">
             <button onclick="easeoDeclineCookies()" class="px-4 py-2 text-sm border border-gray-500 rounded hover:bg-gray-700 transition-colors">
-                Weigeren
+                <?= t('cookie_decline_button') ?>
             </button>
             <button onclick="easeoAcceptCookies()" class="px-4 py-2 text-sm bg-primary text-white rounded hover:opacity-90 transition-colors">
-                Accepteren
+                <?= t('cookie_accept_button') ?>
             </button>
         </div>
     </div>

@@ -24,7 +24,7 @@ $plannen = $data['plannen'] ?? [];
             ?>
             <div class="bg-white rounded-xl p-8 <?= $uitgelicht ? 'ring-2 ring-primary shadow-xl' : 'shadow-sm' ?>">
                 <?php if ($uitgelicht): ?>
-                <span class="inline-block bg-primary text-white text-xs px-2 py-1 rounded-full mb-4">Populair</span>
+                <span class="inline-block bg-primary text-white text-xs px-2 py-1 rounded-full mb-4"><?= t('pricing_popular_badge') ?></span>
                 <?php endif; ?>
                 <h3 class="text-xl font-display font-bold text-dark"><?= e($plan['naam'] ?? '') ?></h3>
                 <div class="mt-4 mb-6">

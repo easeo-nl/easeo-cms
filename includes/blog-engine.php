@@ -165,7 +165,7 @@ function render_post_card(array $post): string {
     }
     $html .= '    <div class="flex items-center justify-between">' . "\n";
     $html .= '      <time class="text-xs text-gray-400">' . $date . '</time>' . "\n";
-    $html .= '      <a href="' . $url . '" class="text-sm text-primary font-medium hover:underline">Lees meer &rarr;</a>' . "\n";
+    $html .= '      <a href="' . $url . '" class="text-sm text-primary font-medium hover:underline">' . t('blog_card_read_more') . '</a>' . "\n";
     $html .= '    </div>' . "\n";
     $html .= '  </div>' . "\n";
     $html .= '</article>' . "\n";

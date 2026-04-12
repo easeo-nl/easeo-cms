@@ -18,12 +18,12 @@ $form = get_form($formId);
 
 if (!$form) {
     http_response_code(400);
-    exit('Formulier niet gevonden.');
+    exit(t('error_form_not_found'));
 }
 
 // CSRF check
 if (!verify_csrf_frontend()) {
-    $_SESSION['form_error'] = 'Beveiligingsfout. Probeer het opnieuw.';
+    $_SESSION['form_error'] = t('error_security_csrf');
     header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
     exit;
 }
@@ -31,7 +31,7 @@ if (!verify_csrf_frontend()) {
 // Rate limiting
 $limiter = new RateLimiter(10, 300);
 if ($limiter->isLimited()) {
-    $_SESSION['form_error'] = 'Te veel verzoeken. Probeer het later opnieuw.';
+    $_SESSION['form_error'] = t('error_too_many_requests');
     header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
     exit;
 }
@@ -53,13 +53,13 @@ foreach ($fields as $field) {
     $value = trim($_POST[$name] ?? '');
 
     if (!empty($field['verplicht']) && $value === '') {
-        $errors[] = ($field['label'] ?? $name) . ' is verplicht.';
+        $errors[] = t('error_field_required', ['field' => $field['label'] ?? $name]);
     }
 
     // Basic type validation
     if ($value !== '' && ($field['type'] ?? 'text') === 'email') {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Ongeldig e-mailadres.';
+            $errors[] = t('error_invalid_email');
         }
     }
 
@@ -95,15 +95,15 @@ audit_log('formulier_verzonden', "Formulier: {$form['naam']}", 'bezoeker');
 // Send email notification
 $emailTo = $form['email_naar'] ?? site('company.email');
 if ($emailTo && filter_var($emailTo, FILTER_VALIDATE_EMAIL)) {
-    $subject = 'Nieuw bericht via ' . ($form['naam'] ?? 'formulier') . ' — ' . site('company.name', 'EASEO');
-    $body = '<h2>Nieuw formulier inzending</h2>';
+    $subject = t('email_subject_new_submission', ['form' => ($form['naam'] ?? 'formulier')]) . ' — ' . site('company.name', 'EASEO');
+    $body = '<h2>' . t('email_body_heading') . '</h2>';
     $body .= '<table style="border-collapse:collapse;width:100%">';
     foreach ($data as $key => $value) {
         $body .= '<tr><td style="padding:6px 12px;border:1px solid #ddd;font-weight:bold">' . e(ucfirst($key)) . '</td>';
         $body .= '<td style="padding:6px 12px;border:1px solid #ddd">' . e($value) . '</td></tr>';
     }
     $body .= '</table>';
-    $body .= '<p style="color:#888;font-size:12px">Datum: ' . e($submission['datum']) . ' — IP: ' . e($submission['ip']) . '</p>';
+    $body .= '<p style="color:#888;font-size:12px">' . t('email_body_date_label') . ' ' . e($submission['datum']) . ' — ' . t('email_body_ip_label') . ' ' . e($submission['ip']) . '</p>';
 
     $replyTo = $data['email'] ?? '';
     send_mail($emailTo, $subject, $body, $replyTo);
@@ -113,6 +113,6 @@ if ($emailTo && filter_var($emailTo, FILTER_VALIDATE_EMAIL)) {
 $_SESSION['csrf_frontend'] = bin2hex(random_bytes(32));
 
 // Success message
-$_SESSION['form_success'] = $form['bevestiging'] ?? 'Bedankt voor uw bericht.';
+$_SESSION['form_success'] = $form['bevestiging'] ?? t('default_confirmation_message');
 header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
 exit;

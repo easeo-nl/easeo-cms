@@ -27,7 +27,7 @@ function get_form(string $id): ?array {
 
 function render_form(string $id, bool $showTitle = false): string {
     $form = get_form($id);
-    if (!$form) return '<p class="text-muted">Formulier niet gevonden.</p>';
+    if (!$form) return '<p class="text-muted">' . t('error_form_not_found') . '</p>';
 
     $fields = $form['velden'] ?? [];
     $buttonText = $form['knop_tekst'] ?? 'Versturen';
@@ -74,7 +74,7 @@ function render_form(string $id, bool $showTitle = false): string {
             case 'select':
                 $options = $field['opties'] ?? [];
                 $html .= '    <select id="field-' . $name . '" name="' . $name . '"' . $reqAttr . ' class="w-full border border-gray-300 rounded-md p-2.5">' . "\n";
-                $html .= '      <option value="">Kies...</option>' . "\n";
+                $html .= '      <option value="">' . t('form_select_placeholder') . '</option>' . "\n";
                 foreach ($options as $opt) {
                     $html .= '      <option value="' . e($opt) . '">' . e($opt) . '</option>' . "\n";
                 }

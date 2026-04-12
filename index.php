@@ -45,7 +45,7 @@ endif;
 
 // Latest blog posts
 $data = [
-    'titel' => 'Laatste berichten',
+    'titel' => t('homepage_latest_posts_title'),
     'tekst' => '',
     'aantal' => 3,
 ];
@@ -53,9 +53,9 @@ include __DIR__ . '/templates/blog-latest.php';
 
 // CTA section
 $data = [
-    'titel' => 'Klaar om te beginnen?',
-    'tekst' => 'Neem vandaag nog contact met ons op voor een vrijblijvend gesprek.',
-    'knop_tekst' => 'Neem contact op',
+    'titel' => t('homepage_cta_title'),
+    'tekst' => t('homepage_cta_text'),
+    'knop_tekst' => t('homepage_cta_button'),
     'knop_url' => '/contact',
     'achtergrond' => 'primary',
 ];

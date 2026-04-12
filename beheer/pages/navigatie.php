@@ -7,7 +7,7 @@ $nav = load_json('navigation.json');
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_nav'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $menuType = $_POST['menu_type'] ?? 'main';
 
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_nav'])) {
         $nav[$menuType] = $items;
         save_json('navigation.json', $nav);
         audit_log('navigatie_bewerkt', "Menu: {$menuType}");
-        $_SESSION['flash_success'] = 'Navigatie opgeslagen.';
+        $_SESSION['flash_success'] = t('success_navigation_saved');
     }
     header('Location: /beheer/?tab=navigatie&menu=' . urlencode($_POST['menu_type'] ?? 'main'));
     exit;
@@ -52,17 +52,17 @@ $activeMenu = $_GET['menu'] ?? 'main';
 $menuItems = $nav[$activeMenu] ?? [];
 ?>
 
-<h1 class="text-2xl font-bold text-white mb-6">Navigatie</h1>
+<h1 class="text-2xl font-bold text-white mb-6"><?= t('navigation_title') ?></h1>
 
 <p class="text-sm text-gray-400 mb-4">
-    <strong>Label</strong> <span class="help-tooltip" data-help="De tekst die bezoekers zien in het menu.">?</span> &mdash;
-    <strong>URL</strong> <span class="help-tooltip" data-help="Het adres waar de link naartoe gaat. Kies een bestaande pagina of typ een extern adres.">?</span>
+    <strong><?= t('nav_label_heading') ?></strong> <span class="help-tooltip" data-help="<?= t('tooltip_nav_label') ?>">?</span> &mdash;
+    <strong><?= t('nav_url_heading') ?></strong> <span class="help-tooltip" data-help="<?= t('tooltip_nav_url') ?>">?</span>
 </p>
 
 <!-- Menu tabs -->
 <div class="admin-tabs">
-    <a href="/beheer/?tab=navigatie&menu=main" class="admin-tab <?= $activeMenu === 'main' ? 'active' : '' ?>">Hoofdmenu</a>
-    <a href="/beheer/?tab=navigatie&menu=footer" class="admin-tab <?= $activeMenu === 'footer' ? 'active' : '' ?>">Footer menu</a>
+    <a href="/beheer/?tab=navigatie&menu=main" class="admin-tab <?= $activeMenu === 'main' ? 'active' : '' ?>"><?= t('nav_main_menu_tab') ?></a>
+    <a href="/beheer/?tab=navigatie&menu=footer" class="admin-tab <?= $activeMenu === 'footer' ? 'active' : '' ?>"><?= t('nav_footer_menu_tab') ?></a>
 </div>
 
 <form method="POST" class="admin-card" id="nav-form">
@@ -74,8 +74,8 @@ $menuItems = $nav[$activeMenu] ?? [];
         <div class="menu-item border border-gray-700 rounded-lg p-4 mb-3">
             <div class="flex items-center gap-3 mb-2">
                 <span class="text-gray-600 cursor-grab">&#9776;</span>
-                <input type="text" name="label[]" value="<?= e($item['label'] ?? '') ?>" placeholder="Label" class="admin-input flex-1" title="De tekst die bezoekers zien in het menu.">
-                <input type="text" name="url[]" value="<?= e($item['url'] ?? '') ?>" placeholder="URL" class="admin-input flex-1" title="Het adres waar de link naartoe gaat.">
+                <input type="text" name="label[]" value="<?= e($item['label'] ?? '') ?>" placeholder="Label" class="admin-input flex-1" title="<?= t('tooltip_nav_label') ?>">
+                <input type="text" name="url[]" value="<?= e($item['url'] ?? '') ?>" placeholder="URL" class="admin-input flex-1" title="<?= t('tooltip_nav_url') ?>">
                 <button type="button" onclick="removeMenuItem(this)" class="text-red-400 hover:text-red-300 text-lg">&times;</button>
             </div>
 
@@ -90,15 +90,15 @@ $menuItems = $nav[$activeMenu] ?? [];
                 </div>
                 <?php endforeach; ?>
             </div>
-            <button type="button" onclick="addChild(this, <?= $i ?>)" class="ml-8 mt-2 text-xs text-blue-400 hover:text-blue-300">+ Sub-item</button>
+            <button type="button" onclick="addChild(this, <?= $i ?>)" class="ml-8 mt-2 text-xs text-blue-400 hover:text-blue-300"><?= t('button_add_sub_item') ?></button>
             <?php endif; ?>
         </div>
         <?php endforeach; ?>
     </div>
 
     <div class="flex items-center gap-3 mt-4">
-        <button type="button" onclick="addMenuItem()" class="btn-admin btn-admin-outline text-sm">+ Menu-item</button>
-        <button type="submit" name="save_nav" class="btn-admin btn-admin-primary">Opslaan</button>
+        <button type="button" onclick="addMenuItem()" class="btn-admin btn-admin-outline text-sm"><?= t('button_add_menu_item') ?></button>
+        <button type="submit" name="save_nav" class="btn-admin btn-admin-primary"><?= t('button_save') ?></button>
     </div>
 </form>
 
@@ -109,15 +109,15 @@ $autoMenuPages = array_filter($pagesData['pages'] ?? [], fn($p) => !empty($p['sh
 if (!empty($autoMenuPages)):
 ?>
 <div class="admin-card mt-6">
-    <h3 class="text-md font-semibold text-white mb-2">Automatische menu-items</h3>
-    <p class="text-sm text-gray-400 mb-3">Deze pagina's worden automatisch in het menu getoond omdat 'Tonen in menu' is aangevinkt in de pagina-instellingen.</p>
+    <h3 class="text-md font-semibold text-white mb-2"><?= t('nav_auto_items_heading') ?></h3>
+    <p class="text-sm text-gray-400 mb-3"><?= t('nav_auto_items_desc') ?></p>
     <ul class="space-y-1">
         <?php foreach ($autoMenuPages as $ap): ?>
         <li class="flex items-center gap-2 text-sm text-gray-300">
             <span class="text-green-400">&#10003;</span>
             <?= e($ap['menu_label'] ?: $ap['title']) ?>
             <span class="text-gray-600">/<?= e($ap['slug']) ?></span>
-            <a href="/beheer/?tab=paginas&action=edit&id=<?= e($ap['id']) ?>" class="text-blue-400 hover:text-blue-300 text-xs ml-auto">Bewerken</a>
+            <a href="/beheer/?tab=paginas&action=edit&id=<?= e($ap['id']) ?>" class="text-blue-400 hover:text-blue-300 text-xs ml-auto"><?= t('action_edit') ?></a>
         </li>
         <?php endforeach; ?>
     </ul>
@@ -140,7 +140,7 @@ function addMenuItem() {
         '</div>';
     if (isHoofdmenu) {
         html += '<div class="ml-8 mt-2 space-y-2 children-container"></div>' +
-            '<button type="button" onclick="addChild(this, ' + menuItemCount + ')" class="ml-8 mt-2 text-xs text-blue-400 hover:text-blue-300">+ Sub-item</button>';
+            '<button type="button" onclick="addChild(this, ' + menuItemCount + ')" class="ml-8 mt-2 text-xs text-blue-400 hover:text-blue-300"><?= t('button_add_sub_item') ?></button>';
     }
     div.innerHTML = html;
     container.appendChild(div);

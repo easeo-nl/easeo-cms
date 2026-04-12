@@ -14,7 +14,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'list' && isset($_GET['format'
 // Handle upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['media_file'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $files = $_FILES['media_file'];
 
@@ -33,12 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['media_file'])) {
                 $result = upload_media($file);
                 if ($result['success']) $uploaded++;
             }
-            $_SESSION['flash_success'] = "{$uploaded} van {$count} bestanden geüpload.";
+            $_SESSION['flash_success'] = t('success_files_uploaded', ['count' => $uploaded, 'total' => $count]);
             audit_log('media_upload', "{$uploaded} bestanden geüpload");
         } else {
             $result = upload_media($files);
             if ($result['success']) {
-                $_SESSION['flash_success'] = 'Bestand geüpload.';
+                $_SESSION['flash_success'] = t('success_file_uploaded');
                 audit_log('media_upload', $files['name']);
             } else {
                 $_SESSION['flash_error'] = $result['error'];
@@ -52,14 +52,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['media_file'])) {
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_media'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $id = $_POST['media_id'] ?? '';
         if (delete_media($id)) {
             audit_log('media_verwijderd', "ID: {$id}");
-            $_SESSION['flash_success'] = 'Bestand verwijderd.';
+            $_SESSION['flash_success'] = t('success_file_deleted');
         } else {
-            $_SESSION['flash_error'] = 'Kon bestand niet verwijderen.';
+            $_SESSION['flash_error'] = t('error_file_delete_failed');
         }
     }
     header('Location: /beheer/?tab=media');
@@ -71,8 +71,8 @@ $media = array_reverse($media); // newest first
 ?>
 
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-white">Media bibliotheek</h1>
-    <span class="text-sm text-gray-500"><?= count($media) ?> bestanden</span>
+    <h1 class="text-2xl font-bold text-white"><?= t('media_library_title') ?></h1>
+    <span class="text-sm text-gray-500"><?= count($media) ?> <?= t('unit_files') ?></span>
 </div>
 
 <!-- Upload area -->
@@ -83,8 +83,8 @@ $media = array_reverse($media); // newest first
             <svg class="w-12 h-12 mx-auto text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
             </svg>
-            <p class="text-gray-400 mb-2">Sleep bestanden hierheen of klik om te uploaden <span class="help-tooltip" data-help="Sleep afbeeldingen hierheen of klik om te uploaden. Maximaal 5MB per bestand. JPG, PNG, WebP en SVG.">?</span></p>
-            <p class="text-gray-600 text-sm">Max 10MB — JPEG, PNG, GIF, WebP, SVG, PDF</p>
+            <p class="text-gray-400 mb-2"><?= t('media_drop_zone_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_media_upload') ?>">?</span></p>
+            <p class="text-gray-600 text-sm"><?= t('media_allowed_types_hint') ?></p>
             <input type="file" name="media_file[]" multiple accept="image/*,.pdf" class="hidden" id="file-input">
         </div>
     </form>
@@ -110,13 +110,13 @@ $media = array_reverse($media); // newest first
         <div class="text-xs text-gray-600"><?= format_file_size($item['grootte'] ?? 0) ?></div>
 
         <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
-            <button onclick="copyToClipboard('<?= e($item['url']) ?>')" class="p-1 bg-blue-600 rounded text-white text-xs" title="Kopieer URL">
+            <button onclick="copyToClipboard('<?= e($item['url']) ?>')" class="p-1 bg-blue-600 rounded text-white text-xs" title="<?= t('tooltip_copy_url') ?>">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
             </button>
-            <form method="POST" class="inline" onsubmit="return confirm('Verwijderen?')">
+            <form method="POST" class="inline" onsubmit="return confirm('<?= t('confirm_delete') ?>')">
                 <?= csrf_field() ?>
                 <input type="hidden" name="media_id" value="<?= e($item['id']) ?>">
-                <button type="submit" name="delete_media" class="p-1 bg-red-600 rounded text-white text-xs" title="Verwijderen">
+                <button type="submit" name="delete_media" class="p-1 bg-red-600 rounded text-white text-xs" title="<?= t('tooltip_delete_media') ?>">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                 </button>
             </form>
@@ -127,7 +127,7 @@ $media = array_reverse($media); // newest first
 
 <?php if (empty($media)): ?>
 <div class="admin-card text-center py-12">
-    <p class="text-gray-500">Nog geen media geüpload.</p>
+    <p class="text-gray-500"><?= t('media_no_files') ?></p>
 </div>
 <?php endif; ?>
 
@@ -162,7 +162,7 @@ function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(function() {
         var toast = document.createElement('div');
         toast.className = 'fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg text-sm z-50';
-        toast.textContent = 'URL gekopieerd!';
+        toast.textContent = '<?= t('toast_url_copied') ?>';
         document.body.appendChild(toast);
         setTimeout(function() { toast.remove(); }, 2000);
     });

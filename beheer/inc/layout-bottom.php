@@ -5,7 +5,7 @@
 <div class="media-modal" id="media-picker-modal">
     <div class="media-modal-content">
         <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold">Media kiezen</h3>
+            <h3 class="text-lg font-semibold"><?= t('modal_media_picker_title') ?></h3>
             <button onclick="closeMediaPicker()" class="text-gray-400 hover:text-white">&times;</button>
         </div>
         <div id="media-picker-grid" class="grid grid-cols-4 gap-3">
@@ -45,7 +45,7 @@ function openMediaPicker(targetId) {
             });
         })
         .catch(function() {
-            document.getElementById('media-picker-grid').innerHTML = '<p class="col-span-4 text-gray-500 text-sm">Geen media gevonden.</p>';
+            document.getElementById('media-picker-grid').innerHTML = '<p class="col-span-4 text-gray-500 text-sm"><?= t('media_picker_empty') ?></p>';
         });
 }
 
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 <div style="text-align:center;padding:1.5rem 0 0.5rem;">
-    <a href="https://easeo.nl" target="_blank" rel="noopener" style="color:#64748b;font-size:0.7rem;">Powered by EASEO &mdash; Digital Agency met kracht</a>
+    <a href="https://easeo.nl" target="_blank" rel="noopener" style="color:#64748b;font-size:0.7rem;"><?= t('powered_by_easeo') ?></a>
 </div>
 </body>
 </html>

@@ -1,0 +1,27 @@
+title: EASEO CMS
+description: Open-source PHP CMS without database dependencies. Built for sovereignty.
+url: "https://easeo-nl.github.io"
+baseurl: "/easeo-cms"
+lang: en
+
+author:
+  name: Nick Aldewereld
+  url: https://www.easeo.nl
+
+github_repo: https://github.com/easeo-nl/easeo-cms
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+      lang: en
+  - scope:
+      path: "nl"
+    values:
+      lang: nl
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md

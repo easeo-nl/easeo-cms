@@ -5,7 +5,7 @@
  */
 require_once EASEO_ROOT . '/includes/form-engine.php';
 
-$titel = e($data['titel'] ?? 'Neem contact op');
+$titel = e($data['titel'] ?? t('contact_form_template_title'));
 $tekst = e($data['tekst'] ?? '');
 $formId = $data['formulier_id'] ?? 'contact';
 ?>

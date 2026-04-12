@@ -1,0 +1,22 @@
+<nav>
+    <div class="container">
+        <a href="{{ '/' | relative_url }}" class="logo">EA<span>SEO</span> CMS</a>
+        <div class="nav-links">
+            {% if page.lang == 'nl' %}
+            <a href="{{ '/nl/docs' | relative_url }}">Documentatie</a>
+            <a href="{{ site.github_repo }}">GitHub</a>
+            <div class="lang-switch">
+                <a href="{{ '/' | relative_url }}">EN</a>
+                <a href="{{ '/nl/' | relative_url }}" class="active">NL</a>
+            </div>
+            {% else %}
+            <a href="{{ '/en/docs' | relative_url }}">Docs</a>
+            <a href="{{ site.github_repo }}">GitHub</a>
+            <div class="lang-switch">
+                <a href="{{ '/' | relative_url }}" class="active">EN</a>
+                <a href="{{ '/nl/' | relative_url }}">NL</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>

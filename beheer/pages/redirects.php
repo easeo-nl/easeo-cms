@@ -8,7 +8,7 @@ $redirects = $redirectData['redirects'] ?? [];
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_redirects'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $vans = $_POST['van'] ?? [];
         $naars = $_POST['naar'] ?? [];
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_redirects'])) {
 
         save_json('redirects.json', ['redirects' => $newRedirects]);
         audit_log('redirects_bewerkt', count($newRedirects) . ' redirects');
-        $_SESSION['flash_success'] = 'Redirects opgeslagen.';
+        $_SESSION['flash_success'] = t('success_redirects_saved');
     }
     header('Location: /beheer/?tab=redirects');
     exit;
@@ -39,11 +39,11 @@ $redirectData = load_json('redirects.json');
 $redirects = $redirectData['redirects'] ?? [];
 ?>
 
-<h1 class="text-2xl font-bold text-white mb-6">Redirects</h1>
+<h1 class="text-2xl font-bold text-white mb-6"><?= t('redirects_title') ?></h1>
 
 <p class="text-sm text-gray-400 mb-4">
-    <strong>Oud adres</strong> <span class="help-tooltip" data-help="Het oude webadres dat niet meer bestaat. Begint met /. Voorbeeld: /oude-pagina">?</span> &rarr;
-    <strong>Nieuw adres</strong> <span class="help-tooltip" data-help="Het nieuwe webadres waar bezoekers naartoe gestuurd worden. Voorbeeld: /nieuwe-pagina">?</span>
+    <strong><?= t('redirect_from_label') ?></strong> <span class="help-tooltip" data-help="<?= t('tooltip_redirect_from') ?>">?</span> &rarr;
+    <strong><?= t('redirect_to_label') ?></strong> <span class="help-tooltip" data-help="<?= t('tooltip_redirect_to') ?>">?</span>
 </p>
 
 <form method="POST" class="admin-card">
@@ -62,8 +62,8 @@ $redirects = $redirectData['redirects'] ?? [];
             </div>
             <div class="col-span-2">
                 <select name="type[]" class="admin-input w-full">
-                    <option value="301" <?= ($r['type'] ?? '') === '301' ? 'selected' : '' ?>>301 Permanent</option>
-                    <option value="302" <?= ($r['type'] ?? '') === '302' ? 'selected' : '' ?>>302 Tijdelijk</option>
+                    <option value="301" <?= ($r['type'] ?? '') === '301' ? 'selected' : '' ?>><?= t('redirect_type_301') ?></option>
+                    <option value="302" <?= ($r['type'] ?? '') === '302' ? 'selected' : '' ?>><?= t('redirect_type_302') ?></option>
                 </select>
             </div>
             <div class="col-span-1">
@@ -74,14 +74,14 @@ $redirects = $redirectData['redirects'] ?? [];
     </div>
 
     <div class="flex items-center gap-3 mt-4">
-        <button type="button" onclick="addRedirect()" class="btn-admin btn-admin-outline text-sm">+ Redirect</button>
-        <button type="submit" name="save_redirects" class="btn-admin btn-admin-primary">Opslaan</button>
+        <button type="button" onclick="addRedirect()" class="btn-admin btn-admin-outline text-sm"><?= t('button_add_redirect') ?></button>
+        <button type="submit" name="save_redirects" class="btn-admin btn-admin-primary"><?= t('button_save') ?></button>
     </div>
 </form>
 
 <div class="admin-card mt-6">
-    <h3 class="text-md font-semibold text-white mb-2">Info</h3>
-    <p class="text-sm text-gray-400">Redirects worden verwerkt via PHP (niet via .htaccess). Gebruik relatieve paden, bijv. <code class="bg-gray-800 px-1 rounded">/oud-pad</code> → <code class="bg-gray-800 px-1 rounded">/nieuw-pad</code>.</p>
+    <h3 class="text-md font-semibold text-white mb-2"><?= t('redirect_info_heading') ?></h3>
+    <p class="text-sm text-gray-400"><?= t('redirect_info_text') ?></p>
 </div>
 
 <script>
@@ -92,7 +92,7 @@ function addRedirect() {
     div.innerHTML = '<div class="col-span-4"><input type="text" name="van[]" class="admin-input w-full" placeholder="/oud-pad"></div>' +
         '<div class="col-span-1 text-center text-gray-500">&rarr;</div>' +
         '<div class="col-span-4"><input type="text" name="naar[]" class="admin-input w-full" placeholder="/nieuw-pad"></div>' +
-        '<div class="col-span-2"><select name="type[]" class="admin-input w-full"><option value="301">301 Permanent</option><option value="302">302 Tijdelijk</option></select></div>' +
+        '<div class="col-span-2"><select name="type[]" class="admin-input w-full"><option value="301"><?= t('redirect_type_301') ?></option><option value="302"><?= t('redirect_type_302') ?></option></select></div>' +
         '<div class="col-span-1"><button type="button" onclick="this.closest(\'.redirect-row\').remove()" class="text-red-400 hover:text-red-300">&times;</button></div>';
     container.appendChild(div);
 }

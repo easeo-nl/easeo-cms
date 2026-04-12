@@ -1,0 +1,167 @@
+---
+layout: default
+title: Open-source PHP CMS — Geen database, geen afhankelijkheden
+description: Lichtgewicht, soeverein CMS voor MKB-websites. Geen database, geen frameworks, geen vendor lock-in. Draait op elke PHP-hosting in Europa.
+lang: nl
+---
+
+<section class="hero">
+    <div class="container">
+        <div class="badge">MIT License — 100% open-source — Gemaakt in de EU</div>
+        <h1>Een CMS dat doet wat het moet.<br><em>Meer niet.</em></h1>
+        <p>Lichtgewicht PHP CMS voor MKB-websites. Geen database, geen frameworks, geen node_modules. Draait op elke shared hosting met PHP.</p>
+        <div class="hero-buttons">
+            <a href="{{ site.github_repo }}" class="btn btn-primary">Bekijk op GitHub</a>
+            <a href="{{ site.github_repo }}/archive/refs/heads/main.zip" class="btn btn-secondary">Download .zip</a>
+        </div>
+        <div class="install">
+            <code><span class="prompt">$</span> git clone https://github.com/easeo-nl/easeo-cms.git && php -S localhost:8000 router.php</code>
+        </div>
+    </div>
+</section>
+
+<section class="sovereignty" id="sovereignty">
+    <div class="container">
+        <h2>Digitale Soevereiniteit</h2>
+        <p class="subtitle">Jouw data, jouw server, jouw regels. Geen Amerikaanse cloud nodig.</p>
+        <div class="sovereignty-grid">
+            <div class="sov-card">
+                <div class="sov-icon">&#x1f3e0;</div>
+                <h3>Self-hosted</h3>
+                <p>Draait op elke Europese hostingprovider. TransIP, Antagonist, Hostinger EU — jouw keuze.</p>
+            </div>
+            <div class="sov-card">
+                <div class="sov-icon">&#x1f512;</div>
+                <h3>Geen cloud dependencies</h3>
+                <p>Geen AWS, geen Google Cloud, geen Cloudflare nodig. Alle data blijft op jouw server als JSON-bestanden.</p>
+            </div>
+            <div class="sov-card">
+                <div class="sov-icon">&#x1f1ea;&#x1f1fa;</div>
+                <h3>GDPR by design</h3>
+                <p>Geen externe tracking tenzij je het aanzet. Geen third-party cookies. Cookie consent ingebouwd.</p>
+            </div>
+            <div class="sov-card">
+                <div class="sov-icon">&#x1f4e6;</div>
+                <h3>Zero vendor lock-in</h3>
+                <p>Geen Composer, geen npm, geen SaaS-abonnementen. Fork het, maak het van jezelf, draai het voor altijd.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features" id="features">
+    <div class="container">
+        <h2 class="section-title">Kenmerken</h2>
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon" style="background: var(--green-dim); color: var(--green);">0</div>
+                <h3>Zero dependencies</h3>
+                <p>Geen Composer, geen npm, geen build tools. Upload de bestanden, klaar. Enige dependency is PHPMailer voor SMTP — zit erin.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: #3D1D0A; color: var(--orange);">{ }</div>
+                <h3>JSON in plaats van MySQL</h3>
+                <p>Alle data als JSON-bestanden. Geen database server nodig, geen migraties, geen ORM. Werkt op elke hosting met PHP.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: #3b1d54; color: #a855f7;">&#x26A1;</div>
+                <h3>Veilig by design</h3>
+                <p>2FA, CSRF-tokens, bcrypt, rate limiting, account lockout, CSP headers, SVG sanitization. Security is geen plugin.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: #1a3329; color: #4ade80;">5m</div>
+                <h3>Setup in 5 minuten</h3>
+                <p>Upload, bezoek het domein, doorloop de wizard. Bedrijfsinfo, branding, content en admin account in vijf stappen.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: #3D1D0A; color: var(--orange);">SEO</div>
+                <h3>SEO uit de doos</h3>
+                <p>Auto-sitemap, JSON-LD structured data, meta tags, breadcrumbs, Open Graph. Geen plugin nodig.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon" style="background: var(--navy-lighter); color: var(--slate-lightest);">i18n</div>
+                <h3>Meertalig</h3>
+                <p>Ingebouwd i18n-systeem met JSON-taalbestanden. Engels en Nederlands standaard. Voeg elke taal toe met één bestand.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="comparison" id="comparison">
+    <div class="container">
+        <h2 class="section-title">WordPress vs. EASEO CMS</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>WordPress</th>
+                    <th>EASEO CMS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Database vereist</td>
+                    <td>MySQL / MariaDB</td>
+                    <td class="yes">Geen — JSON bestanden</td>
+                </tr>
+                <tr>
+                    <td>Dependencies</td>
+                    <td>PHP + MySQL + plugins</td>
+                    <td class="yes">Alleen PHP</td>
+                </tr>
+                <tr>
+                    <td>Installatie</td>
+                    <td>Database aanmaken, wp-config, wizard</td>
+                    <td class="yes">Upload + wizard</td>
+                </tr>
+                <tr>
+                    <td>Updates</td>
+                    <td>Core + thema + 10-30 plugins</td>
+                    <td class="yes">git pull</td>
+                </tr>
+                <tr>
+                    <td>Beveiliging</td>
+                    <td>Afhankelijk van plugins</td>
+                    <td class="yes">Ingebouwd: 2FA, CSRF, CSP</td>
+                </tr>
+                <tr>
+                    <td>Laadtijd</td>
+                    <td>Database queries + plugin overhead</td>
+                    <td class="yes">Direct file reads</td>
+                </tr>
+                <tr>
+                    <td>Data soevereiniteit</td>
+                    <td class="no">Vaak cloud/SaaS plugins vereist</td>
+                    <td class="yes">100% op jouw server</td>
+                </tr>
+                <tr>
+                    <td>Ecosysteem</td>
+                    <td class="yes">60.000+ plugins</td>
+                    <td class="no">Handmatig uitbreiden</td>
+                </tr>
+                <tr>
+                    <td>Complexe sites</td>
+                    <td class="yes">Webshops, membership, LMS</td>
+                    <td class="no">MKB-websites, blogs</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="architecture" id="architecture">
+    <div class="container">
+        <h2 class="section-title">Architectuur</h2>
+        <pre>
+index.php              Homepage
+blog.php / blog-post.php   Blog engine
+contact.php            Contactpagina
+pagina-router.php      Dynamische pagina's
+
+includes/              Core PHP (content, auth, forms, media, mail, i18n)
+beheer/                Admin panel (donker thema)
+templates/             Herbruikbare frontend sections
+lang/                  Taalbestanden (en.json, nl.json, ...)
+data/                  JSON data bestanden (git-ignored)</pre>
+    </div>
+</section>

@@ -6,7 +6,7 @@
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_tracking'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $siteData = load_json('site.json');
         // Sanitize tracking IDs: only alphanumeric + hyphens + underscores
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_tracking'])) {
         $siteData['tracking'] = $tracking_data;
         save_json('site.json', $siteData);
         audit_log('tracking_bewerkt', 'Tracking instellingen bijgewerkt');
-        $_SESSION['flash_success'] = 'Tracking instellingen opgeslagen.';
+        $_SESSION['flash_success'] = t('success_tracking_saved');
     }
     header('Location: /beheer/?tab=tracking');
     exit;
@@ -46,65 +46,65 @@ $tracking = site('tracking', []);
 if (!is_array($tracking)) $tracking = [];
 ?>
 
-<h1 class="text-2xl font-bold text-white mb-6">Tracking & Analytics</h1>
+<h1 class="text-2xl font-bold text-white mb-6"><?= t('tracking_title') ?></h1>
 
 <form method="POST" class="admin-card">
     <?= csrf_field() ?>
 
     <div class="space-y-6">
         <div>
-            <h2 class="text-lg font-semibold text-white mb-4">Google Tag Manager</h2>
-            <label class="block text-sm font-medium text-gray-300 mb-1">GTM Container ID <span class="help-tooltip" data-help="Google Tag Manager container-ID. Begint met GTM-. Hiermee kun je alle tracking centraal beheren.">?</span></label>
+            <h2 class="text-lg font-semibold text-white mb-4"><?= t('tracking_gtm_heading') ?></h2>
+            <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('tracking_gtm_id_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_gtm_id') ?>">?</span></label>
             <input type="text" name="gtm_id" value="<?= e($tracking['gtm_id'] ?? '') ?>" class="admin-input w-full max-w-md" placeholder="GTM-XXXXXXX">
-            <p class="text-xs text-gray-500 mt-1">Wordt alleen geladen na cookie consent.</p>
+            <p class="text-xs text-gray-500 mt-1"><?= t('tracking_gtm_hint') ?></p>
         </div>
 
         <div>
-            <h2 class="text-lg font-semibold text-white mb-4">Google Analytics 4</h2>
-            <label class="block text-sm font-medium text-gray-300 mb-1">GA4 Measurement ID <span class="help-tooltip" data-help="Google Analytics 4 tracking-ID. Begint met G-. Voor websitestatistieken.">?</span></label>
+            <h2 class="text-lg font-semibold text-white mb-4"><?= t('tracking_ga4_heading') ?></h2>
+            <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('tracking_ga4_id_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_ga4_id') ?>">?</span></label>
             <input type="text" name="google_analytics_id" value="<?= e($tracking['google_analytics_id'] ?? '') ?>" class="admin-input w-full max-w-md" placeholder="G-XXXXXXXXXX">
         </div>
 
         <div>
-            <h2 class="text-lg font-semibold text-white mb-4">Google Search Console</h2>
-            <label class="block text-sm font-medium text-gray-300 mb-1">Verificatie code <span class="help-tooltip" data-help="De verificatiecode van Google Search Console. Alleen de code, niet de hele meta-tag.">?</span></label>
+            <h2 class="text-lg font-semibold text-white mb-4"><?= t('tracking_gsc_heading') ?></h2>
+            <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('tracking_gsc_code_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_gsc_code') ?>">?</span></label>
             <input type="text" name="google_search_console" value="<?= e($tracking['google_search_console'] ?? '') ?>" class="admin-input w-full max-w-md" placeholder="google-site-verification=...">
         </div>
 
         <div>
-            <h2 class="text-lg font-semibold text-white mb-4">Google Ads</h2>
+            <h2 class="text-lg font-semibold text-white mb-4"><?= t('tracking_gads_heading') ?></h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Conversion ID <span class="help-tooltip" data-help="Voor het meten van conversies uit Google Ads campagnes.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('tracking_gads_conversion_id_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_gads_conversion_id') ?>">?</span></label>
                     <input type="text" name="google_ads_conversion_id" value="<?= e($tracking['google_ads_conversion_id'] ?? '') ?>" class="admin-input w-full" placeholder="AW-XXXXXXXXX">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Conversion Label</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('tracking_gads_conversion_label_label') ?></label>
                     <input type="text" name="google_ads_conversion_label" value="<?= e($tracking['google_ads_conversion_label'] ?? '') ?>" class="admin-input w-full">
                 </div>
             </div>
         </div>
 
         <div>
-            <h2 class="text-lg font-semibold text-white mb-4">Facebook Pixel</h2>
-            <label class="block text-sm font-medium text-gray-300 mb-1">Pixel ID <span class="help-tooltip" data-help="Voor het meten van websitebezoek vanuit Facebook en Instagram advertenties.">?</span></label>
+            <h2 class="text-lg font-semibold text-white mb-4"><?= t('tracking_fb_heading') ?></h2>
+            <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('tracking_fb_pixel_id_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_fb_pixel_id') ?>">?</span></label>
             <input type="text" name="facebook_pixel_id" value="<?= e($tracking['facebook_pixel_id'] ?? '') ?>" class="admin-input w-full max-w-md" placeholder="123456789012345">
         </div>
 
         <div>
-            <h2 class="text-lg font-semibold text-white mb-4">Aangepaste code <?php if (!is_admin()): ?><span class="text-sm text-gray-500">(alleen beheerders)</span><?php endif; ?></h2>
+            <h2 class="text-lg font-semibold text-white mb-4"><?= t('tracking_custom_code_heading') ?> <?php if (!is_admin()): ?><span class="text-sm text-gray-500"><?= t('tracking_admin_only') ?></span><?php endif; ?></h2>
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-1">Custom code in &lt;head&gt; <span class="help-tooltip" data-help="HTML of JavaScript die in de <head> van elke pagina wordt geplaatst. Alleen voor gevorderd gebruik.">?</span></label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('tracking_custom_head_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_custom_head') ?>">?</span></label>
                 <textarea name="custom_head_code" rows="4" class="admin-input w-full font-mono text-sm" <?= !is_admin() ? 'disabled' : '' ?>><?= e($tracking['custom_head_code'] ?? '') ?></textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-300 mb-1">Custom code in &lt;body&gt; <span class="help-tooltip" data-help="HTML of JavaScript die vlak voor </body> wordt geplaatst. Alleen voor gevorderd gebruik.">?</span></label>
+                <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('tracking_custom_body_label') ?> <span class="help-tooltip" data-help="<?= t('tooltip_custom_body') ?>">?</span></label>
                 <textarea name="custom_body_code" rows="4" class="admin-input w-full font-mono text-sm" <?= !is_admin() ? 'disabled' : '' ?>><?= e($tracking['custom_body_code'] ?? '') ?></textarea>
             </div>
         </div>
     </div>
 
     <div class="flex justify-end pt-6 border-t border-gray-700 mt-6">
-        <button type="submit" name="save_tracking" class="btn-admin btn-admin-primary">Opslaan</button>
+        <button type="submit" name="save_tracking" class="btn-admin btn-admin-primary"><?= t('button_save') ?></button>
     </div>
 </form>

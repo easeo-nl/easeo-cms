@@ -12,21 +12,21 @@ if ($hasMore) array_pop($entries);
 ?>
 
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-white">Activiteitenlog</h1>
+    <h1 class="text-2xl font-bold text-white"><?= t('activity_log_title') ?></h1>
 </div>
 
 <div class="admin-card">
     <?php if (empty($entries)): ?>
-        <p class="text-gray-500">Geen activiteit gevonden.</p>
+        <p class="text-gray-500"><?= t('no_activity_found') ?></p>
     <?php else: ?>
     <table class="admin-table">
         <thead>
             <tr>
-                <th>Datum</th>
-                <th>Gebruiker</th>
-                <th>IP</th>
-                <th>Actie</th>
-                <th>Details</th>
+                <th><?= t('table_header_date') ?></th>
+                <th><?= t('table_header_user') ?></th>
+                <th><?= t('table_header_ip') ?></th>
+                <th><?= t('table_header_action') ?></th>
+                <th><?= t('table_header_details') ?></th>
             </tr>
         </thead>
         <tbody>
@@ -44,7 +44,7 @@ if ($hasMore) array_pop($entries);
 
     <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-700">
         <?php if ($page > 1): ?>
-            <a href="/beheer/?tab=activiteit&p=<?= $page - 1 ?>" class="btn-admin btn-admin-outline text-sm">&laquo; Vorige</a>
+            <a href="/beheer/?tab=activiteit&p=<?= $page - 1 ?>" class="btn-admin btn-admin-outline text-sm">&laquo; <?= t('pagination_previous') ?></a>
         <?php else: ?>
             <span></span>
         <?php endif; ?>
@@ -52,7 +52,7 @@ if ($hasMore) array_pop($entries);
         <span class="text-sm text-gray-500">Pagina <?= $page ?></span>
 
         <?php if ($hasMore): ?>
-            <a href="/beheer/?tab=activiteit&p=<?= $page + 1 ?>" class="btn-admin btn-admin-outline text-sm">Volgende &raquo;</a>
+            <a href="/beheer/?tab=activiteit&p=<?= $page + 1 ?>" class="btn-admin btn-admin-outline text-sm"><?= t('pagination_next') ?> &raquo;</a>
         <?php else: ?>
             <span></span>
         <?php endif; ?>

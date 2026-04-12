@@ -33,7 +33,7 @@ require_once __DIR__ . '/includes/header.php';
             <!-- Contact info -->
             <div>
                 <div class="bg-light rounded-lg p-8">
-                    <h2 class="text-xl font-display font-bold text-dark mb-6">Contactgegevens</h2>
+                    <h2 class="text-xl font-display font-bold text-dark mb-6"><?= t('contact_info_heading') ?></h2>
 
                     <div class="space-y-4">
                         <?php if (site('company.address')): ?>
@@ -62,7 +62,7 @@ require_once __DIR__ . '/includes/header.php';
 
                         <?php if (site('company.kvk')): ?>
                         <div class="flex items-center gap-3 text-sm text-muted">
-                            <span>KVK: <?= e(site('company.kvk')) ?></span>
+                            <span><?= t('contact_kvk_label') ?> <?= e(site('company.kvk')) ?></span>
                         </div>
                         <?php endif; ?>
                     </div>

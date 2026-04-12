@@ -10,7 +10,7 @@ $post = $postId ? get_post_by_id($postId) : null;
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_post'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $data = [
             'titel' => sanitize_input($_POST['titel'] ?? ''),
@@ -27,17 +27,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_post'])) {
         ];
 
         if (empty($data['titel'])) {
-            $_SESSION['flash_error'] = 'Titel is verplicht.';
+            $_SESSION['flash_error'] = t('error_title_required');
         } else {
             if ($post) {
                 update_post($post['id'], $data);
                 audit_log('blog_bewerkt', "Post: {$data['titel']}");
-                $_SESSION['flash_success'] = 'Blogpost bijgewerkt.';
+                $_SESSION['flash_success'] = t('success_post_updated');
                 header('Location: /beheer/?tab=blog-edit&id=' . $post['id']);
             } else {
                 $newPost = create_post($data);
                 audit_log('blog_aangemaakt', "Post: {$data['titel']}");
-                $_SESSION['flash_success'] = 'Blogpost aangemaakt.';
+                $_SESSION['flash_success'] = t('success_post_created');
                 header('Location: /beheer/?tab=blog-edit&id=' . $newPost['id']);
             }
             exit;
@@ -52,8 +52,8 @@ $categories = get_categories();
 ?>
 
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-white"><?= $post ? 'Blogpost bewerken' : 'Nieuw blogpost' ?></h1>
-    <a href="/beheer/?tab=blog" class="btn-admin btn-admin-outline text-sm">&larr; Terug</a>
+    <h1 class="text-2xl font-bold text-white"><?= $post ? t('blog_edit_title') : t('blog_new_title') ?></h1>
+    <a href="/beheer/?tab=blog" class="btn-admin btn-admin-outline text-sm">&larr; <?= t('button_back') ?></a>
 </div>
 
 <form method="POST" class="space-y-6">
@@ -64,38 +64,38 @@ $categories = get_categories();
         <div class="lg:col-span-2 space-y-6">
             <div class="admin-card">
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Titel <span class="help-tooltip" data-help="De titel van je artikel. Wordt ook gebruikt als SEO titel als je die leeg laat.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_title') ?> <span class="help-tooltip" data-help="<?= t('tooltip_blog_title') ?>">?</span></label>
                     <input type="text" name="titel" value="<?= e($post['titel'] ?? '') ?>" required class="admin-input w-full text-lg">
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Samenvatting <span class="help-tooltip" data-help="Een korte samenvatting die getoond wordt op de overzichtspagina. 1–2 zinnen is genoeg.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_summary') ?> <span class="help-tooltip" data-help="<?= t('tooltip_blog_summary') ?>">?</span></label>
                     <textarea name="samenvatting" rows="2" class="admin-input w-full"><?= e($post['samenvatting'] ?? '') ?></textarea>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Inhoud <span class="help-tooltip" data-help="Schrijf in HTML. Gebruik <p> voor alinea's, <h2> voor tussenkopjes, <strong> voor vet, <a href=&quot;...&quot;> voor links.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_content') ?> <span class="help-tooltip" data-help="<?= t('tooltip_blog_content') ?>">?</span></label>
                     <textarea name="inhoud" rows="15" class="admin-input w-full"><?= e($post['inhoud'] ?? '') ?></textarea>
                 </div>
             </div>
 
             <!-- SEO -->
             <div class="admin-card">
-                <h3 class="text-md font-semibold text-white mb-3">SEO</h3>
+                <h3 class="text-md font-semibold text-white mb-3"><?= t('section_seo') ?></h3>
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Meta titel <span class="help-tooltip" data-help="Maximaal 60 tekens. Laat leeg om de artikeltitel te gebruiken.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_meta_title') ?> <span class="help-tooltip" data-help="<?= t('tooltip_blog_meta_title') ?>">?</span></label>
                     <input type="text" name="meta_title" id="blog-meta-title" value="<?= e($post['meta_title'] ?? '') ?>" class="admin-input w-full" maxlength="60">
-                    <p class="text-xs text-gray-500 mt-1"><span id="blog-meta-title-count"><?= strlen($post['meta_title'] ?? '') ?></span>/60 tekens</p>
+                    <p class="text-xs text-gray-500 mt-1"><span id="blog-meta-title-count"><?= strlen($post['meta_title'] ?? '') ?></span><?= t('char_count_of_60') ?></p>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Meta beschrijving <span class="help-tooltip" data-help="Maximaal 155 tekens. Laat leeg om het excerpt te gebruiken.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_meta_description') ?> <span class="help-tooltip" data-help="<?= t('tooltip_blog_meta_description') ?>">?</span></label>
                     <textarea name="meta_description" id="blog-meta-desc" rows="2" class="admin-input w-full" maxlength="155"><?= e($post['meta_description'] ?? '') ?></textarea>
-                    <p class="text-xs text-gray-500 mt-1"><span id="blog-meta-desc-count"><?= strlen($post['meta_description'] ?? '') ?></span>/155 tekens</p>
+                    <p class="text-xs text-gray-500 mt-1"><span id="blog-meta-desc-count"><?= strlen($post['meta_description'] ?? '') ?></span><?= t('char_count_of_155') ?></p>
                 </div>
 
                 <!-- SEO Preview -->
                 <div class="mt-4 pt-4 border-t border-gray-700">
-                    <p class="text-xs text-gray-500 mb-2">Google preview</p>
+                    <p class="text-xs text-gray-500 mb-2"><?= t('google_preview_label') ?></p>
                     <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:16px;">
                         <p style="color:#8ab4f8;font-size:13px;margin:0 0 4px;" id="blog-seo-url"><?= e(($_SERVER['HTTP_HOST'] ?? 'domein.nl')) ?>/blog/<?= e($post['slug'] ?? '') ?></p>
                         <p style="color:#e8eaed;font-size:16px;margin:0 0 4px;" id="blog-seo-title"><?= e($post['meta_title'] ?? $post['titel'] ?? '') ?></p>
@@ -133,40 +133,40 @@ $categories = get_categories();
         <!-- Sidebar -->
         <div class="space-y-6">
             <div class="admin-card">
-                <h3 class="text-md font-semibold text-white mb-3">Publiceren</h3>
+                <h3 class="text-md font-semibold text-white mb-3"><?= t('section_publish') ?></h3>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Status <span class="help-tooltip" data-help="Concept-artikelen zijn alleen zichtbaar in het beheerpanel. Gepubliceerd is zichtbaar voor bezoekers.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_status') ?> <span class="help-tooltip" data-help="<?= t('tooltip_blog_status') ?>">?</span></label>
                     <select name="status" class="admin-input w-full">
-                        <option value="concept" <?= ($post['status'] ?? '') === 'concept' ? 'selected' : '' ?>>Concept</option>
-                        <option value="gepubliceerd" <?= ($post['status'] ?? '') === 'gepubliceerd' ? 'selected' : '' ?>>Gepubliceerd</option>
+                        <option value="concept" <?= ($post['status'] ?? '') === 'concept' ? 'selected' : '' ?>><?= t('status_draft') ?></option>
+                        <option value="gepubliceerd" <?= ($post['status'] ?? '') === 'gepubliceerd' ? 'selected' : '' ?>><?= t('status_published') ?></option>
                     </select>
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Datum</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_date') ?></label>
                     <input type="datetime-local" name="datum"
                            value="<?= e(date('Y-m-d\TH:i', strtotime($post['datum'] ?? 'now'))) ?>"
                            class="admin-input w-full">
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Auteur</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_author') ?></label>
                     <input type="text" name="auteur" value="<?= e($post['auteur'] ?? (current_user()['naam'] ?? '')) ?>" class="admin-input w-full">
                 </div>
 
                 <button type="submit" name="save_post" class="btn-admin btn-admin-primary w-full">
-                    <?= $post ? 'Bijwerken' : 'Publiceren' ?>
+                    <?= $post ? t('button_update') : t('button_publish') ?>
                 </button>
             </div>
 
             <div class="admin-card">
-                <h3 class="text-md font-semibold text-white mb-3">Details</h3>
+                <h3 class="text-md font-semibold text-white mb-3"><?= t('section_details') ?></h3>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Categorie <span class="help-tooltip" data-help="Categorieën kun je beheren via de bloginstellingen.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_category') ?> <span class="help-tooltip" data-help="<?= t('tooltip_blog_category') ?>">?</span></label>
                     <input type="text" name="categorie" value="<?= e($post['categorie'] ?? '') ?>" class="admin-input w-full"
-                           list="categories" placeholder="bijv. Nieuws">
+                           list="categories" placeholder="<?= t('placeholder_category_example') ?>">
                     <datalist id="categories">
                         <?php foreach ($categories as $cat): ?>
                         <option value="<?= e($cat) ?>">
@@ -175,15 +175,15 @@ $categories = get_categories();
                 </div>
 
                 <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Tags (komma gescheiden)</label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_tags') ?></label>
                     <input type="text" name="tags" value="<?= e($post['tags'] ?? '') ?>" class="admin-input w-full" placeholder="tag1, tag2">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-300 mb-1">Uitgelichte afbeelding <span class="help-tooltip" data-help="De uitgelichte afbeelding bij dit artikel. Wordt getoond op de overzichtspagina en bovenaan het artikel.">?</span></label>
+                    <label class="block text-sm font-medium text-gray-300 mb-1"><?= t('field_label_featured_image') ?> <span class="help-tooltip" data-help="<?= t('tooltip_featured_image') ?>">?</span></label>
                     <div class="flex items-center gap-2">
                         <input type="text" name="afbeelding" id="post-afbeelding" value="<?= e($post['afbeelding'] ?? '') ?>" class="admin-input flex-1" placeholder="/images/uploads/...">
-                        <button type="button" onclick="openMediaPicker('post-afbeelding')" class="btn-admin-sm">Kies</button>
+                        <button type="button" onclick="openMediaPicker('post-afbeelding')" class="btn-admin-sm"><?= t('button_choose_media') ?></button>
                     </div>
                     <?php if (!empty($post['afbeelding'])): ?>
                     <img src="<?= e($post['afbeelding']) ?>" class="mt-2 w-full h-32 object-cover rounded" alt="">
@@ -193,9 +193,9 @@ $categories = get_categories();
 
             <?php if ($post): ?>
             <div class="admin-card">
-                <p class="text-xs text-gray-500">Slug: <?= e($post['slug'] ?? '') ?> <span class="help-tooltip" data-help="Het webadres van dit artikel. Wordt automatisch aangemaakt vanuit de titel. Pas alleen aan als je een goede reden hebt.">?</span></p>
-                <p class="text-xs text-gray-500 mt-1">Bijgewerkt: <?= e($post['bijgewerkt'] ?? '') ?></p>
-                <a href="/blog/<?= e($post['slug']) ?>" target="_blank" class="text-sm text-blue-400 hover:text-blue-300 mt-2 inline-block">Bekijk post &rarr;</a>
+                <p class="text-xs text-gray-500"><?= t('label_slug') ?> <?= e($post['slug'] ?? '') ?> <span class="help-tooltip" data-help="<?= t('tooltip_post_slug') ?>">?</span></p>
+                <p class="text-xs text-gray-500 mt-1"><?= t('label_updated') ?> <?= e($post['bijgewerkt'] ?? '') ?></p>
+                <a href="/blog/<?= e($post['slug']) ?>" target="_blank" class="text-sm text-blue-400 hover:text-blue-300 mt-2 inline-block"><?= t('link_view_post') ?></a>
             </div>
             <?php endif; ?>
         </div>

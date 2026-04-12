@@ -8,7 +8,7 @@ $currentPage = $_GET['pagina'] ?? array_key_first($pages) ?? 'home';
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $pageName = $_POST['page_name'] ?? '';
         if (isset($pages[$pageName])) {
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
             // Reload
             $content = $pages;
             audit_log('content_bewerkt', "Pagina: {$pageName}");
-            $_SESSION['flash_success'] = 'Content opgeslagen.';
+            $_SESSION['flash_success'] = t('success_content_saved');
         }
     }
     header('Location: /beheer/?tab=content&pagina=' . urlencode($currentPage));
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
 // Handle add new page
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_page'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $newSlug = preg_replace('/[^a-z0-9-]/', '', strtolower(trim($_POST['new_page_slug'] ?? '')));
         if ($newSlug && !isset($pages[$newSlug])) {
@@ -50,10 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_page'])) {
             ];
             save_json('content.json', $pages);
             audit_log('pagina_toegevoegd', "Pagina: {$newSlug}");
-            $_SESSION['flash_success'] = 'Pagina toegevoegd.';
+            $_SESSION['flash_success'] = t('success_page_added');
             $currentPage = $newSlug;
         } else {
-            $_SESSION['flash_error'] = 'Ongeldige slug of pagina bestaat al.';
+            $_SESSION['flash_error'] = t('error_invalid_slug_or_exists');
         }
     }
     header('Location: /beheer/?tab=content&pagina=' . urlencode($currentPage));
@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_page'])) {
 // Handle delete page
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $delPage = $_POST['page_name'] ?? '';
         $protected = ['home', 'over', 'contact'];
@@ -71,10 +71,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
             unset($pages[$delPage]);
             save_json('content.json', $pages);
             audit_log('pagina_verwijderd', "Pagina: {$delPage}");
-            $_SESSION['flash_success'] = 'Pagina verwijderd.';
+            $_SESSION['flash_success'] = t('success_page_deleted');
             $currentPage = 'home';
         } else {
-            $_SESSION['flash_error'] = 'Deze pagina kan niet worden verwijderd.';
+            $_SESSION['flash_error'] = t('error_page_cannot_delete');
         }
     }
     header('Location: /beheer/?tab=content&pagina=' . urlencode($currentPage));
@@ -84,14 +84,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
 // Handle add field
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_field'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = 'Ongeldig CSRF token.';
+        $_SESSION['flash_error'] = t('error_invalid_csrf');
     } else {
         $pageName = $_POST['page_name'] ?? '';
         $fieldKey = preg_replace('/[^a-z0-9_]/', '', strtolower(trim($_POST['new_field_key'] ?? '')));
         if ($pageName && $fieldKey && isset($pages[$pageName]) && !isset($pages[$pageName][$fieldKey])) {
             $pages[$pageName][$fieldKey] = '';
             save_json('content.json', $pages);
-            $_SESSION['flash_success'] = 'Veld toegevoegd.';
+            $_SESSION['flash_success'] = t('success_field_added');
         }
     }
     header('Location: /beheer/?tab=content&pagina=' . urlencode($currentPage));
@@ -104,7 +104,7 @@ $pageData = $pages[$currentPage] ?? [];
 ?>
 
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-white">Content bewerken</h1>
+    <h1 class="text-2xl font-bold text-white"><?= t('content_edit_title') ?></h1>
 </div>
 
 <!-- Page tabs -->
@@ -119,8 +119,8 @@ $pageData = $pages[$currentPage] ?? [];
     <!-- Add page button -->
     <form method="POST" class="flex items-center gap-2 ml-4">
         <?= csrf_field() ?>
-        <input type="text" name="new_page_slug" placeholder="nieuwe-pagina" class="admin-input text-sm py-1 w-36">
-        <button type="submit" name="add_page" class="btn-admin-sm">+ Pagina</button>
+        <input type="text" name="new_page_slug" placeholder="<?= t('placeholder_new_page_slug') ?>" class="admin-input text-sm py-1 w-36">
+        <button type="submit" name="add_page" class="btn-admin-sm"><?= t('button_add_page') ?></button>
     </form>
 </div>
 
@@ -134,8 +134,8 @@ $pageData = $pages[$currentPage] ?? [];
         <h2 class="text-lg font-semibold text-white"><?= e(ucfirst($currentPage)) ?></h2>
         <?php if (!in_array($currentPage, ['home', 'over', 'contact'])): ?>
         <button type="submit" name="delete_page" class="btn-admin btn-admin-danger text-sm"
-                onclick="return confirm('Weet u zeker dat u deze pagina wilt verwijderen?')">
-            Verwijderen
+                onclick="return confirm('<?= t('confirm_delete_page') ?>')">
+            <?= t('button_delete') ?>
         </button>
         <?php endif; ?>
     </div>
@@ -148,18 +148,18 @@ $pageData = $pages[$currentPage] ?? [];
     <!-- Add field -->
     <div class="border-t border-gray-700 pt-4 mt-4 mb-4">
         <div class="flex items-center gap-2">
-            <input type="text" name="new_field_key" placeholder="nieuw_veld_naam" class="admin-input text-sm py-1 w-48">
-            <button type="submit" name="add_field" class="btn-admin-sm text-xs">+ Veld</button>
+            <input type="text" name="new_field_key" placeholder="<?= t('placeholder_new_field_key') ?>" class="admin-input text-sm py-1 w-48">
+            <button type="submit" name="add_field" class="btn-admin-sm text-xs"><?= t('button_add_field') ?></button>
         </div>
-        <p class="text-xs text-gray-500 mt-1">Gebruik underscores: bijv. sectie3_tekst, banner_afbeelding</p>
+        <p class="text-xs text-gray-500 mt-1"><?= t('hint_field_naming') ?></p>
     </div>
 
     <div class="flex justify-end pt-4 border-t border-gray-700">
-        <button type="submit" name="save_content" class="btn-admin btn-admin-primary">Opslaan</button>
+        <button type="submit" name="save_content" class="btn-admin btn-admin-primary"><?= t('button_save') ?></button>
     </div>
 </form>
 <?php else: ?>
 <div class="admin-card">
-    <p class="text-gray-400">Pagina niet gevonden.</p>
+    <p class="text-gray-400"><?= t('error_page_not_found') ?></p>
 </div>
 <?php endif; ?>
