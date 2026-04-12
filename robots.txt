@@ -7,14 +7,8 @@ Disallow: /includes/
 Disallow: /setup.php
 Disallow: /install.php
 
-# AI crawlers — explicitly allowed
+# AI crawlers
 User-agent: GPTBot
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-User-agent: ClaudeBot
 Allow: /
 
 User-agent: PerplexityBot
