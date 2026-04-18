@@ -29,6 +29,16 @@ Thumbs.db
 *.swo
 *~
 
-# PHP
-vendor/
+# Composer
+composer.phar
+/vendor/
+/apps/*/vendor/
+/packages/*/vendor/
 composer.lock
+
+# Env
+/apps/*/.env
+
+# Build / tests
+.phpunit.result.cache
+coverage/
