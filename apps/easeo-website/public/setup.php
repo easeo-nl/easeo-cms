@@ -3,7 +3,7 @@
  * EASEO CMS — Setup Wizard (first-run)
  * 5 steps: company info, branding, pages, admin account, confirmation
  */
-require_once __DIR__ . '/includes/content.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Redirect if already set up
 if (is_setup_complete()) {
@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $siteData['company']['copyright_year'] = date('Y');
             save_json('site.json', $siteData);
 
-            require_once __DIR__ . '/includes/audit.php';
+            // audit loaded via autoload/bootstrap
             audit_log('setup_voltooid', "Admin: {$naam} ({$email})", $naam);
 
             header('Location: /setup.php?step=5');

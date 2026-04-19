@@ -2,14 +2,14 @@
 /**
  * EASEO CMS — Homepage with template sections
  */
-require_once __DIR__ . '/includes/content.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 check_setup();
 
 $home = page_content('home');
 $pageTitle = ($home['meta_title'] ?? 'Home') . ' | ' . site('company.name', 'EASEO');
 $metaDescription = $home['meta_description'] ?? '';
 
-require_once __DIR__ . '/includes/header.php';
+require_once EASEO_CORE . '/src/legacy/header.php';
 
 // Hero section via template
 $data = [
@@ -61,4 +61,4 @@ $data = [
 ];
 include __DIR__ . '/templates/cta-block.php';
 
-require_once __DIR__ . '/includes/footer.php';
+require_once EASEO_CORE . '/src/legacy/footer.php';

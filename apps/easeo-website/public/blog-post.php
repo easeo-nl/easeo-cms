@@ -2,8 +2,7 @@
 /**
  * EASEO CMS — Individual blog post with Schema.org
  */
-require_once __DIR__ . '/includes/content.php';
-require_once __DIR__ . '/includes/blog-engine.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 check_setup();
 
 $slug = $_GET['slug'] ?? '';
@@ -18,7 +17,6 @@ if (!$post || ($post['status'] ?? 'concept') !== 'gepubliceerd') {
 $pageTitle = ($post['meta_title'] ?: $post['titel']) . ' | ' . site('company.name', 'EASEO');
 $metaDescription = $post['meta_description'] ?: $post['samenvatting'] ?: '';
 
-require_once __DIR__ . '/includes/structured-data.php';
 $structuredSchemas = [
     schema_article($post),
     schema_breadcrumbs($post['titel'], 'blog/' . $post['slug'], [
@@ -26,7 +24,7 @@ $structuredSchemas = [
     ]),
 ];
 
-require_once __DIR__ . '/includes/header.php';
+require_once EASEO_CORE . '/src/legacy/header.php';
 
 $dateISO = date('c', strtotime($post['datum']));
 ?>
@@ -81,4 +79,4 @@ $dateISO = date('c', strtotime($post['datum']));
     </div>
 </article>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once EASEO_CORE . '/src/legacy/footer.php'; ?>

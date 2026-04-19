@@ -2,8 +2,7 @@
 /**
  * EASEO CMS — RSS feed
  */
-require_once __DIR__ . '/includes/content.php';
-require_once __DIR__ . '/includes/blog-engine.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 header('Content-Type: application/rss+xml; charset=UTF-8');
 

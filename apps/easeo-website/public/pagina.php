@@ -3,7 +3,7 @@
  * EASEO CMS — Dynamic page renderer
  * Renders content pages from content.json based on slug
  */
-require_once __DIR__ . '/includes/content.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 check_setup();
 
 $slug = $_GET['slug'] ?? '';
@@ -20,7 +20,7 @@ if (empty($pageData) || !is_array($pageData)) {
 $pageTitle = ($pageData['meta_title'] ?? ucfirst($slug)) . ' | ' . site('company.name', 'EASEO');
 $metaDescription = $pageData['meta_description'] ?? '';
 
-require_once __DIR__ . '/includes/header.php';
+require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
 
 <section class="py-12">
@@ -68,7 +68,7 @@ require_once __DIR__ . '/includes/header.php';
         <?php
         // Render form if formulier_id is set
         if (!empty($pageData['formulier_id'])):
-            require_once __DIR__ . '/includes/form-engine.php';
+            // form-engine loaded via autoload/bootstrap
         ?>
         <div class="mt-8">
             <?= render_form($pageData['formulier_id']) ?>
@@ -77,4 +77,4 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once EASEO_CORE . '/src/legacy/footer.php'; ?>

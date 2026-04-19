@@ -2,8 +2,7 @@
 /**
  * EASEO CMS — Contact page with dynamic form
  */
-require_once __DIR__ . '/includes/content.php';
-require_once __DIR__ . '/includes/form-engine.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 check_setup();
 
 $contactData = page_content('contact');
@@ -11,10 +10,9 @@ $pageTitle = ($contactData['meta_title'] ?? 'Contact') . ' | ' . site('company.n
 $metaDescription = $contactData['meta_description'] ?? '';
 $formId = $contactData['formulier_id'] ?? 'contact';
 
-require_once __DIR__ . '/includes/structured-data.php';
 $structuredSchemas = [schema_breadcrumbs('Contact', 'contact')];
 
-require_once __DIR__ . '/includes/header.php';
+require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
 
 <section class="py-12">
@@ -78,4 +76,4 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once EASEO_CORE . '/src/legacy/footer.php'; ?>

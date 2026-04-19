@@ -2,11 +2,7 @@
 /**
  * EASEO CMS — Form POST handler
  */
-require_once __DIR__ . '/includes/content.php';
-require_once __DIR__ . '/includes/form-engine.php';
-require_once __DIR__ . '/includes/rate-limiter.php';
-require_once __DIR__ . '/includes/audit.php';
-require_once __DIR__ . '/includes/mailer.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /');

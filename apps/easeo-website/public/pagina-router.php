@@ -3,7 +3,7 @@
  * EASEO CMS — Dynamic page router
  * Renders pages from data/pages.json based on slug
  */
-require_once __DIR__ . '/includes/content.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 check_setup();
 
 $slug = $_GET['slug'] ?? '';
@@ -46,7 +46,6 @@ if (!$page) {
 $pageTitle = ($page['seo_title'] ?: $page['title']) . ' | ' . site('company.name', 'EASEO');
 $metaDescription = $page['seo_description'] ?: '';
 
-require_once __DIR__ . '/includes/structured-data.php';
 $breadcrumbParents = [];
 if (!empty($page['parent'])) {
     foreach (($pages_data['pages'] ?? []) as $pp) {
@@ -58,7 +57,7 @@ if (!empty($page['parent'])) {
 }
 $structuredSchemas = [schema_breadcrumbs($page['title'], $page['slug'], $breadcrumbParents)];
 
-require_once __DIR__ . '/includes/header.php';
+require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
 
 <section class="py-12">
@@ -75,7 +74,7 @@ require_once __DIR__ . '/includes/header.php';
 
         <?php if ($page['template'] === 'contact'): ?>
             <?php
-            require_once __DIR__ . '/includes/form-engine.php';
+            // form-engine loaded via autoload/bootstrap
             $contactData = page_content('contact');
             $formId = $contactData['formulier_id'] ?? 'contact';
             ?>
@@ -86,4 +85,4 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once EASEO_CORE . '/src/legacy/footer.php'; ?>

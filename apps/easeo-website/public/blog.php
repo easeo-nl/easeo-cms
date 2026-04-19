@@ -2,8 +2,7 @@
 /**
  * EASEO CMS — Blog overview with pagination and category filter
  */
-require_once __DIR__ . '/includes/content.php';
-require_once __DIR__ . '/includes/blog-engine.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 check_setup();
 
 $posts = get_published_posts();
@@ -21,10 +20,9 @@ $result = paginate_posts(array_values($posts), $page);
 $pageTitle = t('blog_page_title') . ($filterCat ? ' — ' . $filterCat : '') . ' | ' . site('company.name', 'EASEO');
 $metaDescription = t('blog_meta_description');
 
-require_once __DIR__ . '/includes/structured-data.php';
 $structuredSchemas = [schema_breadcrumbs('Blog', 'blog')];
 
-require_once __DIR__ . '/includes/header.php';
+require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
 
 <section class="py-12">
@@ -81,4 +79,4 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once EASEO_CORE . '/src/legacy/footer.php'; ?>

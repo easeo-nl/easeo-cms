@@ -2,14 +2,13 @@
 /**
  * EASEO CMS — Terms & conditions page
  */
-require_once __DIR__ . '/includes/content.php';
-require_once __DIR__ . '/includes/legal.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 check_setup();
 
 $pageTitle = 'Algemene Voorwaarden | ' . site('company.name', 'EASEO');
 $metaDescription = 'Algemene voorwaarden van ' . site('company.name', 'ons bedrijf');
 
-require_once __DIR__ . '/includes/header.php';
+require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
 
 <section class="py-12">
@@ -20,4 +19,4 @@ require_once __DIR__ . '/includes/header.php';
     </div>
 </section>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php require_once EASEO_CORE . '/src/legacy/footer.php'; ?>
