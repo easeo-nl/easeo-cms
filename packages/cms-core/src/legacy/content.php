@@ -3,8 +3,8 @@
  * EASEO CMS — Content loader, helpers, and globals
  */
 
-define('EASEO_ROOT', dirname(__DIR__));
-define('EASEO_DATA', EASEO_ROOT . '/data');
+if (!defined('EASEO_ROOT')) { define('EASEO_ROOT', dirname(__DIR__)); }
+if (!defined('EASEO_DATA')) { define('EASEO_DATA', EASEO_ROOT . '/data'); }
 
 require_once __DIR__ . '/lang.php';
 

@@ -5,13 +5,13 @@
  */
 require_once __DIR__ . '/content.php';
 
-define('MEDIA_UPLOAD_DIR', EASEO_ROOT . '/images/uploads');
-define('MEDIA_THUMB_DIR', EASEO_ROOT . '/images/thumbs');
-define('MEDIA_MAX_SIZE', 10 * 1024 * 1024); // 10MB
-define('MEDIA_ALLOWED_TYPES', ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'application/pdf']);
-define('MEDIA_THUMB_WIDTH', 300);
-define('MEDIA_THUMB_HEIGHT', 300);
-define('MEDIA_MAX_WIDTH', 1920);
+if (!defined('MEDIA_UPLOAD_DIR')) { define('MEDIA_UPLOAD_DIR', EASEO_ROOT . '/images/uploads'); }
+if (!defined('MEDIA_THUMB_DIR')) { define('MEDIA_THUMB_DIR', EASEO_ROOT . '/images/thumbs'); }
+if (!defined('MEDIA_MAX_SIZE')) { define('MEDIA_MAX_SIZE', 10 * 1024 * 1024); } // 10MB
+if (!defined('MEDIA_ALLOWED_TYPES')) { define('MEDIA_ALLOWED_TYPES', ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'application/pdf']); }
+if (!defined('MEDIA_THUMB_WIDTH')) { define('MEDIA_THUMB_WIDTH', 300); }
+if (!defined('MEDIA_THUMB_HEIGHT')) { define('MEDIA_THUMB_HEIGHT', 300); }
+if (!defined('MEDIA_MAX_WIDTH')) { define('MEDIA_MAX_WIDTH', 1920); }
 
 function get_media(): array {
     $data = load_json('media.json');
