@@ -1,0 +1,17 @@
+{
+    "engine": "content",
+    "subdir": "Content",
+    "class": "ContentRepository",
+    "namespace": "Easeo\\Cms\\Content",
+    "functions": {
+        "load_json": "loadJson",
+        "save_json": "saveJson",
+        "invalidate_json_cache": "invalidateJsonCache",
+        "site": "siteValue",
+        "page_content": "pageContent",
+        "e": "escape",
+        "is_setup_complete": "isSetupComplete",
+        "handle_redirects": "handleRedirects",
+        "check_setup": "checkSetup"
+    }
+}

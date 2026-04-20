@@ -1,0 +1,14 @@
+{
+    "engine": "structured-data",
+    "subdir": "Seo",
+    "class": "StructuredData",
+    "namespace": "Easeo\\Cms\\Seo",
+    "functions": {
+        "get_base_url": "getBaseUrl",
+        "schema_organization": "schemaOrganization",
+        "schema_website": "schemaWebsite",
+        "schema_breadcrumbs": "schemaBreadcrumbs",
+        "schema_article": "schemaArticle",
+        "render_structured_data": "render"
+    }
+}

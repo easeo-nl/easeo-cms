@@ -1,0 +1,11 @@
+{
+    "engine": "brand",
+    "subdir": "Branding",
+    "class": "BrandConfig",
+    "namespace": "Easeo\\Cms\\Branding",
+    "functions": {
+        "brand_css_properties": "cssProperties",
+        "brand_google_fonts_url": "googleFontsUrl",
+        "brand_tailwind_config": "tailwindConfig"
+    }
+}

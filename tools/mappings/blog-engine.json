@@ -1,0 +1,21 @@
+{
+    "engine": "blog-engine",
+    "subdir": "Blog",
+    "class": "BlogEngine",
+    "namespace": "Easeo\\Cms\\Blog",
+    "functions": {
+        "get_posts_data": "getPostsData",
+        "get_posts": "getPosts",
+        "save_posts": "savePosts",
+        "get_published_posts": "getPublishedPosts",
+        "get_post_by_slug": "getPostBySlug",
+        "get_post_by_id": "getPostById",
+        "create_post": "createPost",
+        "update_post": "updatePost",
+        "delete_post": "deletePost",
+        "get_categories": "getCategories",
+        "paginate_posts": "paginatePosts",
+        "generate_slug": "generateSlug",
+        "render_post_card": "renderPostCard"
+    }
+}
