@@ -6,7 +6,6 @@
 require_once dirname(__DIR__, 4) . '/tools/legacy-bridge.php';
 $legacyDir = __DIR__;
 $engines = [
-    'content.php',        // eerst — andere engines requiren dit
     'lang.php',
     'brand.php',
     'audit.php',

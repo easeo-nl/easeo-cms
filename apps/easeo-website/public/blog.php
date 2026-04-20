@@ -1,82 +1,147 @@
 <?php
+use Easeo\Cms\Content\ContentRepository;
 /**
  * EASEO CMS — Blog overview with pagination and category filter
  */
 require_once __DIR__ . '/../vendor/autoload.php';
-check_setup();
-
+ContentRepository::checkSetup();
 $posts = get_published_posts();
 $categories = get_categories();
-
 // Category filter
 $filterCat = $_GET['categorie'] ?? '';
 if ($filterCat) {
     $posts = array_filter($posts, fn($p) => strcasecmp($p['categorie'] ?? '', $filterCat) === 0);
 }
-
-$page = max(1, (int)($_GET['pagina'] ?? 1));
+$page = max(1, (int) ($_GET['pagina'] ?? 1));
 $result = paginate_posts(array_values($posts), $page);
-
-$pageTitle = t('blog_page_title') . ($filterCat ? ' — ' . $filterCat : '') . ' | ' . site('company.name', 'EASEO');
+$pageTitle = t('blog_page_title') . ($filterCat ? ' — ' . $filterCat : '') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = t('blog_meta_description');
-
 $structuredSchemas = [schema_breadcrumbs('Blog', 'blog')];
-
 require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
 
 <section class="py-12">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="mb-8">
-            <h1 class="text-3xl font-display font-bold text-dark mb-2"><?= t('blog_page_title') ?></h1>
-            <p class="text-muted"><?= t('blog_page_subtitle') ?></p>
+            <h1 class="text-3xl font-display font-bold text-dark mb-2"><?php 
+echo t('blog_page_title');
+?></h1>
+            <p class="text-muted"><?php 
+echo t('blog_page_subtitle');
+?></p>
         </div>
 
-        <?php if (!empty($categories)): ?>
+        <?php 
+if (!empty($categories)) {
+    ?>
         <div class="flex flex-wrap gap-2 mb-8">
-            <a href="/blog" class="px-3 py-1 rounded-full text-sm <?= !$filterCat ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?> transition-colors"><?= t('blog_filter_all') ?></a>
-            <?php foreach ($categories as $cat): ?>
-            <a href="/blog/categorie/<?= urlencode($cat) ?>"
-               class="px-3 py-1 rounded-full text-sm <?= $filterCat === $cat ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' ?> transition-colors">
-                <?= e($cat) ?>
+            <a href="/blog" class="px-3 py-1 rounded-full text-sm <?php 
+    echo !$filterCat ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200';
+    ?> transition-colors"><?php 
+    echo t('blog_filter_all');
+    ?></a>
+            <?php 
+    foreach ($categories as $cat) {
+        ?>
+            <a href="/blog/categorie/<?php 
+        echo urlencode($cat);
+        ?>"
+               class="px-3 py-1 rounded-full text-sm <?php 
+        echo $filterCat === $cat ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200';
+        ?> transition-colors">
+                <?php 
+        echo ContentRepository::escape($cat);
+        ?>
             </a>
-            <?php endforeach; ?>
+            <?php 
+    }
+    ?>
         </div>
-        <?php endif; ?>
+        <?php 
+}
+?>
 
-        <?php if (empty($result['posts'])): ?>
+        <?php 
+if (empty($result['posts'])) {
+    ?>
         <div class="text-center py-12">
-            <p class="text-muted"><?= t('blog_no_posts_found') ?></p>
+            <p class="text-muted"><?php 
+    echo t('blog_no_posts_found');
+    ?></p>
         </div>
-        <?php else: ?>
+        <?php 
+} else {
+    ?>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <?php foreach ($result['posts'] as $post): ?>
-                <?= render_post_card($post) ?>
-            <?php endforeach; ?>
+            <?php 
+    foreach ($result['posts'] as $post) {
+        ?>
+                <?php 
+        echo render_post_card($post);
+        ?>
+            <?php 
+    }
+    ?>
         </div>
 
-        <?php if ($result['total_pages'] > 1): ?>
+        <?php 
+    if ($result['total_pages'] > 1) {
+        ?>
         <nav class="flex justify-center items-center gap-2 mt-10">
-            <?php if ($result['page'] > 1): ?>
-            <a href="/blog/pagina/<?= $result['page'] - 1 ?><?= $filterCat ? '?categorie=' . urlencode($filterCat) : '' ?>"
-               class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm">&laquo; <?= t('pagination_previous') ?></a>
-            <?php endif; ?>
+            <?php 
+        if ($result['page'] > 1) {
+            ?>
+            <a href="/blog/pagina/<?php 
+            echo $result['page'] - 1;
+            echo $filterCat ? '?categorie=' . urlencode($filterCat) : '';
+            ?>"
+               class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm">&laquo; <?php 
+            echo t('pagination_previous');
+            ?></a>
+            <?php 
+        }
+        ?>
 
-            <?php for ($i = 1; $i <= $result['total_pages']; $i++): ?>
-            <a href="/blog/pagina/<?= $i ?><?= $filterCat ? '?categorie=' . urlencode($filterCat) : '' ?>"
-               class="px-3 py-2 rounded text-sm <?= $i === $result['page'] ? 'bg-primary text-white' : 'bg-gray-100 hover:bg-gray-200' ?>">
-                <?= $i ?>
+            <?php 
+        for ($i = 1; $i <= $result['total_pages']; $i++) {
+            ?>
+            <a href="/blog/pagina/<?php 
+            echo $i;
+            echo $filterCat ? '?categorie=' . urlencode($filterCat) : '';
+            ?>"
+               class="px-3 py-2 rounded text-sm <?php 
+            echo $i === $result['page'] ? 'bg-primary text-white' : 'bg-gray-100 hover:bg-gray-200';
+            ?>">
+                <?php 
+            echo $i;
+            ?>
             </a>
-            <?php endfor; ?>
+            <?php 
+        }
+        ?>
 
-            <?php if ($result['page'] < $result['total_pages']): ?>
-            <a href="/blog/pagina/<?= $result['page'] + 1 ?><?= $filterCat ? '?categorie=' . urlencode($filterCat) : '' ?>"
-               class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm"><?= t('pagination_next') ?> &raquo;</a>
-            <?php endif; ?>
+            <?php 
+        if ($result['page'] < $result['total_pages']) {
+            ?>
+            <a href="/blog/pagina/<?php 
+            echo $result['page'] + 1;
+            echo $filterCat ? '?categorie=' . urlencode($filterCat) : '';
+            ?>"
+               class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm"><?php 
+            echo t('pagination_next');
+            ?> &raquo;</a>
+            <?php 
+        }
+        ?>
         </nav>
-        <?php endif; ?>
-        <?php endif; ?>
+        <?php 
+    }
+    ?>
+        <?php 
+}
+?>
     </div>
 </section>
 
-<?php require_once EASEO_CORE . '/src/legacy/footer.php'; ?>
+<?php 
+require_once EASEO_CORE . '/src/legacy/footer.php';

@@ -1,8 +1,8 @@
 <?php
+use Easeo\Cms\Content\ContentRepository;
 /**
  * EASEO CMS — Admin UI helpers, auto field config
  */
-
 /**
  * Derive field type from key naming conventions.
  *
@@ -21,113 +21,96 @@
  * - meta_* → text (seo)
  * - Everything else → text input
  */
-function auto_field_config(string $key, $value = ''): array {
+function auto_field_config(string $key, $value = '') : array
+{
     $key_lower = strtolower($key);
     $label = generate_label($key);
-
     // Image fields
     if (preg_match('/(afbeelding|logo|foto|image|favicon|thumbnail|thumb)$/', $key_lower)) {
         return ['type' => 'image', 'label' => $label, 'key' => $key];
     }
-
     // Rich text / textarea
     if (preg_match('/(tekst|inhoud|beschrijving|content|bio|samenvatting)$/', $key_lower)) {
         return ['type' => 'textarea', 'label' => $label, 'key' => $key];
     }
-
     // Email
     if (preg_match('/email$/', $key_lower)) {
         return ['type' => 'email', 'label' => $label, 'key' => $key];
     }
-
     // Phone
     if (preg_match('/(telefoon|tel)$/', $key_lower)) {
         return ['type' => 'tel', 'label' => $label, 'key' => $key];
     }
-
     // URL
     if (preg_match('/(url|link|website)$/', $key_lower)) {
         return ['type' => 'url', 'label' => $label, 'key' => $key];
     }
-
     // Date
     if (preg_match('/(datum|date)$/', $key_lower)) {
         return ['type' => 'date', 'label' => $label, 'key' => $key];
     }
-
     // Color
     if (preg_match('/(kleur|color)$/', $key_lower)) {
         return ['type' => 'color', 'label' => $label, 'key' => $key];
     }
-
     // Number
     if (preg_match('/(nummer|aantal|prijs|price|number|count)$/', $key_lower)) {
         return ['type' => 'number', 'label' => $label, 'key' => $key];
     }
-
     // Boolean toggle
     if (preg_match('/(aan|actief|toon|enabled|active|visible)$/', $key_lower)) {
         return ['type' => 'checkbox', 'label' => $label, 'key' => $key];
     }
-
     // Code / embed
     if (preg_match('/(embed|code|script|custom|html)$/', $key_lower)) {
         return ['type' => 'code', 'label' => $label, 'key' => $key];
     }
-
     // Default text
     return ['type' => 'text', 'label' => $label, 'key' => $key];
 }
-
 /**
  * Generate a human-readable label from a key.
  * Converts snake_case to Title Case, with Dutch-friendly output.
  */
-function generate_label(string $key): string {
+function generate_label(string $key) : string
+{
     $label = str_replace('_', ' ', $key);
     $label = ucfirst($label);
     // Capitalize common abbreviations
     $label = str_ireplace(['url', 'seo', 'html', 'css', 'gtm', 'ga4', 'kvk', 'btw'], ['URL', 'SEO', 'HTML', 'CSS', 'GTM', 'GA4', 'KVK', 'BTW'], $label);
     return $label;
 }
-
 /**
  * Render a form field based on auto_field_config.
  */
-function get_field_tooltip(string $key, string $type): string {
-    $tooltips = [
-        'meta_title' => t('tooltip_meta_title'),
-        'meta_description' => t('tooltip_meta_description'),
-    ];
+function get_field_tooltip(string $key, string $type) : string
+{
+    $tooltips = ['meta_title' => t('tooltip_meta_title'), 'meta_description' => t('tooltip_meta_description')];
     if (isset($tooltips[$key])) {
-        return ' <span class="help-tooltip" data-help="' . e($tooltips[$key]) . '">?</span>';
+        return ' <span class="help-tooltip" data-help="' . ContentRepository::escape($tooltips[$key]) . '">?</span>';
     }
     if ($type === 'image') {
-        return ' <span class="help-tooltip" data-help="' . e(t('tooltip_image_picker')) . '">?</span>';
+        return ' <span class="help-tooltip" data-help="' . ContentRepository::escape(t('tooltip_image_picker')) . '">?</span>';
     }
     return '';
 }
-
-function render_field(array $config, $value = '', string $prefix = ''): string {
+function render_field(array $config, $value = '', string $prefix = '') : string
+{
     $name = $prefix ? "{$prefix}[{$config['key']}]" : $config['key'];
     $id = str_replace(['[', ']'], ['-', ''], $name);
-    $val = e((string)$value);
-    $label = e($config['label']);
+    $val = ContentRepository::escape((string) $value);
+    $label = ContentRepository::escape($config['label']);
     $tooltip = get_field_tooltip($config['key'], $config['type']);
-
     $html = '<div class="mb-4">' . "\n";
-
     switch ($config['type']) {
         case 'textarea':
             $html .= '  <label for="' . $id . '" class="block text-sm font-medium text-gray-300 mb-1">' . $label . $tooltip . '</label>' . "\n";
             $html .= '  <textarea id="' . $id . '" name="' . $name . '" rows="5" class="admin-input w-full">' . $val . '</textarea>' . "\n";
             break;
-
         case 'code':
             $html .= '  <label for="' . $id . '" class="block text-sm font-medium text-gray-300 mb-1">' . $label . $tooltip . '</label>' . "\n";
             $html .= '  <textarea id="' . $id . '" name="' . $name . '" rows="6" class="admin-input w-full font-mono text-sm">' . $val . '</textarea>' . "\n";
             break;
-
         case 'image':
             $html .= '  <label class="block text-sm font-medium text-gray-300 mb-1">' . $label . $tooltip . '</label>' . "\n";
             $html .= '  <div class="flex items-center gap-3">' . "\n";
@@ -138,7 +121,6 @@ function render_field(array $config, $value = '', string $prefix = ''): string {
             }
             $html .= '  </div>' . "\n";
             break;
-
         case 'checkbox':
             $checked = $value ? ' checked' : '';
             $html .= '  <label class="flex items-center gap-2 cursor-pointer">' . "\n";
@@ -147,7 +129,6 @@ function render_field(array $config, $value = '', string $prefix = ''): string {
             $html .= '    <span class="text-sm text-gray-300">' . $label . $tooltip . '</span>' . "\n";
             $html .= '  </label>' . "\n";
             break;
-
         case 'color':
             $html .= '  <label for="' . $id . '" class="block text-sm font-medium text-gray-300 mb-1">' . $label . $tooltip . '</label>' . "\n";
             $html .= '  <div class="flex items-center gap-2">' . "\n";
@@ -155,42 +136,39 @@ function render_field(array $config, $value = '', string $prefix = ''): string {
             $html .= '    <input type="text" value="' . $val . '" class="admin-input w-28" oninput="document.getElementById(\'' . $id . '\').value=this.value" >' . "\n";
             $html .= '  </div>' . "\n";
             break;
-
-        default: // text, email, tel, url, date, number
+        default:
+            // text, email, tel, url, date, number
             $type = in_array($config['type'], ['email', 'tel', 'url', 'date', 'number']) ? $config['type'] : 'text';
             $html .= '  <label for="' . $id . '" class="block text-sm font-medium text-gray-300 mb-1">' . $label . $tooltip . '</label>' . "\n";
             $html .= '  <input type="' . $type . '" id="' . $id . '" name="' . $name . '" value="' . $val . '" class="admin-input w-full">' . "\n";
             break;
     }
-
     $html .= '</div>' . "\n";
     return $html;
 }
-
 /**
  * Sanitize input value
  */
-function sanitize_input($value) {
+function sanitize_input($value)
+{
     if (is_array($value)) {
         return array_map('sanitize_input', $value);
     }
-    return trim((string)$value);
+    return trim((string) $value);
 }
-
 /**
  * Flash message display
  */
-function render_flash(): string {
+function render_flash() : string
+{
     $html = '';
     $error = flash_error();
     $success = flash_success();
-
     if ($error) {
-        $html .= '<div class="mb-4 p-3 bg-red-900/50 border border-red-700 text-red-300 rounded-lg text-sm">' . e($error) . '</div>' . "\n";
+        $html .= '<div class="mb-4 p-3 bg-red-900/50 border border-red-700 text-red-300 rounded-lg text-sm">' . ContentRepository::escape($error) . '</div>' . "\n";
     }
     if ($success) {
-        $html .= '<div class="mb-4 p-3 bg-green-900/50 border border-green-700 text-green-300 rounded-lg text-sm">' . e($success) . '</div>' . "\n";
+        $html .= '<div class="mb-4 p-3 bg-green-900/50 border border-green-700 text-green-300 rounded-lg text-sm">' . ContentRepository::escape($success) . '</div>' . "\n";
     }
-
     return $html;
 }

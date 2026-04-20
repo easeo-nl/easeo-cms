@@ -1,8 +1,8 @@
 <?php
+use Easeo\Cms\Content\ContentRepository;
 /**
  * EASEO CMS — Submission inbox with read/unread
  */
-
 // Handle mark as read
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_read'])) {
     if (verify_csrf()) {
@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mark_read'])) {
     header('Location: /beheer/?tab=inbox');
     exit;
 }
-
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_submission'])) {
     if (verify_csrf()) {
@@ -33,18 +32,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_submission']))
     header('Location: /beheer/?tab=inbox');
     exit;
 }
-
 // Load submissions
 $subFiles = glob(EASEO_DATA . '/submissions/*.json') ?: [];
 $submissions = [];
 foreach ($subFiles as $f) {
     $sub = json_decode(file_get_contents($f), true);
-    if ($sub) $submissions[] = $sub;
+    if ($sub) {
+        $submissions[] = $sub;
+    }
 }
-
 // Sort newest first
 usort($submissions, fn($a, $b) => strcmp($b['datum'] ?? '', $a['datum'] ?? ''));
-
 // View single submission
 $viewId = $_GET['view'] ?? '';
 $viewSub = null;
@@ -62,82 +60,163 @@ if ($viewId) {
 ?>
 
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-white"><?= t('inbox_title') ?></h1>
-    <span class="text-sm text-gray-500"><?= count($submissions) ?> <?= t('inbox_messages_count_unit') ?></span>
+    <h1 class="text-2xl font-bold text-white"><?php 
+echo t('inbox_title');
+?></h1>
+    <span class="text-sm text-gray-500"><?php 
+echo count($submissions);
+?> <?php 
+echo t('inbox_messages_count_unit');
+?></span>
 </div>
 
-<?php if ($viewSub): ?>
+<?php 
+if ($viewSub) {
+    ?>
 <!-- Single submission view -->
 <div class="admin-card mb-4">
     <div class="flex items-center justify-between mb-4">
         <div>
-            <h2 class="text-lg font-semibold text-white"><?= e($viewSub['formulier_naam'] ?? '') ?></h2>
-            <p class="text-sm text-gray-500"><?= e($viewSub['datum'] ?? '') ?> — IP: <?= e($viewSub['ip'] ?? '') ?></p>
+            <h2 class="text-lg font-semibold text-white"><?php 
+    echo ContentRepository::escape($viewSub['formulier_naam'] ?? '');
+    ?></h2>
+            <p class="text-sm text-gray-500"><?php 
+    echo ContentRepository::escape($viewSub['datum'] ?? '');
+    ?> — IP: <?php 
+    echo ContentRepository::escape($viewSub['ip'] ?? '');
+    ?></p>
         </div>
-        <a href="/beheer/?tab=inbox" class="btn-admin btn-admin-outline text-sm">&larr; <?= t('button_back') ?></a>
+        <a href="/beheer/?tab=inbox" class="btn-admin btn-admin-outline text-sm">&larr; <?php 
+    echo t('button_back');
+    ?></a>
     </div>
 
     <div class="space-y-3">
-        <?php foreach (($viewSub['data'] ?? []) as $key => $value): ?>
+        <?php 
+    foreach ($viewSub['data'] ?? [] as $key => $value) {
+        ?>
         <div>
-            <span class="text-sm text-gray-500"><?= e(ucfirst($key)) ?>:</span>
-            <div class="text-white mt-0.5"><?= nl2br(e($value)) ?></div>
+            <span class="text-sm text-gray-500"><?php 
+        echo ContentRepository::escape(ucfirst($key));
+        ?>:</span>
+            <div class="text-white mt-0.5"><?php 
+        echo nl2br(ContentRepository::escape($value));
+        ?></div>
         </div>
-        <?php endforeach; ?>
+        <?php 
+    }
+    ?>
     </div>
 
     <div class="flex gap-2 mt-6 pt-4 border-t border-gray-700">
-        <?php if (!empty($viewSub['data']['email'])): ?>
-        <a href="mailto:<?= e($viewSub['data']['email']) ?>" class="btn-admin btn-admin-primary text-sm"><?= t('button_reply') ?></a>
-        <?php endif; ?>
-        <form method="POST" class="inline" onsubmit="return confirm('<?= t('confirm_delete') ?>')">
-            <?= csrf_field() ?>
-            <input type="hidden" name="submission_id" value="<?= e($viewSub['id'] ?? '') ?>">
-            <button type="submit" name="delete_submission" class="btn-admin btn-admin-danger text-sm"><?= t('action_delete') ?></button>
+        <?php 
+    if (!empty($viewSub['data']['email'])) {
+        ?>
+        <a href="mailto:<?php 
+        echo ContentRepository::escape($viewSub['data']['email']);
+        ?>" class="btn-admin btn-admin-primary text-sm"><?php 
+        echo t('button_reply');
+        ?></a>
+        <?php 
+    }
+    ?>
+        <form method="POST" class="inline" onsubmit="return confirm('<?php 
+    echo t('confirm_delete');
+    ?>')">
+            <?php 
+    echo csrf_field();
+    ?>
+            <input type="hidden" name="submission_id" value="<?php 
+    echo ContentRepository::escape($viewSub['id'] ?? '');
+    ?>">
+            <button type="submit" name="delete_submission" class="btn-admin btn-admin-danger text-sm"><?php 
+    echo t('action_delete');
+    ?></button>
         </form>
     </div>
 </div>
 
-<?php else: ?>
+<?php 
+} else {
+    ?>
 <!-- Submission list -->
 <div class="admin-card">
-    <?php if (empty($submissions)): ?>
-        <p class="text-gray-500"><?= t('inbox_no_messages') ?></p>
-    <?php else: ?>
+    <?php 
+    if (empty($submissions)) {
+        ?>
+        <p class="text-gray-500"><?php 
+        echo t('inbox_no_messages');
+        ?></p>
+    <?php 
+    } else {
+        ?>
     <table class="admin-table">
         <thead>
             <tr>
                 <th style="width:20px"></th>
-                <th><?= t('table_header_form') ?></th>
-                <th><?= t('table_header_sender') ?></th>
-                <th><?= t('table_header_date') ?></th>
+                <th><?php 
+        echo t('table_header_form');
+        ?></th>
+                <th><?php 
+        echo t('table_header_sender');
+        ?></th>
+                <th><?php 
+        echo t('table_header_date');
+        ?></th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($submissions as $sub): ?>
-            <tr class="<?= empty($sub['gelezen']) ? 'font-semibold' : '' ?>">
-                <td><?= empty($sub['gelezen']) ? '<span class="unread-dot"></span>' : '' ?></td>
+            <?php 
+        foreach ($submissions as $sub) {
+            ?>
+            <tr class="<?php 
+            echo empty($sub['gelezen']) ? 'font-semibold' : '';
+            ?>">
+                <td><?php 
+            echo empty($sub['gelezen']) ? '<span class="unread-dot"></span>' : '';
+            ?></td>
                 <td>
-                    <a href="/beheer/?tab=inbox&view=<?= e($sub['id']) ?>" class="text-white hover:text-blue-400">
-                        <?= e($sub['formulier_naam'] ?? t('unknown_form_name')) ?>
+                    <a href="/beheer/?tab=inbox&view=<?php 
+            echo ContentRepository::escape($sub['id']);
+            ?>" class="text-white hover:text-blue-400">
+                        <?php 
+            echo ContentRepository::escape($sub['formulier_naam'] ?? t('unknown_form_name'));
+            ?>
                     </a>
                 </td>
                 <td class="text-gray-400">
-                    <?= e($sub['data']['naam'] ?? $sub['data']['email'] ?? '—') ?>
+                    <?php 
+            echo ContentRepository::escape($sub['data']['naam'] ?? $sub['data']['email'] ?? '—');
+            ?>
                 </td>
-                <td class="text-gray-500"><?= e($sub['datum'] ?? '') ?></td>
+                <td class="text-gray-500"><?php 
+            echo ContentRepository::escape($sub['datum'] ?? '');
+            ?></td>
                 <td class="text-right">
-                    <form method="POST" class="inline" onsubmit="return confirm('<?= t('confirm_delete') ?>')">
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="submission_id" value="<?= e($sub['id']) ?>">
-                        <button type="submit" name="delete_submission" class="text-red-400 hover:text-red-300 text-sm"><?= t('action_delete') ?></button>
+                    <form method="POST" class="inline" onsubmit="return confirm('<?php 
+            echo t('confirm_delete');
+            ?>')">
+                        <?php 
+            echo csrf_field();
+            ?>
+                        <input type="hidden" name="submission_id" value="<?php 
+            echo ContentRepository::escape($sub['id']);
+            ?>">
+                        <button type="submit" name="delete_submission" class="text-red-400 hover:text-red-300 text-sm"><?php 
+            echo t('action_delete');
+            ?></button>
                     </form>
                 </td>
             </tr>
-            <?php endforeach; ?>
+            <?php 
+        }
+        ?>
         </tbody>
     </table>
-    <?php endif; ?>
+    <?php 
+    }
+    ?>
 </div>
-<?php endif; ?>
+<?php 
+}

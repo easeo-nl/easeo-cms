@@ -1,8 +1,8 @@
 <?php
+use Easeo\Cms\Content\ContentRepository;
 /**
  * EASEO CMS — Dashboard
  */
-
 // Handle dismiss welcome
 if (isset($_GET['action']) && $_GET['action'] === 'dismiss_welcome' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $site_path = EASEO_DATA . '/site.json';
@@ -12,65 +12,85 @@ if (isset($_GET['action']) && $_GET['action'] === 'dismiss_welcome' && $_SERVER[
     http_response_code(200);
     exit;
 }
-
 $pages = $content;
-$postsData = load_json('posts.json');
+$postsData = ContentRepository::loadJson('posts.json');
 $posts = $postsData['posts'] ?? [];
-$mediaData = load_json('media.json');
+$mediaData = ContentRepository::loadJson('media.json');
 $media = $mediaData['files'] ?? [];
 $users = get_users();
-
 // Count submissions
 $submissionFiles = glob(EASEO_DATA . '/submissions/*.json') ?: [];
 $totalSubmissions = count($submissionFiles);
 $unreadSubmissions = 0;
 foreach ($submissionFiles as $f) {
     $s = json_decode(file_get_contents($f), true);
-    if ($s && empty($s['gelezen'])) $unreadSubmissions++;
+    if ($s && empty($s['gelezen'])) {
+        $unreadSubmissions++;
+    }
 }
-
 $recentActivity = read_audit_log(10);
-
 // Check welcome screen
 $showWelcome = false;
 $siteRaw = json_decode(file_get_contents(EASEO_DATA . '/site.json'), true);
-if (!empty($siteRaw['show_welcome'])) $showWelcome = true;
+if (!empty($siteRaw['show_welcome'])) {
+    $showWelcome = true;
+}
 ?>
 
-<?php if ($showWelcome): ?>
+<?php 
+if ($showWelcome) {
+    ?>
 <div id="welcome-screen" style="background:#1e293b;border:1px solid #334155;border-radius:12px;padding:40px;margin-bottom:32px;">
 
   <h2 style="color:#f8fafc;font-size:22px;font-weight:700;margin:0 0 8px 0;">
-    <?= t('welcome_title') ?>
+    <?php 
+    echo t('welcome_title');
+    ?>
   </h2>
   <p style="color:#94a3b8;font-size:14px;margin:0 0 32px 0;">
-    <?= t('welcome_subtitle') ?>
+    <?php 
+    echo t('welcome_subtitle');
+    ?>
   </p>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:32px;">
 
     <a href="/beheer/?tab=blog-edit" style="display:block;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:24px;text-decoration:none;transition:border-color 0.15s;">
       <div style="font-size:28px;margin-bottom:12px;">&#9997;&#65039;</div>
-      <div style="color:#f8fafc;font-size:15px;font-weight:600;margin-bottom:6px;"><?= t('welcome_action_write_post') ?></div>
-      <div style="color:#64748b;font-size:13px;"><?= t('welcome_action_write_post_desc') ?></div>
+      <div style="color:#f8fafc;font-size:15px;font-weight:600;margin-bottom:6px;"><?php 
+    echo t('welcome_action_write_post');
+    ?></div>
+      <div style="color:#64748b;font-size:13px;"><?php 
+    echo t('welcome_action_write_post_desc');
+    ?></div>
     </a>
 
     <a href="/beheer/?tab=content" style="display:block;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:24px;text-decoration:none;transition:border-color 0.15s;">
       <div style="font-size:28px;margin-bottom:12px;">&#128221;</div>
-      <div style="color:#f8fafc;font-size:15px;font-weight:600;margin-bottom:6px;"><?= t('welcome_action_edit_content') ?></div>
-      <div style="color:#64748b;font-size:13px;"><?= t('welcome_action_edit_content_desc') ?></div>
+      <div style="color:#f8fafc;font-size:15px;font-weight:600;margin-bottom:6px;"><?php 
+    echo t('welcome_action_edit_content');
+    ?></div>
+      <div style="color:#64748b;font-size:13px;"><?php 
+    echo t('welcome_action_edit_content_desc');
+    ?></div>
     </a>
 
     <a href="/beheer/?tab=media" style="display:block;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:24px;text-decoration:none;transition:border-color 0.15s;">
       <div style="font-size:28px;margin-bottom:12px;">&#128248;</div>
-      <div style="color:#f8fafc;font-size:15px;font-weight:600;margin-bottom:6px;"><?= t('welcome_action_upload_image') ?></div>
-      <div style="color:#64748b;font-size:13px;"><?= t('welcome_action_upload_image_desc') ?></div>
+      <div style="color:#f8fafc;font-size:15px;font-weight:600;margin-bottom:6px;"><?php 
+    echo t('welcome_action_upload_image');
+    ?></div>
+      <div style="color:#64748b;font-size:13px;"><?php 
+    echo t('welcome_action_upload_image_desc');
+    ?></div>
     </a>
 
   </div>
 
   <button onclick="dismissWelcome()" style="background:#334155;color:#94a3b8;border:none;padding:10px 20px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;">
-    <?= t('welcome_dismiss_button') ?>
+    <?php 
+    echo t('welcome_dismiss_button');
+    ?>
   </button>
 
 </div>
@@ -83,85 +103,164 @@ function dismissWelcome() {
     });
 }
 </script>
-<?php endif; ?>
+<?php 
+}
+?>
 
-<h1 class="text-2xl font-bold text-white mb-6"><?= t('dashboard_title') ?></h1>
+<h1 class="text-2xl font-bold text-white mb-6"><?php 
+echo t('dashboard_title');
+?></h1>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
     <div class="stat-card">
-        <div class="stat-value"><?= count($pages) ?></div>
-        <div class="stat-label"><?= t('stat_pages') ?></div>
+        <div class="stat-value"><?php 
+echo count($pages);
+?></div>
+        <div class="stat-label"><?php 
+echo t('stat_pages');
+?></div>
     </div>
     <div class="stat-card">
-        <div class="stat-value"><?= count($posts) ?></div>
-        <div class="stat-label"><?= t('stat_blogposts') ?></div>
+        <div class="stat-value"><?php 
+echo count($posts);
+?></div>
+        <div class="stat-label"><?php 
+echo t('stat_blogposts');
+?></div>
     </div>
     <div class="stat-card">
-        <div class="stat-value"><?= count($media) ?></div>
-        <div class="stat-label"><?= t('stat_media_files') ?></div>
+        <div class="stat-value"><?php 
+echo count($media);
+?></div>
+        <div class="stat-label"><?php 
+echo t('stat_media_files');
+?></div>
     </div>
     <div class="stat-card">
-        <div class="stat-value"><?= $unreadSubmissions ?><span class="text-sm font-normal text-gray-500"> / <?= $totalSubmissions ?></span></div>
-        <div class="stat-label"><?= t('stat_unread_messages') ?></div>
+        <div class="stat-value"><?php 
+echo $unreadSubmissions;
+?><span class="text-sm font-normal text-gray-500"> / <?php 
+echo $totalSubmissions;
+?></span></div>
+        <div class="stat-label"><?php 
+echo t('stat_unread_messages');
+?></div>
     </div>
 </div>
 
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Quick actions -->
     <div class="admin-card">
-        <h2 class="text-lg font-semibold text-white mb-4"><?= t('dashboard_quick_actions') ?></h2>
+        <h2 class="text-lg font-semibold text-white mb-4"><?php 
+echo t('dashboard_quick_actions');
+?></h2>
         <div class="grid grid-cols-2 gap-3">
-            <a href="/beheer/?tab=content" class="btn-admin btn-admin-outline w-full justify-center"><?= t('quick_action_edit_content') ?></a>
-            <a href="/beheer/?tab=blog-edit" class="btn-admin btn-admin-outline w-full justify-center"><?= t('quick_action_new_post') ?></a>
-            <a href="/beheer/?tab=media" class="btn-admin btn-admin-outline w-full justify-center"><?= t('quick_action_upload_media') ?></a>
+            <a href="/beheer/?tab=content" class="btn-admin btn-admin-outline w-full justify-center"><?php 
+echo t('quick_action_edit_content');
+?></a>
+            <a href="/beheer/?tab=blog-edit" class="btn-admin btn-admin-outline w-full justify-center"><?php 
+echo t('quick_action_new_post');
+?></a>
+            <a href="/beheer/?tab=media" class="btn-admin btn-admin-outline w-full justify-center"><?php 
+echo t('quick_action_upload_media');
+?></a>
             <a href="/beheer/?tab=inbox" class="btn-admin btn-admin-outline w-full justify-center">
-                <?= t('quick_action_inbox') ?>
-                <?php if ($unreadSubmissions > 0): ?>
-                <span class="badge badge-primary ml-1"><?= $unreadSubmissions ?></span>
-                <?php endif; ?>
+                <?php 
+echo t('quick_action_inbox');
+?>
+                <?php 
+if ($unreadSubmissions > 0) {
+    ?>
+                <span class="badge badge-primary ml-1"><?php 
+    echo $unreadSubmissions;
+    ?></span>
+                <?php 
+}
+?>
             </a>
         </div>
     </div>
 
     <!-- Recent activity -->
     <div class="admin-card">
-        <h2 class="text-lg font-semibold text-white mb-4"><?= t('dashboard_recent_activity') ?></h2>
-        <?php if (empty($recentActivity)): ?>
-            <p class="text-gray-500 text-sm"><?= t('no_activity_found') ?></p>
-        <?php else: ?>
+        <h2 class="text-lg font-semibold text-white mb-4"><?php 
+echo t('dashboard_recent_activity');
+?></h2>
+        <?php 
+if (empty($recentActivity)) {
+    ?>
+            <p class="text-gray-500 text-sm"><?php 
+    echo t('no_activity_found');
+    ?></p>
+        <?php 
+} else {
+    ?>
             <div class="space-y-3">
-                <?php foreach ($recentActivity as $entry): ?>
+                <?php 
+    foreach ($recentActivity as $entry) {
+        ?>
                 <div class="flex items-start gap-3 text-sm">
-                    <span class="text-gray-500 shrink-0 w-32"><?= e($entry['datum'] ?? '') ?></span>
+                    <span class="text-gray-500 shrink-0 w-32"><?php 
+        echo ContentRepository::escape($entry['datum'] ?? '');
+        ?></span>
                     <span class="text-gray-300">
-                        <strong class="text-white"><?= e($entry['gebruiker'] ?? '') ?></strong>
-                        — <?= e($entry['actie'] ?? '') ?>
-                        <?php if (!empty($entry['details'])): ?>
-                        <span class="text-gray-500">(<?= e($entry['details']) ?>)</span>
-                        <?php endif; ?>
+                        <strong class="text-white"><?php 
+        echo ContentRepository::escape($entry['gebruiker'] ?? '');
+        ?></strong>
+                        — <?php 
+        echo ContentRepository::escape($entry['actie'] ?? '');
+        ?>
+                        <?php 
+        if (!empty($entry['details'])) {
+            ?>
+                        <span class="text-gray-500">(<?php 
+            echo ContentRepository::escape($entry['details']);
+            ?>)</span>
+                        <?php 
+        }
+        ?>
                     </span>
                 </div>
-                <?php endforeach; ?>
+                <?php 
+    }
+    ?>
             </div>
-        <?php endif; ?>
+        <?php 
+}
+?>
     </div>
 </div>
 
 <!-- Site info -->
 <div class="admin-card mt-6">
-    <h2 class="text-lg font-semibold text-white mb-4"><?= t('dashboard_site_info') ?></h2>
+    <h2 class="text-lg font-semibold text-white mb-4"><?php 
+echo t('dashboard_site_info');
+?></h2>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
         <div>
-            <span class="text-gray-500"><?= t('site_info_company_name') ?></span>
-            <span class="text-white ml-1"><?= e(site('company.name', '—')) ?></span>
+            <span class="text-gray-500"><?php 
+echo t('site_info_company_name');
+?></span>
+            <span class="text-white ml-1"><?php 
+echo ContentRepository::escape(ContentRepository::siteValue('company.name', '—'));
+?></span>
         </div>
         <div>
-            <span class="text-gray-500"><?= t('site_info_email') ?></span>
-            <span class="text-white ml-1"><?= e(site('company.email', '—')) ?></span>
+            <span class="text-gray-500"><?php 
+echo t('site_info_email');
+?></span>
+            <span class="text-white ml-1"><?php 
+echo ContentRepository::escape(ContentRepository::siteValue('company.email', '—'));
+?></span>
         </div>
         <div>
-            <span class="text-gray-500"><?= t('site_info_php_version') ?></span>
-            <span class="text-white ml-1"><?= phpversion() ?></span>
+            <span class="text-gray-500"><?php 
+echo t('site_info_php_version');
+?></span>
+            <span class="text-white ml-1"><?php 
+echo phpversion();
+?></span>
         </div>
     </div>
 </div>
+<?php 

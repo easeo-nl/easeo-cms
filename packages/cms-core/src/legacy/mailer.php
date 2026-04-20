@@ -2,7 +2,6 @@
 /**
  * EASEO CMS — Central mail sender (SMTP with PHPMailer or native mail() fallback)
  */
-require_once __DIR__ . '/content.php';
 
 /**
  * Encrypt SMTP password for storage in site.json

@@ -15,10 +15,16 @@
         "test:core": "phpunit --configuration packages/cms-core/phpunit.xml",
         "test:tools": "phpunit --configuration tools/phpunit.xml"
     },
+    "autoload": {
+        "psr-4": {
+            "Easeo\\Cms\\": "packages/cms-core/src/"
+        }
+    },
     "autoload-dev": {
         "psr-4": {
             "Easeo\\Tools\\": "tools/src/",
-            "Easeo\\Tools\\Tests\\": "tools/tests/"
+            "Easeo\\Tools\\Tests\\": "tools/tests/",
+            "Easeo\\Cms\\Tests\\": "packages/cms-core/tests/"
         }
     }
 }
