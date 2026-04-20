@@ -108,6 +108,33 @@ class RenameEngine {
     }
 
     private function ensureUseStatement(array $ast, string $fullClass): array {
+        // Find Namespace_ node — if present, insert use INSIDE it
+        foreach ($ast as $topStmt) {
+            if ($topStmt instanceof Stmt\Namespace_) {
+                // Check if use already exists in namespace
+                foreach ($topStmt->stmts as $nsStmt) {
+                    if ($nsStmt instanceof Stmt\Use_) {
+                        foreach ($nsStmt->uses as $use) {
+                            if ((string)$use->name === $fullClass) return $ast;
+                        }
+                    }
+                }
+                $useStmt = new Stmt\Use_([new Stmt\UseUse(new Name($fullClass))]);
+                // Insert after existing Declare_/Use_ in namespace, before first non-use
+                $insertIdx = 0;
+                foreach ($topStmt->stmts as $i => $s) {
+                    if ($s instanceof Stmt\Declare_ || $s instanceof Stmt\Use_) {
+                        $insertIdx = $i + 1;
+                    } else {
+                        break;
+                    }
+                }
+                array_splice($topStmt->stmts, $insertIdx, 0, [$useStmt]);
+                return $ast;
+            }
+        }
+
+        // No namespace — check top-level uses + declares
         foreach ($ast as $stmt) {
             if ($stmt instanceof Stmt\Use_) {
                 foreach ($stmt->uses as $use) {
@@ -117,7 +144,16 @@ class RenameEngine {
         }
 
         $useStmt = new Stmt\Use_([new Stmt\UseUse(new Name($fullClass))]);
-        array_unshift($ast, $useStmt);
+        // Insert after top-level Declare_ / Use_, before first other statement
+        $insertIdx = 0;
+        foreach ($ast as $i => $s) {
+            if ($s instanceof Stmt\Declare_ || $s instanceof Stmt\Use_) {
+                $insertIdx = $i + 1;
+            } else {
+                break;
+            }
+        }
+        array_splice($ast, $insertIdx, 0, [$useStmt]);
         return $ast;
     }
 
@@ -139,7 +175,10 @@ class CallSiteRewriter extends NodeVisitorAbstract {
     public function __construct(private array $fnMap, private string $className) {}
 
     public function leaveNode(Node $node) {
-        if ($node instanceof FuncCall && $node->name instanceof Name) {
+        if ($node instanceof FuncCall
+            && $node->name instanceof Name
+            && !$node->name instanceof Name\FullyQualified
+        ) {
             $fnName = (string)$node->name;
             if (isset($this->fnMap[$fnName])) {
                 $this->changed = true;
