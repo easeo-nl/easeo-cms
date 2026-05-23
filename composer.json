@@ -3,6 +3,9 @@
     "description": "EASEO CMS monorepo — cms-core library + site-apps",
     "type": "project",
     "license": "MIT",
+    "require": {
+        "php": ">=8.2"
+    },
     "require-dev": {
         "phpunit/phpunit": "^10.5",
         "nikic/php-parser": "^4.19"
