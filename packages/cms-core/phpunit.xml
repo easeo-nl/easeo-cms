@@ -6,7 +6,12 @@
          cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="cms-core">
-            <directory>tests</directory>
+            <directory>tests/Content</directory>
+            <file>tests/LegacyLoadTest.php</file>
+            <file>tests/SmokeTest.php</file>
+        </testsuite>
+        <testsuite name="cms-core-integration">
+            <directory>tests/Integration</directory>
         </testsuite>
     </testsuites>
     <source>

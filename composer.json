@@ -15,7 +15,7 @@
             "@test:core",
             "@test:tools"
         ],
-        "test:core": "phpunit --configuration packages/cms-core/phpunit.xml",
+        "test:core": "phpunit --configuration packages/cms-core/phpunit.xml --testsuite cms-core",
         "test:tools": "phpunit --configuration tools/phpunit.xml"
     },
     "autoload": {
