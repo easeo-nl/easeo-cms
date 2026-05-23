@@ -1,0 +1,17 @@
+{
+  "site_name": "Fixture Site",
+  "site_url": "http://localhost:8080",
+  "gtm_id": "GTM-FIXTURE",
+  "language": "nl",
+  "branding": {
+    "primary_color": "#0066cc",
+    "logo": ""
+  },
+  "modules": [],
+  "smtp": {
+    "host": "localhost",
+    "port": 1025,
+    "user": "",
+    "from_email": "fixture@example.com"
+  }
+}

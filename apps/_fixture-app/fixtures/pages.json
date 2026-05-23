@@ -1,0 +1,14 @@
+[
+  {
+    "slug": "",
+    "title": "Welkom op de fixture",
+    "content": "<p>Dit is de fixture-homepage. Als je dit ziet werkt rendering.</p>",
+    "meta": {"description": "Fixture homepage"}
+  },
+  {
+    "slug": "contact",
+    "title": "Contact",
+    "content": "<p>Fixture contact pagina met form.</p>",
+    "meta": {"description": "Fixture contact"}
+  }
+]
