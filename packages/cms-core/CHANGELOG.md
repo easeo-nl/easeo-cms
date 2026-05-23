@@ -7,6 +7,10 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added
+- CI badge in monorepo README
+- Plan 05 (Fase A) tasks A1-A5, A7, A12 complete (A6 blocked on cms-core App class; A8/A10/A11 require manual setup by Nick)
+
 ## [0.1.0-rc1] - 2026-05-23
 
 ### Added

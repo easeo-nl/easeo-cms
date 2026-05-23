@@ -1,5 +1,9 @@
 # EASEO CMS
 
+[![CI](https://github.com/easeo-nl/easeo-cms/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/easeo-nl/easeo-cms/actions/workflows/ci.yml)
+[![Packagist Version](https://img.shields.io/packagist/v/easeo/cms-core?label=easeo%2Fcms-core)](https://packagist.org/packages/easeo/cms-core)
+[![License](https://img.shields.io/packagist/l/easeo/cms-core)](LICENSE.txt)
+
 A lightweight, open-source PHP CMS built as an alternative to WordPress. No database, no frameworks, no dependencies — runs on any shared hosting with PHP 8.x.
 
 **[Website](https://easeo-nl.github.io/easeo-cms)** · **[Documentation](https://easeo-nl.github.io/easeo-cms/en/docs)** · **[Nederlands](https://easeo-nl.github.io/easeo-cms/nl/)**
