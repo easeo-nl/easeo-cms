@@ -7,9 +7,17 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+## [0.1.0-rc2] - 2026-05-28
+
+### Fixed
+- `release.yml`: `contents: write` permission op release-notes job (rc1 faalde met 403 op GitHub release creation, zie PR #2)
+- `release.yml`: vervang dode `splitsh-lite` v2.0.0 download door ingebouwde `git subtree split`
+- Branch-protection actief op `main` met required CI checks
+
 ### Added
 - CI badge in monorepo README
-- Plan 05 (Fase A) tasks A1-A5, A7, A12 complete (A6 blocked on cms-core App class; A8/A10/A11 require manual setup by Nick)
+- `apps/_skeleton/` thin site-app template (Plan 06 B1 + B3)
+- `docs/packagist-setup.md` en `docs/branch-protection.md` runbooks
 
 ## [0.1.0-rc1] - 2026-05-23
 
