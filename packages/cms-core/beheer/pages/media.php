@@ -2,14 +2,14 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Audit\AuditLogger;
+use Easeo\Cms\Media\MediaLibrary;
 /**
  * EASEO CMS — Media library with drag-drop upload
  */
-require_once EASEO_ROOT . '/includes/media-engine.php';
 // JSON API for media picker
 if (isset($_GET['action']) && $_GET['action'] === 'list' && isset($_GET['format']) && $_GET['format'] === 'json') {
     header('Content-Type: application/json');
-    echo json_encode(['files' => get_media()]);
+    echo json_encode(['files' => MediaLibrary::getMedia()]);
     exit;
 }
 // Handle upload
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['media_file'])) {
             $uploaded = 0;
             for ($i = 0; $i < $count; $i++) {
                 $file = ['name' => $files['name'][$i], 'type' => $files['type'][$i], 'tmp_name' => $files['tmp_name'][$i], 'error' => $files['error'][$i], 'size' => $files['size'][$i]];
-                $result = upload_media($file);
+                $result = MediaLibrary::uploadMedia($file);
                 if ($result['success']) {
                     $uploaded++;
                 }
@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['media_file'])) {
             $_SESSION['flash_success'] = Translator::translate('success_files_uploaded', ['count' => $uploaded, 'total' => $count]);
             AuditLogger::log('media_upload', "{$uploaded} bestanden geüpload");
         } else {
-            $result = upload_media($files);
+            $result = MediaLibrary::uploadMedia($files);
             if ($result['success']) {
                 $_SESSION['flash_success'] = Translator::translate('success_file_uploaded');
                 AuditLogger::log('media_upload', $files['name']);
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_media'])) {
         $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $id = $_POST['media_id'] ?? '';
-        if (delete_media($id)) {
+        if (MediaLibrary::deleteMedia($id)) {
             AuditLogger::log('media_verwijderd', "ID: {$id}");
             $_SESSION['flash_success'] = Translator::translate('success_file_deleted');
         } else {
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_media'])) {
     header('Location: /beheer/?tab=media');
     exit;
 }
-$media = get_media();
+$media = MediaLibrary::getMedia();
 $media = array_reverse($media);
 // newest first
 ?>
@@ -135,7 +135,7 @@ foreach ($media as $item) {
     echo ContentRepository::escape($item['origineel'] ?? '');
     ?></div>
         <div class="text-xs text-gray-600"><?php 
-    echo format_file_size($item['grootte'] ?? 0);
+    echo MediaLibrary::formatFileSize($item['grootte'] ?? 0);
     ?></div>
 
         <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
