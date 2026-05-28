@@ -5,6 +5,7 @@ use Easeo\Cms\Legal\LegalPages;
  * EASEO CMS — Privacy policy page
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 ContentRepository::checkSetup();
 $pageTitle = 'Privacyverklaring | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = 'Privacyverklaring van ' . ContentRepository::siteValue('company.name', 'ons bedrijf');

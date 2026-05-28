@@ -7,6 +7,7 @@ use Easeo\Cms\Seo\StructuredData;
  * EASEO CMS — Individual blog post with Schema.org
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 ContentRepository::checkSetup();
 $slug = $_GET['slug'] ?? '';
 $post = BlogEngine::getPostBySlug($slug);

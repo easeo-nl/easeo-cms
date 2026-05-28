@@ -7,6 +7,7 @@ use Easeo\Cms\Seo\StructuredData;
  * EASEO CMS — Blog overview with pagination and category filter
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 ContentRepository::checkSetup();
 $posts = BlogEngine::getPublishedPosts();
 $categories = BlogEngine::getCategories();

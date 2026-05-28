@@ -7,6 +7,7 @@ use Easeo\Cms\Audit\AuditLogger;
  * 5 steps: company info, branding, pages, admin account, confirmation
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 // Redirect if already set up
 if (ContentRepository::isSetupComplete()) {
     header('Location: /');

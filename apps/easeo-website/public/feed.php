@@ -5,6 +5,7 @@ use Easeo\Cms\Blog\BlogEngine;
  * EASEO CMS — RSS feed
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 header('Content-Type: application/rss+xml; charset=UTF-8');
 $posts = BlogEngine::getPublishedPosts();
 usort($posts, fn($a, $b) => strcmp($b['datum'] ?? '', $a['datum'] ?? ''));

@@ -9,6 +9,7 @@ use Easeo\Cms\Security\RateLimiter;
  * EASEO CMS — Form POST handler
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: /');
     exit;

@@ -7,6 +7,7 @@ use Easeo\Cms\Seo\StructuredData;
  * Renders pages from data/pages.json based on slug
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 ContentRepository::checkSetup();
 $slug = $_GET['slug'] ?? '';
 $slug = rtrim($slug, '/');

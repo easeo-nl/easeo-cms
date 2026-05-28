@@ -5,6 +5,7 @@ use Easeo\Cms\Lang\Translator;
  * EASEO CMS — Homepage with template sections
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 ContentRepository::checkSetup();
 $home = ContentRepository::pageContent('home');
 $pageTitle = ($home['meta_title'] ?? 'Home') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
