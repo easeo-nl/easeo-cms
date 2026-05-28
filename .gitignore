@@ -42,3 +42,6 @@ composer.lock
 # Build / tests
 .phpunit.result.cache
 coverage/
+
+# PHPUnit result cache
+.phpunit.cache/
