@@ -82,6 +82,23 @@ data/                  JSON data files (git-ignored)
 
 All data is stored as JSON in `data/`. No database setup, no migrations, no ORM.
 
+## Building client-sites with EASEO CMS
+
+For maintainers running multiple client-sites on the same `easeo/cms-core` package: each site is a thin Composer project that pulls cms-core as a dependency. The monorepo ships an `apps/_skeleton/` template + an instantiation CLI:
+
+```bash
+php tools/instantiate-skeleton.php \
+  --site="Client Name" \
+  --domain=clientdomain.example \
+  --reviewer=junior-dev-handle \
+  --backstop=your-handle \
+  --output=/tmp/client-bootstrap
+```
+
+This produces a complete thin-site-app with placeholders filled in: composer.json requiring `easeo/cms-core: ^X`, GitHub Actions deploy + smoke pipeline, Dependabot config that auto-PRs new cms-core releases, PR-template and four ADRs explaining the architecture, and DEVELOPER/DEPLOY docs.
+
+Updates to cms-core flow to all client-sites via Packagist + Dependabot. Each site's `data/` lives only on its server (gitignored) — code deploys never touch CMS state. Background: [design spec](specs/2026-05-23-easeo-cms-cicd-en-update-flow-design.md), ADRs in the [skeleton](apps/_skeleton/docs/adr/).
+
 ## Contributing
 
 Pull requests are welcome. Fork the repository, make your changes, and open a PR.
