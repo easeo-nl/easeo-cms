@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Legal\LegalPages;
 /**
  * EASEO CMS — Terms & conditions page
  */
@@ -14,7 +15,7 @@ require_once EASEO_CORE . '/src/legacy/header.php';
     <div class="max-w-3xl mx-auto px-4 sm:px-6">
         <div class="content-area">
             <?php 
-echo nl2br(ContentRepository::escape(get_legal_text('voorwaarden')));
+echo nl2br(ContentRepository::escape(LegalPages::getText('voorwaarden')));
 ?>
         </div>
     </div>

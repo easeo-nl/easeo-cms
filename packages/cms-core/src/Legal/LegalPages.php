@@ -1,29 +1,44 @@
 <?php
+declare(strict_types=1);
+
+namespace Easeo\Cms\Legal;
+
 use Easeo\Cms\Content\ContentRepository;
-/**
- * EASEO CMS — Legal text templates with placeholder replacement
- * Uses legal.json with keys: privacy, voorwaarden, cookies
- */
-function get_legal_text(string $type) : string
+
+final class LegalPages
 {
-    $legal = ContentRepository::loadJson('legal.json');
-    $text = $legal[$type]['content'] ?? '';
-    if (!empty($text)) {
-        return replace_legal_placeholders($text);
+    public static function getText(string $type): string
+    {
+        $legal = ContentRepository::loadJson('legal.json');
+        $text = $legal[$type]['content'] ?? '';
+        if ($text !== '') {
+            return self::replacePlaceholders($text);
+        }
+        return self::replacePlaceholders(self::getDefault($type));
     }
-    // Return default template
-    return replace_legal_placeholders(get_default_legal($type));
-}
-function replace_legal_placeholders(string $text) : string
-{
-    $replacements = ['{bedrijfsnaam}' => ContentRepository::siteValue('company.name', '[Bedrijfsnaam]'), '{email}' => ContentRepository::siteValue('company.email', '[E-mailadres]'), '{telefoon}' => ContentRepository::siteValue('company.phone', '[Telefoonnummer]'), '{adres}' => ContentRepository::siteValue('company.address', '[Adres]'), '{postcode}' => ContentRepository::siteValue('company.postcode', '[Postcode]'), '{plaats}' => ContentRepository::siteValue('company.city', '[Plaats]'), '{kvk}' => ContentRepository::siteValue('company.kvk', '[KVK-nummer]'), '{btw}' => ContentRepository::siteValue('company.btw', '[BTW-nummer]'), '{website}' => isset($_SERVER['HTTP_HOST']) ? 'https://' . $_SERVER['HTTP_HOST'] : '[Website]', '{datum}' => date('d-m-Y')];
-    return str_replace(array_keys($replacements), array_values($replacements), $text);
-}
-function get_default_legal(string $type) : string
-{
-    switch ($type) {
-        case 'privacy':
-            return <<<'EOT'
+
+    public static function replacePlaceholders(string $text): string
+    {
+        $replacements = [
+            '{bedrijfsnaam}' => ContentRepository::siteValue('company.name',     '[Bedrijfsnaam]'),
+            '{email}'        => ContentRepository::siteValue('company.email',    '[E-mailadres]'),
+            '{telefoon}'     => ContentRepository::siteValue('company.phone',    '[Telefoonnummer]'),
+            '{adres}'        => ContentRepository::siteValue('company.address',  '[Adres]'),
+            '{postcode}'     => ContentRepository::siteValue('company.postcode', '[Postcode]'),
+            '{plaats}'       => ContentRepository::siteValue('company.city',     '[Plaats]'),
+            '{kvk}'          => ContentRepository::siteValue('company.kvk',      '[KVK-nummer]'),
+            '{btw}'          => ContentRepository::siteValue('company.btw',      '[BTW-nummer]'),
+            '{website}'      => isset($_SERVER['HTTP_HOST']) ? 'https://' . $_SERVER['HTTP_HOST'] : '[Website]',
+            '{datum}'        => date('d-m-Y'),
+        ];
+        return str_replace(array_keys($replacements), array_values($replacements), $text);
+    }
+
+    public static function getDefault(string $type): string
+    {
+        switch ($type) {
+            case 'privacy':
+                return <<<'EOT'
 Privacyverklaring
 
 {bedrijfsnaam}, gevestigd aan {adres}, {postcode} {plaats}, is verantwoordelijk voor de verwerking van persoonsgegevens zoals weergegeven in deze privacyverklaring.
@@ -68,8 +83,8 @@ Hoe wij persoonsgegevens beveiligen:
 KVK-nummer: {kvk}
 BTW-nummer: {btw}
 EOT;
-        case 'voorwaarden':
-            return <<<'EOT'
+            case 'voorwaarden':
+                return <<<'EOT'
 Algemene Voorwaarden — {bedrijfsnaam}
 
 Artikel 1 — Definities
@@ -103,8 +118,8 @@ Contactgegevens:
 {adres}, {postcode} {plaats}
 {email} | {telefoon}
 EOT;
-        case 'cookies':
-            return <<<'EOT'
+            case 'cookies':
+                return <<<'EOT'
 Cookiebeleid — {bedrijfsnaam}
 
 Wat zijn cookies?
@@ -129,7 +144,8 @@ Heeft u vragen over ons cookiebeleid? Neem contact op via {email}.
 
 Laatste update: {datum}
 EOT;
-        default:
-            return '';
+            default:
+                return '';
+        }
     }
 }
