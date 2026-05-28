@@ -33,13 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # splitsh heeft volledige history nodig
-
-      - name: Setup splitsh/lite
-        run: |
-          curl -fsSL https://github.com/splitsh/lite/releases/download/v2.0.0/lite_linux_amd64.tar.gz \
-            | tar xz -C /tmp
-          sudo mv /tmp/splitsh-lite /usr/local/bin/
+          fetch-depth: 0   # subtree split heeft volledige history nodig
 
       - name: Split packages/cms-core to mirror-repo
         env:
@@ -51,11 +45,12 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
 
-          # Split de subtree → krijg sha terug van split-commit
-          SPLIT_SHA=$(splitsh-lite --prefix=packages/cms-core)
+          # Built-in git subtree split (splitsh-lite v2.0.0 assets zijn upstream
+          # verwijderd; git subtree split doet hetzelfde voor onze kleine history).
+          SPLIT_SHA=$(git subtree split --prefix=packages/cms-core HEAD)
           echo "Split commit: $SPLIT_SHA"
 
-          # Push naar mirror
+          # Push naar mirror — main + tag
           git remote add mirror git@github.com:easeo-nl/cms-core.git
           git push mirror "$SPLIT_SHA:refs/heads/main" --force
           git push mirror "$SPLIT_SHA:refs/tags/$GITHUB_REF_NAME"
