@@ -68,6 +68,8 @@ jobs:
     name: Generate GitHub release notes
     needs: split-cms-core
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
