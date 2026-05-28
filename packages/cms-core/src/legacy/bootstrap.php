@@ -8,7 +8,6 @@ $legacyDir = __DIR__;
 $engines = [
     'rate-limiter.php',
     'cookie-consent.php',
-    'navigation.php',
     'structured-data.php',
     // header.php, footer.php, tracking-head.php, tracking-body.php worden
     // NIET hier geladen: zij produceren HTML-output en worden expliciet

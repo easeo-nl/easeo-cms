@@ -72,8 +72,8 @@ if (ContentRepository::siteValue('company.phone')) {
 echo Translator::translate('footer_links_heading');
 ?></h3>
                     <div class="flex flex-col space-y-1">
-                        <?php 
-echo render_footer_nav();
+                        <?php
+echo \Easeo\Cms\Navigation\Menu::renderFooterNav();
 ?>
                     </div>
                 </div>
