@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Setup Wizard (first-run)
  * 5 steps: company info, branding, pages, admin account, confirmation
@@ -96,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $siteData['company']['copyright_year'] = date('Y');
             ContentRepository::saveJson('site.json', $siteData);
             // audit loaded via autoload/bootstrap
-            audit_log('setup_voltooid', "Admin: {$naam} ({$email})", $naam);
+            AuditLogger::log('setup_voltooid', "Admin: {$naam} ({$email})", $naam);
             header('Location: /setup.php?step=5');
             exit;
         }

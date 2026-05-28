@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Media engine: upload, resize, thumbnail, CRUD
  * Uses media.json with structure: {files:[]}
@@ -81,7 +82,7 @@ function upload_media(array $file) : array
     if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
         return ['success' => false, 'error' => 'Kon bestand niet opslaan.'];
     }
-    audit_log('bestand_geupload', "Bestand: {$filename} ({$mimeType})");
+    AuditLogger::log('bestand_geupload', "Bestand: {$filename} ({$mimeType})");
     if (str_starts_with($mimeType, 'image/') && $mimeType !== 'image/svg+xml') {
         resize_image($uploadPath, MEDIA_MAX_WIDTH);
         create_thumbnail($uploadPath, $thumbPath, MEDIA_THUMB_WIDTH, MEDIA_THUMB_HEIGHT);
@@ -107,7 +108,7 @@ function delete_media(string $id) : bool
             }
             array_splice($media, $idx, 1);
             save_media($media);
-            audit_log('bestand_verwijderd', "Bestand: {$item['bestandsnaam']}");
+            AuditLogger::log('bestand_verwijderd', "Bestand: {$item['bestandsnaam']}");
             return true;
         }
     }

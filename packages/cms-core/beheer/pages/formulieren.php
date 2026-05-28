@@ -2,6 +2,7 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Form\FormEngine;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Form list in admin
  */
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_form'])) {
         foreach ($forms as $form) {
             if (($form['id'] ?? '') === $fid) {
                 $deleted = true;
-                audit_log('formulier_verwijderd', "Formulier: " . ($form['naam'] ?? $fid));
+                AuditLogger::log('formulier_verwijderd', "Formulier: " . ($form['naam'] ?? $fid));
                 continue;
             }
             $newForms[] = $form;

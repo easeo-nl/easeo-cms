@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Backup download & restore (admin only)
  */
@@ -36,7 +37,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'download') {
     header('Content-Length: ' . filesize($zipFile));
     readfile($zipFile);
     unlink($zipFile);
-    audit_log('backup_gedownload', $filename);
+    AuditLogger::log('backup_gedownload', $filename);
     exit;
 }
 // Handle restore
@@ -85,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_backup'])) {
                     }
                 }
                 $zip->close();
-                audit_log('backup_hersteld', $file['name']);
+                AuditLogger::log('backup_hersteld', $file['name']);
                 $_SESSION['flash_success'] = Translator::translate('success_backup_restored');
             }
         }

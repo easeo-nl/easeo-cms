@@ -2,6 +2,7 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Form\FormEngine;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Form builder/editor
  */
@@ -55,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_form'])) {
                 $forms[] = $newForm;
             }
             FormEngine::saveForms($forms);
-            audit_log('formulier_bewerkt', "Formulier: {$naam}");
+            AuditLogger::log('formulier_bewerkt', "Formulier: {$naam}");
             $_SESSION['flash_success'] = Translator::translate('success_form_saved');
             header('Location: /beheer/?tab=formulier-edit&id=' . urlencode($id));
             exit;

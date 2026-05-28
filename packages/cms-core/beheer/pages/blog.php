@@ -2,6 +2,7 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Blog\BlogEngine;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Blog post list in admin
  */
@@ -14,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_post'])) {
         $postId = $_POST['post_id'] ?? '';
         $post = BlogEngine::getPostById($postId);
         if ($post && BlogEngine::deletePost($postId)) {
-            audit_log('blog_verwijderd', "Post: {$post['titel']}");
+            AuditLogger::log('blog_verwijderd', "Post: {$post['titel']}");
             $_SESSION['flash_success'] = Translator::translate('success_post_deleted');
         }
     }

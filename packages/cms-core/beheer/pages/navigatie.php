@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Menu editor (main + footer)
  */
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_nav'])) {
         }
         $nav[$menuType] = $items;
         ContentRepository::saveJson('navigation.json', $nav);
-        audit_log('navigatie_bewerkt', "Menu: {$menuType}");
+        AuditLogger::log('navigatie_bewerkt', "Menu: {$menuType}");
         $_SESSION['flash_success'] = Translator::translate('success_navigation_saved');
     }
     header('Location: /beheer/?tab=navigatie&menu=' . urlencode($_POST['menu_type'] ?? 'main'));

@@ -1,13 +1,14 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Audit log viewer (admin only)
  */
 $page = max(1, (int) ($_GET['p'] ?? 1));
 $perPage = 50;
 $offset = ($page - 1) * $perPage;
-$entries = read_audit_log($perPage + 1, $offset);
+$entries = AuditLogger::read($perPage + 1, $offset);
 $hasMore = count($entries) > $perPage;
 if ($hasMore) {
     array_pop($entries);

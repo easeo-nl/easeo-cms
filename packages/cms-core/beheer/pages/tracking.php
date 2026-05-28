@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Tracking settings
  */
@@ -24,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_tracking'])) {
         }
         $siteData['tracking'] = $tracking_data;
         ContentRepository::saveJson('site.json', $siteData);
-        audit_log('tracking_bewerkt', 'Tracking instellingen bijgewerkt');
+        AuditLogger::log('tracking_bewerkt', 'Tracking instellingen bijgewerkt');
         $_SESSION['flash_success'] = Translator::translate('success_tracking_saved');
     }
     header('Location: /beheer/?tab=tracking');

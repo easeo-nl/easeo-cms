@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Redirect management
  */
@@ -24,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_redirects'])) {
             $newRedirects[] = ['van' => $van, 'naar' => $naar, 'type' => ($types[$i] ?? '301') === '302' ? '302' : '301'];
         }
         ContentRepository::saveJson('redirects.json', ['redirects' => $newRedirects]);
-        audit_log('redirects_bewerkt', count($newRedirects) . ' redirects');
+        AuditLogger::log('redirects_bewerkt', count($newRedirects) . ' redirects');
         $_SESSION['flash_success'] = Translator::translate('success_redirects_saved');
     }
     header('Location: /beheer/?tab=redirects');

@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — User management (admin only)
  */
@@ -29,11 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
                     $users[$idx]['rol'] = $rol;
                     if (!empty($password)) {
                         $users[$idx]['wachtwoord'] = password_hash($password, PASSWORD_DEFAULT);
-                        audit_log('wachtwoord_gewijzigd', "Gebruiker: {$naam}");
+                        AuditLogger::log('wachtwoord_gewijzigd', "Gebruiker: {$naam}");
                         session_regenerate_id(true);
                     }
                     save_users($users);
-                    audit_log('gebruiker_bewerkt', "Gebruiker: {$naam}");
+                    AuditLogger::log('gebruiker_bewerkt', "Gebruiker: {$naam}");
                     $_SESSION['flash_success'] = Translator::translate('success_user_updated');
                 }
             } else {
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
                 } else {
                     $users[] = ['email' => $email, 'naam' => $naam, 'rol' => $rol, 'wachtwoord' => password_hash($password, PASSWORD_DEFAULT), 'aangemaakt' => date('Y-m-d H:i:s')];
                     save_users($users);
-                    audit_log('gebruiker_aangemaakt', "Gebruiker: {$naam}");
+                    AuditLogger::log('gebruiker_aangemaakt', "Gebruiker: {$naam}");
                     $_SESSION['flash_success'] = Translator::translate('success_user_created');
                 }
             }
@@ -76,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_2fa'])) {
                 $users[$idx]['two_factor_enabled'] = !$current;
                 save_users($users);
                 $status = !$current ? 'ingeschakeld' : 'uitgeschakeld';
-                audit_log('2fa_' . $status, "Gebruiker: {$users[$idx]['naam']}");
+                AuditLogger::log('2fa_' . $status, "Gebruiker: {$users[$idx]['naam']}");
                 $_SESSION['flash_success'] = "2FA {$status} voor {$users[$idx]['naam']}.";
                 session_regenerate_id(true);
             }
@@ -99,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_user'])) {
                 $naam = $users[$idx]['naam'];
                 array_splice($users, $idx, 1);
                 save_users($users);
-                audit_log('gebruiker_verwijderd', "Gebruiker: {$naam}");
+                AuditLogger::log('gebruiker_verwijderd', "Gebruiker: {$naam}");
                 $_SESSION['flash_success'] = Translator::translate('success_user_deleted');
             }
         }

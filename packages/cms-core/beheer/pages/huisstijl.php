@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Brand editor (colors, fonts, logo)
  */
@@ -23,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_brand'])) {
         $siteData['brand']['font_display'] = sanitize_input($_POST['font_display'] ?? 'Outfit');
         $siteData['brand']['font_body'] = sanitize_input($_POST['font_body'] ?? 'Inter');
         ContentRepository::saveJson('site.json', $siteData);
-        audit_log('huisstijl_bewerkt', 'Huisstijl bijgewerkt');
+        AuditLogger::log('huisstijl_bewerkt', 'Huisstijl bijgewerkt');
         $_SESSION['flash_success'] = Translator::translate('success_branding_saved');
     }
     header('Location: /beheer/?tab=huisstijl');
