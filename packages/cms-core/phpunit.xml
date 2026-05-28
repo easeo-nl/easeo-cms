@@ -14,6 +14,7 @@
             <directory>tests/Blog</directory>
             <directory>tests/Mail</directory>
             <directory>tests/Media</directory>
+            <directory>tests/Navigation</directory>
             <file>tests/LegacyLoadTest.php</file>
             <file>tests/SmokeTest.php</file>
         </testsuite>

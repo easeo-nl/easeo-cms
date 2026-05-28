@@ -100,8 +100,8 @@ if (ContentRepository::siteValue('brand.logo')) {
 ?>
                 </a>
 
-                <?php 
-echo render_main_nav();
+                <?php
+echo \Easeo\Cms\Navigation\Menu::renderMainNav();
 ?>
 
                 <button id="mobile-menu-btn" class="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100" aria-label="<?php 
@@ -113,8 +113,8 @@ echo Translator::translate('aria_label_menu');
                 </button>
             </div>
         </div>
-        <?php 
-echo render_mobile_nav();
+        <?php
+echo \Easeo\Cms\Navigation\Menu::renderMobileNav();
 ?>
     </header>
 
