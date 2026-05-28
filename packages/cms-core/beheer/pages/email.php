@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Mail\Mailer;
 /**
  * EASEO CMS — E-mail (SMTP) instellingen
  */
@@ -20,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_test'])) {
             $companyName = ContentRepository::siteValue('company.name', 'EASEO CMS');
             $subject = 'Test e-mail — ' . $companyName;
             $body = '<h2>Test e-mail</h2>' . '<p>Dit is een test e-mail vanuit het EASEO CMS beheerpanel.</p>' . '<p>Als je dit leest, werkt de e-mailconfiguratie correct.</p>' . '<p><small>Verstuurd op ' . date('d-m-Y H:i:s') . '</small></p>';
-            $result = send_mail($testTo, $subject, $body);
+            $result = Mailer::send($testTo, $subject, $body);
             if ($result === true) {
                 $_SESSION['flash_success'] = Translator::translate('success_test_email_sent') . ' ' . $testTo;
                 audit_log('test_email_verstuurd', "Naar: {$testTo}");
@@ -51,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_smtp'])) {
         // Only update password if a new one was entered
         $newPassword = $_POST['smtp_password'] ?? '';
         if ($newPassword !== '') {
-            $newSmtp['password'] = encrypt_smtp_password($newPassword);
+            $newSmtp['password'] = Mailer::encryptSmtpPassword($newPassword);
         }
         $siteData['smtp'] = $newSmtp;
         file_put_contents(EASEO_DATA . '/site.json', json_encode($siteData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));

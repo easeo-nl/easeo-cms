@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Mail\Mailer;
 /**
  * EASEO CMS — Authentication, session management, CSRF, 2FA, account lockout
  */
@@ -189,7 +190,7 @@ function send_2fa_code(string $email, string $code) : bool
     $companyName = ContentRepository::siteValue('company.name', 'EASEO CMS');
     $subject = "Verificatiecode {$companyName} beheer";
     $body = "<h2>Verificatiecode</h2>" . "<p>Uw verificatiecode is: <strong style='font-size:24px;letter-spacing:4px'>{$code}</strong></p>" . "<p>Deze code is 10 minuten geldig.</p>" . "<p style='color:#888'>Als u niet heeft geprobeerd in te loggen, wijzig dan uw wachtwoord.</p>";
-    $result = send_mail($email, $subject, $body);
+    $result = Mailer::send($email, $subject, $body);
     return $result === true;
 }
 function is_2fa_enabled(array $user) : bool
