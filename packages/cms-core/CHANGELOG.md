@@ -7,6 +7,33 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Changed — Plan 01 Fase B complete (PSR-4 refactor)
+- **BREAKING** Procedurele `includes/` engines hernoemd naar PSR-4 classes onder namespace `Easeo\Cms\`:
+  - `content.php` → `Easeo\Cms\Content\ContentRepository`
+  - `lang.php` → `Easeo\Cms\Lang\Translator`
+  - `brand.php` → `Easeo\Cms\Branding\BrandConfig`
+  - `mailer.php` → `Easeo\Cms\Mail\Mailer` (crypto-key BC behouden)
+  - `form-engine.php` → `Easeo\Cms\Form\FormEngine`
+  - `blog-engine.php` → `Easeo\Cms\Blog\BlogEngine`
+  - `audit.php` → `Easeo\Cms\Audit\AuditLogger`
+  - `legal.php` → `Easeo\Cms\Legal\LegalPages`
+  - `media-engine.php` → `Easeo\Cms\Media\MediaLibrary`
+  - `navigation.php` → `Easeo\Cms\Navigation\Menu`
+  - `structured-data.php` → `Easeo\Cms\Seo\StructuredData`
+  - `rate-limiter.php` → `Easeo\Cms\Security\RateLimiter`
+- Template-files (header, footer, cookie-consent, tracking-head, tracking-body) verplaatst naar `packages/cms-core/templates/layout/`
+- Legacy-bridge verwijderd; constants verplaatst naar `Easeo\Cms\Constants` (call `Constants::bootstrap($appRoot)` vanuit entry-files)
+- `packages/cms-core/src/legacy/` directory bestaat niet meer; alleen `vendor-legacy/phpmailer/` blijft tijdelijk over tot een latere `composer require phpmailer/phpmailer`
+
+### Added
+- PHPUnit testsuites voor alle gemigreerde engines (130+ tests)
+- AST-based `tools/rename-engine.php` voor herhaalbare function→method conversies
+- `Easeo\Cms\Constants::bootstrap()` als enige bron van EASEO_APP/DATA/CORE/TEMPLATES/LANG/BEHEER/ROOT constants
+
+### Migration impact
+- Klant-sites die `easeo/cms-core` als dependency installeren moeten in elk entry-file `\Easeo\Cms\Constants::bootstrap(dirname(__DIR__))` aanroepen na `vendor/autoload.php` (skeleton-template B1 doet dit reeds correct)
+- Crypto-key voor SMTP-password (Mailer) is byte-identisch aan legacy om bestaande encrypted passwords decryptbaar te houden
+
 ## [0.1.0-rc2] - 2026-05-28
 
 ### Fixed
