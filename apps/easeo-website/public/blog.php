@@ -2,6 +2,7 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Blog\BlogEngine;
+use Easeo\Cms\Seo\StructuredData;
 /**
  * EASEO CMS — Blog overview with pagination and category filter
  */
@@ -18,7 +19,7 @@ $page = max(1, (int) ($_GET['pagina'] ?? 1));
 $result = BlogEngine::paginatePosts(array_values($posts), $page);
 $pageTitle = Translator::translate('blog_page_title') . ($filterCat ? ' — ' . $filterCat : '') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = Translator::translate('blog_meta_description');
-$structuredSchemas = [schema_breadcrumbs('Blog', 'blog')];
+$structuredSchemas = [StructuredData::schemaBreadcrumbs('Blog', 'blog')];
 require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
 
