@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Mail\Mailer;
 /**
  * EASEO CMS — Form POST handler
  */
@@ -79,7 +80,7 @@ if ($emailTo && filter_var($emailTo, FILTER_VALIDATE_EMAIL)) {
     $body .= '</table>';
     $body .= '<p style="color:#888;font-size:12px">' . Translator::translate('email_body_date_label') . ' ' . ContentRepository::escape($submission['datum']) . ' — ' . Translator::translate('email_body_ip_label') . ' ' . ContentRepository::escape($submission['ip']) . '</p>';
     $replyTo = $data['email'] ?? '';
-    send_mail($emailTo, $subject, $body, $replyTo);
+    Mailer::send($emailTo, $subject, $body, $replyTo);
 }
 // Regenerate CSRF token
 $_SESSION['csrf_frontend'] = bin2hex(random_bytes(32));
