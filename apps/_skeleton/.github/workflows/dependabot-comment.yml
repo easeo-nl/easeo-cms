@@ -1,0 +1,31 @@
+name: Dependabot review checklist
+
+on:
+  pull_request_target:
+    types: [opened]
+    branches: [main]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  comment:
+    if: github.actor == 'dependabot[bot]' && contains(github.event.pull_request.title, 'easeo/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post review-checklist for easeo/cms-core bump
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          gh pr comment "$PR_NUMBER" --body "## Review-checklist easeo/cms-core bump
+          \`$PR_TITLE\`
+
+          - [ ] Release notes gelezen (zie link in PR body)
+          - [ ] CHANGELOG-entry vermeldt eventuele schema impact?
+          - [ ] CI op deze PR is groen
+          - [ ] Is dit een minor of patch? (caret-pin blokkeert majors automatisch)
+          - [ ] Bij twijfel: ping @{{BACKSTOP_HANDLE}}
+
+          Merge = auto-deploy naar productie. Smoke-test post-deploy verifieert dat het GTM-script in de HTML staat en de homepage HTTP 200 geeft."
