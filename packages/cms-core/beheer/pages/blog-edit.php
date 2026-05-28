@@ -1,12 +1,13 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Blog\BlogEngine;
 /**
  * EASEO CMS — Blog post editor with media picker
  */
 require_once EASEO_ROOT . '/includes/blog-engine.php';
 $postId = $_GET['id'] ?? '';
-$post = $postId ? get_post_by_id($postId) : null;
+$post = $postId ? BlogEngine::getPostById($postId) : null;
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_post'])) {
     if (!verify_csrf()) {
@@ -17,12 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_post'])) {
             $_SESSION['flash_error'] = Translator::translate('error_title_required');
         } else {
             if ($post) {
-                update_post($post['id'], $data);
+                BlogEngine::updatePost($post['id'], $data);
                 audit_log('blog_bewerkt', "Post: {$data['titel']}");
                 $_SESSION['flash_success'] = Translator::translate('success_post_updated');
                 header('Location: /beheer/?tab=blog-edit&id=' . $post['id']);
             } else {
-                $newPost = create_post($data);
+                $newPost = BlogEngine::createPost($data);
                 audit_log('blog_aangemaakt', "Post: {$data['titel']}");
                 $_SESSION['flash_success'] = Translator::translate('success_post_created');
                 header('Location: /beheer/?tab=blog-edit&id=' . $newPost['id']);
@@ -33,9 +34,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_post'])) {
 }
 // Reload post after save
 if ($postId && !$post) {
-    $post = get_post_by_id($postId);
+    $post = BlogEngine::getPostById($postId);
 }
-$categories = get_categories();
+$categories = BlogEngine::getCategories();
 ?>
 
 <div class="flex items-center justify-between mb-6">

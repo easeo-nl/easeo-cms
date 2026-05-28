@@ -1,20 +1,21 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Blog\BlogEngine;
 /**
  * EASEO CMS — Blog overview with pagination and category filter
  */
 require_once __DIR__ . '/../vendor/autoload.php';
 ContentRepository::checkSetup();
-$posts = get_published_posts();
-$categories = get_categories();
+$posts = BlogEngine::getPublishedPosts();
+$categories = BlogEngine::getCategories();
 // Category filter
 $filterCat = $_GET['categorie'] ?? '';
 if ($filterCat) {
     $posts = array_filter($posts, fn($p) => strcasecmp($p['categorie'] ?? '', $filterCat) === 0);
 }
 $page = max(1, (int) ($_GET['pagina'] ?? 1));
-$result = paginate_posts(array_values($posts), $page);
+$result = BlogEngine::paginatePosts(array_values($posts), $page);
 $pageTitle = Translator::translate('blog_page_title') . ($filterCat ? ' — ' . $filterCat : '') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = Translator::translate('blog_meta_description');
 $structuredSchemas = [schema_breadcrumbs('Blog', 'blog')];
@@ -78,7 +79,7 @@ if (empty($result['posts'])) {
     foreach ($result['posts'] as $post) {
         ?>
                 <?php 
-        echo render_post_card($post);
+        echo BlogEngine::renderPostCard($post);
         ?>
             <?php 
     }
