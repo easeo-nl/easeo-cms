@@ -6,7 +6,6 @@
 require_once dirname(__DIR__, 4) . '/tools/legacy-bridge.php';
 $legacyDir = __DIR__;
 $engines = [
-    'rate-limiter.php',
     'cookie-consent.php',
     // header.php, footer.php, tracking-head.php, tracking-body.php worden
     // NIET hier geladen: zij produceren HTML-output en worden expliciet
