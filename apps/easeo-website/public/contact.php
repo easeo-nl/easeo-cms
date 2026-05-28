@@ -13,7 +13,7 @@ $pageTitle = ($contactData['meta_title'] ?? 'Contact') . ' | ' . ContentReposito
 $metaDescription = $contactData['meta_description'] ?? '';
 $formId = $contactData['formulier_id'] ?? 'contact';
 $structuredSchemas = [StructuredData::schemaBreadcrumbs('Contact', 'contact')];
-require_once EASEO_CORE . '/src/legacy/header.php';
+require_once EASEO_TEMPLATES . '/layout/header.php';
 ?>
 
 <section class="py-12">
@@ -130,4 +130,4 @@ if (!empty($contactData['kaart_embed'])) {
 </section>
 
 <?php 
-require_once EASEO_CORE . '/src/legacy/footer.php';
+require_once EASEO_TEMPLATES . '/layout/footer.php';

@@ -8,7 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 http_response_code(404);
 $pageTitle = Translator::translate('error_404_title') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = '';
-require_once EASEO_CORE . '/src/legacy/header.php';
+require_once EASEO_TEMPLATES . '/layout/header.php';
 ?>
 
 <section class="py-20">
@@ -27,4 +27,4 @@ echo Translator::translate('error_404_back_button');
 </section>
 
 <?php 
-require_once EASEO_CORE . '/src/legacy/footer.php';
+require_once EASEO_TEMPLATES . '/layout/footer.php';

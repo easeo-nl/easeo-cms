@@ -17,7 +17,7 @@ if (empty($pageData) || !is_array($pageData)) {
 }
 $pageTitle = ($pageData['meta_title'] ?? ucfirst($slug)) . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = $pageData['meta_description'] ?? '';
-require_once EASEO_CORE . '/src/legacy/header.php';
+require_once EASEO_TEMPLATES . '/layout/header.php';
 ?>
 
 <section class="py-12">
@@ -116,4 +116,4 @@ if (!empty($pageData['formulier_id'])) {
 </section>
 
 <?php 
-require_once EASEO_CORE . '/src/legacy/footer.php';
+require_once EASEO_TEMPLATES . '/layout/footer.php';

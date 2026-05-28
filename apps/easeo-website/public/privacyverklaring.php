@@ -8,7 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 ContentRepository::checkSetup();
 $pageTitle = 'Privacyverklaring | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = 'Privacyverklaring van ' . ContentRepository::siteValue('company.name', 'ons bedrijf');
-require_once EASEO_CORE . '/src/legacy/header.php';
+require_once EASEO_TEMPLATES . '/layout/header.php';
 ?>
 
 <section class="py-12">
@@ -22,4 +22,4 @@ echo nl2br(ContentRepository::escape(LegalPages::getText('privacy')));
 </section>
 
 <?php 
-require_once EASEO_CORE . '/src/legacy/footer.php';
+require_once EASEO_TEMPLATES . '/layout/footer.php';
