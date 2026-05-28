@@ -84,5 +84,22 @@ if ($emailTo && filter_var($emailTo, FILTER_VALIDATE_EMAIL)) {
 $_SESSION['csrf_frontend'] = bin2hex(random_bytes(32));
 // Success message
 $_SESSION['form_success'] = $form['bevestiging'] ?? t('default_confirmation_message');
+
+// Bewaar context voor dataLayer push op de vervolgpagina.
+// `form_type` pakt het eerste select-veld — in een generieke CMS is dat de
+// meest plausibele categorisering (bv. onderwerp, interesse, type project).
+$formType = '';
+foreach ($fields as $field) {
+    if (($field['type'] ?? '') === 'select') {
+        $formType = $data[$field['naam'] ?? ''] ?? '';
+        break;
+    }
+}
+$_SESSION['form_success_data'] = [
+    'form_id' => $formId,
+    'form_name' => $form['naam'] ?? $formId,
+    'form_type' => $formType,
+];
+
 header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
 exit;

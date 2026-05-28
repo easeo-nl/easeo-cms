@@ -36,10 +36,21 @@ function render_form(string $id, bool $showTitle = false) : string
     $buttonText = $form['knop_tekst'] ?? 'Versturen';
     $success = $_SESSION['form_success'] ?? '';
     $error = $_SESSION['form_error'] ?? '';
-    unset($_SESSION['form_success'], $_SESSION['form_error']);
+    $successData = $_SESSION['form_success_data'] ?? null;
+    unset($_SESSION['form_success'], $_SESSION['form_error'], $_SESSION['form_success_data']);
     $html = '';
     if ($success) {
         $html .= '<div class="p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg mb-4">' . ContentRepository::escape($success) . '</div>';
+
+        if ($successData && ($successData['form_id'] ?? '') === $id) {
+            $payload = json_encode([
+                'event' => 'formulier_verstuurd',
+                'form_id' => $successData['form_id'],
+                'form_name' => $successData['form_name'] ?? '',
+                'form_type' => $successData['form_type'] ?? '',
+            ], JSON_UNESCAPED_UNICODE);
+            $html .= '<script>window.dataLayer=window.dataLayer||[];window.dataLayer.push(' . $payload . ');</script>' . "\n";
+        }
     }
     if ($error) {
         $html .= '<div class="p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg mb-4">' . ContentRepository::escape($error) . '</div>';

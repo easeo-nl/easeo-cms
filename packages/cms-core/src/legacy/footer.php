@@ -144,6 +144,17 @@ include __DIR__ . '/cookie-consent.php';
         var menu = document.getElementById('mobile-menu');
         menu.classList.toggle('hidden');
     });
+
+    // Telefoon-klik tracking — delegated, zodat dynamisch toegevoegde tel: links ook getracked worden.
+    document.addEventListener('click', function (e) {
+        var link = e.target.closest && e.target.closest('a[href^="tel:"]');
+        if (!link) return;
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            'event': 'telefoon_klik',
+            'phone_number': link.getAttribute('href').replace(/^tel:/, '')
+        });
+    });
     </script>
 </body>
 </html>
