@@ -1,0 +1,14 @@
+{
+    "name": "easeo/skeleton-site",
+    "description": "Thin site-app skeleton for client sites — copy and customize per client",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "easeo/cms-core": "^0.1"
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
