@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Branding\BrandConfig;
 /**
  * EASEO CMS — Site header
  */
@@ -41,16 +42,16 @@ if (ContentRepository::siteValue('brand.favicon')) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="<?php 
-echo brand_google_fonts_url();
+echo BrandConfig::googleFontsUrl();
 ?>" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script><?php 
-echo brand_tailwind_config();
+echo BrandConfig::tailwindConfig();
 ?></script>
 
     <style><?php 
-echo brand_css_properties();
+echo BrandConfig::cssProperties();
 ?></style>
     <link rel="stylesheet" href="/css/custom.css">
 

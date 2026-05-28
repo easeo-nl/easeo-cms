@@ -3,34 +3,51 @@ namespace Easeo\Cms\Content;
 
 class ContentRepository
 {
+    /** @var array<string, array<mixed>> */
+    private static array $_cache = [];
+
+    private static function dataPath(): string
+    {
+        // getenv() can be overridden at runtime (useful in tests); fall back to constant.
+        $env = getenv('EASEO_DATA');
+        return ($env !== false && $env !== '') ? $env : EASEO_DATA;
+    }
+
     public static function loadJson(string $file) : array
     {
-        static $cache = [];
-        if (isset($cache[$file])) {
-            return $cache[$file];
+        if (isset(self::$_cache[$file])) {
+            return self::$_cache[$file];
         }
-        $path = EASEO_DATA . '/' . $file;
+        $path = self::dataPath() . '/' . $file;
         if (!file_exists($path)) {
             return [];
         }
         $data = json_decode(file_get_contents($path), true);
-        $cache[$file] = is_array($data) ? $data : [];
-        return $cache[$file];
+        self::$_cache[$file] = is_array($data) ? $data : [];
+        return self::$_cache[$file];
     }
+
     public static function saveJson(string $file, array $data) : bool
     {
-        $path = EASEO_DATA . '/' . $file;
+        $path = self::dataPath() . '/' . $file;
         $dir = dirname($path);
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
         return file_put_contents($path, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), LOCK_EX) !== false;
     }
+
     public static function invalidateJsonCache(string $file) : void
     {
-        static $cache = [];
-        // We can't unset the static in load_json from here, so we reload globals
+        unset(self::$_cache[$file]);
     }
+
+    /** Flush the entire in-process JSON cache (useful in tests). */
+    public static function resetCache(): void
+    {
+        self::$_cache = [];
+    }
+
     public static function siteValue(string $key, $default = '')
     {
         $site = self::loadJson('site.json');
@@ -44,6 +61,7 @@ class ContentRepository
         }
         return $value;
     }
+
     public static function pageContent(string $page, string $key = null, $default = '')
     {
         $content = self::loadJson('content.json');
@@ -55,6 +73,7 @@ class ContentRepository
         }
         return $content[$page][$key] ?? $default;
     }
+
     public static function escape(string $value = null) : string
     {
         if ($value === null) {
@@ -62,11 +81,13 @@ class ContentRepository
         }
         return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
     }
+
     public static function isSetupComplete() : bool
     {
         $setupFlag = self::siteValue('setup_complete', false);
         return $setupFlag === true || $setupFlag === 'true' || $setupFlag === 1;
     }
+
     public static function handleRedirects() : void
     {
         $data = self::loadJson('redirects.json');
@@ -91,6 +112,7 @@ class ContentRepository
             }
         }
     }
+
     public static function checkSetup() : void
     {
         $is_setup_page = strpos($_SERVER['SCRIPT_NAME'] ?? '', 'setup.php') !== false;
