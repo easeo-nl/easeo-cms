@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Form\FormEngine;
 /**
  * EASEO CMS — Dynamic page renderer
  * Renders content pages from content.json based on slug
@@ -105,7 +106,7 @@ if (!empty($pageData['formulier_id'])) {
     ?>
         <div class="mt-8">
             <?php 
-    echo render_form($pageData['formulier_id']);
+    echo FormEngine::render($pageData['formulier_id']);
     ?>
         </div>
         <?php 

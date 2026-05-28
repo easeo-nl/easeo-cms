@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Form\FormEngine;
 /**
  * EASEO CMS — Contact page with dynamic form
  */
@@ -33,7 +34,7 @@ if (!empty($contactData['intro_tekst'])) {
 ?>
 
                 <?php 
-echo render_form($formId);
+echo FormEngine::render($formId);
 ?>
             </div>
 

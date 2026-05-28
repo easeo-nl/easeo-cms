@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Form\FormEngine;
 /**
  * EASEO CMS — Dynamic page router
  * Renders pages from data/pages.json based on slug
@@ -86,7 +87,7 @@ if ($page['template'] === 'contact') {
     ?>
             <div class="mt-12">
                 <?php 
-    echo render_form($formId);
+    echo FormEngine::render($formId);
     ?>
             </div>
         <?php 

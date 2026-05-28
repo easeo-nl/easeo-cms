@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Form\FormEngine;
 /**
  * Template: Contact form section
  * Expects: $data array with titel, tekst, formulier_id
@@ -35,7 +36,7 @@ if ($titel) {
 
         <div class="bg-white rounded-xl shadow-sm p-8">
             <?php 
-echo render_form($formId);
+echo FormEngine::render($formId);
 ?>
         </div>
     </div>

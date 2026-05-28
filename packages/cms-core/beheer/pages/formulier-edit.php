@@ -1,12 +1,13 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Form\FormEngine;
 /**
  * EASEO CMS — Form builder/editor
  */
 require_once EASEO_ROOT . '/includes/form-engine.php';
 $formId = $_GET['id'] ?? '';
-$form = $formId ? get_form($formId) : null;
+$form = $formId ? FormEngine::getForm($formId) : null;
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_form'])) {
     if (!verify_csrf()) {
@@ -41,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_form'])) {
             }
             $newForm = ['id' => $id, 'naam' => $naam, 'velden' => $velden, 'email_naar' => $emailNaar, 'bevestiging' => $bevestiging, 'knop_tekst' => $knopTekst];
             // Update or add
-            $forms = get_forms();
+            $forms = FormEngine::getForms();
             $found = false;
             foreach ($forms as &$f) {
                 if ($f['id'] === $id) {
@@ -53,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_form'])) {
             if (!$found) {
                 $forms[] = $newForm;
             }
-            save_forms($forms);
+            FormEngine::saveForms($forms);
             audit_log('formulier_bewerkt', "Formulier: {$naam}");
             $_SESSION['flash_success'] = Translator::translate('success_form_saved');
             header('Location: /beheer/?tab=formulier-edit&id=' . urlencode($id));
@@ -61,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_form'])) {
         }
     }
 }
-$form = $formId ? get_form($formId) : null;
+$form = $formId ? FormEngine::getForm($formId) : null;
 ?>
 
 <div class="flex items-center justify-between mb-6">

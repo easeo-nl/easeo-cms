@@ -1,11 +1,12 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Form\FormEngine;
 /**
  * EASEO CMS — Form list in admin
  */
 require_once EASEO_ROOT . '/includes/form-engine.php';
-$forms = get_forms();
+$forms = FormEngine::getForms();
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_form'])) {
     if (!verify_csrf()) {
@@ -23,14 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_form'])) {
             $newForms[] = $form;
         }
         if ($deleted) {
-            save_forms($newForms);
+            FormEngine::saveForms($newForms);
             $_SESSION['flash_success'] = Translator::translate('success_form_deleted');
         }
     }
     header('Location: /beheer/?tab=formulieren');
     exit;
 }
-$forms = get_forms();
+$forms = FormEngine::getForms();
 ?>
 
 <div class="flex items-center justify-between mb-6">

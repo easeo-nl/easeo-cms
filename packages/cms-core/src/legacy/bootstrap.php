@@ -8,7 +8,6 @@ $legacyDir = __DIR__;
 $engines = [
     'audit.php',
     'rate-limiter.php',
-    'form-engine.php',
     'blog-engine.php',
     'legal.php',
     'cookie-consent.php',
