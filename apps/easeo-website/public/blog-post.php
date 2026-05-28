@@ -18,7 +18,7 @@ if (!$post || ($post['status'] ?? 'concept') !== 'gepubliceerd') {
 $pageTitle = ($post['meta_title'] ?: $post['titel']) . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = ($post['meta_description'] ?: $post['samenvatting']) ?: '';
 $structuredSchemas = [StructuredData::schemaArticle($post), StructuredData::schemaBreadcrumbs($post['titel'], 'blog/' . $post['slug'], [['name' => 'Blog', 'slug' => 'blog']])];
-require_once EASEO_CORE . '/src/legacy/header.php';
+require_once EASEO_TEMPLATES . '/layout/header.php';
 $dateISO = date('c', strtotime($post['datum']));
 ?>
 
@@ -119,4 +119,4 @@ echo Translator::translate('blog_post_back_link');
 </article>
 
 <?php 
-require_once EASEO_CORE . '/src/legacy/footer.php';
+require_once EASEO_TEMPLATES . '/layout/footer.php';

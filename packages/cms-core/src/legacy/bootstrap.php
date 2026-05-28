@@ -6,10 +6,9 @@
 require_once dirname(__DIR__, 4) . '/tools/legacy-bridge.php';
 $legacyDir = __DIR__;
 $engines = [
-    'cookie-consent.php',
-    // header.php, footer.php, tracking-head.php, tracking-body.php worden
-    // NIET hier geladen: zij produceren HTML-output en worden expliciet
-    // included op de juiste positie in elke entry-file.
+    // Alle Categorie-3 templates zijn verplaatst naar templates/layout/ (B15).
+    // Dit array is leeg; de foreach hieronder is een no-op.
+    // Wordt verwijderd in B16 (legacy-bridge cleanup).
 ];
 foreach ($engines as $engine) {
     $path = $legacyDir . '/' . $engine;

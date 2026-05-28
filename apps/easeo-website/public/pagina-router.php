@@ -51,7 +51,7 @@ if (!empty($page['parent'])) {
     }
 }
 $structuredSchemas = [StructuredData::schemaBreadcrumbs($page['title'], $page['slug'], $breadcrumbParents)];
-require_once EASEO_CORE . '/src/legacy/header.php';
+require_once EASEO_TEMPLATES . '/layout/header.php';
 ?>
 
 <section class="py-12">
@@ -98,4 +98,4 @@ if ($page['template'] === 'contact') {
 </section>
 
 <?php 
-require_once EASEO_CORE . '/src/legacy/footer.php';
+require_once EASEO_TEMPLATES . '/layout/footer.php';

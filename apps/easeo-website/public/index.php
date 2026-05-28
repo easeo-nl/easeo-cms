@@ -9,7 +9,7 @@ ContentRepository::checkSetup();
 $home = ContentRepository::pageContent('home');
 $pageTitle = ($home['meta_title'] ?? 'Home') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = $home['meta_description'] ?? '';
-require_once EASEO_CORE . '/src/legacy/header.php';
+require_once EASEO_TEMPLATES . '/layout/header.php';
 // Hero section via template
 $data = ['titel' => $home['hero_titel'] ?? 'Welkom', 'tekst' => $home['hero_tekst'] ?? '', 'afbeelding' => $home['hero_afbeelding'] ?? '', 'knop_tekst' => $home['hero_knop_tekst'] ?? '', 'knop_url' => $home['hero_knop_url'] ?? '/contact'];
 include __DIR__ . '/templates/hero.php';
@@ -29,4 +29,4 @@ include __DIR__ . '/templates/blog-latest.php';
 // CTA section
 $data = ['titel' => Translator::translate('homepage_cta_title'), 'tekst' => Translator::translate('homepage_cta_text'), 'knop_tekst' => Translator::translate('homepage_cta_button'), 'knop_url' => '/contact', 'achtergrond' => 'primary'];
 include __DIR__ . '/templates/cta-block.php';
-require_once EASEO_CORE . '/src/legacy/footer.php';
+require_once EASEO_TEMPLATES . '/layout/footer.php';

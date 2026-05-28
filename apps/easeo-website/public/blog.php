@@ -20,7 +20,7 @@ $result = BlogEngine::paginatePosts(array_values($posts), $page);
 $pageTitle = Translator::translate('blog_page_title') . ($filterCat ? ' — ' . $filterCat : '') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = Translator::translate('blog_meta_description');
 $structuredSchemas = [StructuredData::schemaBreadcrumbs('Blog', 'blog')];
-require_once EASEO_CORE . '/src/legacy/header.php';
+require_once EASEO_TEMPLATES . '/layout/header.php';
 ?>
 
 <section class="py-12">
@@ -147,4 +147,4 @@ if (empty($result['posts'])) {
 </section>
 
 <?php 
-require_once EASEO_CORE . '/src/legacy/footer.php';
+require_once EASEO_TEMPLATES . '/layout/footer.php';
