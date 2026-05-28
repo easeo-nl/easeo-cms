@@ -9,10 +9,7 @@
     "autoload": {
         "psr-4": {
             "Easeo\\Cms\\": "src/"
-        },
-        "files": [
-            "src/legacy/bootstrap.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {

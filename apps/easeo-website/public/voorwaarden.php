@@ -5,6 +5,7 @@ use Easeo\Cms\Legal\LegalPages;
  * EASEO CMS — Terms & conditions page
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 ContentRepository::checkSetup();
 $pageTitle = 'Algemene Voorwaarden | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = 'Algemene voorwaarden van ' . ContentRepository::siteValue('company.name', 'ons bedrijf');

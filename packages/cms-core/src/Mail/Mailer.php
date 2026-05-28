@@ -81,8 +81,8 @@ final class Mailer
     /**
      * Send via SMTP using PHPMailer.
      *
-     * PHPMailer remains in legacy/phpmailer/ (vendored library, intentionally not
-     * PSR-4 migrated). Required via relative path from src/Mail/ to src/legacy/.
+     * PHPMailer lives in vendor-legacy/phpmailer/ (vendored library, intentionally not
+     * PSR-4 migrated). Required via relative path from the package root.
      *
      * @param array<string,mixed> $smtp
      * @param array<string,mixed> $siteData
@@ -90,7 +90,7 @@ final class Mailer
      */
     private static function sendSmtp(string $to, string $subject, string $body, string $replyTo, array $smtp, array $siteData): bool|string
     {
-        require_once dirname(__DIR__) . '/legacy/phpmailer/load.php';
+        require_once dirname(__DIR__, 2) . '/vendor-legacy/phpmailer/load.php';
 
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 

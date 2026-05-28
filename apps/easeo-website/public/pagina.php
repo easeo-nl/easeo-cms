@@ -6,6 +6,7 @@ use Easeo\Cms\Form\FormEngine;
  * Renders content pages from content.json based on slug
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 ContentRepository::checkSetup();
 $slug = $_GET['slug'] ?? '';
 // Check if page exists in content

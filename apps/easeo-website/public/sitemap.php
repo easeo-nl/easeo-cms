@@ -5,6 +5,7 @@ use Easeo\Cms\Blog\BlogEngine;
  * EASEO CMS — Auto-generated XML sitemap
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 header('Content-Type: application/xml; charset=UTF-8');
 $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
 $pages = ContentRepository::loadJson('content.json');

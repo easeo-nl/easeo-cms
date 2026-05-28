@@ -5,6 +5,7 @@ use Easeo\Cms\Lang\Translator;
  * EASEO CMS — 404 Not Found page
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 http_response_code(404);
 $pageTitle = Translator::translate('error_404_title') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = '';

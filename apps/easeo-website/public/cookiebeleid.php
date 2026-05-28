@@ -5,6 +5,7 @@ use Easeo\Cms\Legal\LegalPages;
  * EASEO CMS — Cookie policy page
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 ContentRepository::checkSetup();
 $pageTitle = 'Cookiebeleid | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = 'Cookiebeleid van ' . ContentRepository::siteValue('company.name', 'ons bedrijf');

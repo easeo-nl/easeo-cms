@@ -7,6 +7,7 @@ use Easeo\Cms\Seo\StructuredData;
  * EASEO CMS — Contact page with dynamic form
  */
 require_once __DIR__ . '/../vendor/autoload.php';
+\Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
 ContentRepository::checkSetup();
 $contactData = ContentRepository::pageContent('contact');
 $pageTitle = ($contactData['meta_title'] ?? 'Contact') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
