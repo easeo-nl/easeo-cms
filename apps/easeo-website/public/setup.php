@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Setup Wizard (first-run)
  * 5 steps: company info, branding, pages, admin account, confirmation
@@ -29,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $siteData['company']['kvk'] = trim($_POST['kvk'] ?? '');
         $siteData['company']['btw'] = trim($_POST['btw'] ?? '');
         if (empty($siteData['company']['name'])) {
-            $errors[] = t('setup_error_company_name_required');
+            $errors[] = Translator::translate('setup_error_company_name_required');
         } elseif (empty($siteData['company']['email']) || !filter_var($siteData['company']['email'], FILTER_VALIDATE_EMAIL)) {
-            $errors[] = t('setup_error_email_required');
+            $errors[] = Translator::translate('setup_error_email_required');
         } else {
             ContentRepository::saveJson('site.json', $siteData);
             header('Location: /setup.php?step=2');
@@ -74,13 +75,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['wachtwoord'] ?? '';
         $password2 = $_POST['wachtwoord2'] ?? '';
         if (empty($naam)) {
-            $errors[] = t('setup_error_name_required');
+            $errors[] = Translator::translate('setup_error_name_required');
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = t('setup_error_email_required');
+            $errors[] = Translator::translate('setup_error_email_required');
         } elseif (strlen($password) < 8) {
-            $errors[] = t('setup_error_password_too_short');
+            $errors[] = Translator::translate('setup_error_password_too_short');
         } elseif ($password !== $password2) {
-            $errors[] = t('setup_error_passwords_mismatch');
+            $errors[] = Translator::translate('setup_error_passwords_mismatch');
         } else {
             $users = [['email' => $email, 'naam' => $naam, 'rol' => 'admin', 'wachtwoord' => password_hash($password, PASSWORD_DEFAULT), 'aangemaakt' => date('Y-m-d H:i:s')]];
             ContentRepository::saveJson('users.json', ['users' => $users]);
@@ -109,7 +110,7 @@ $siteData = ContentRepository::loadJson('site.json');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php 
-echo t('setup_page_title');
+echo Translator::translate('setup_page_title');
 ?></title>
     <meta name="robots" content="noindex, nofollow">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -174,10 +175,10 @@ if ($step === 1) {
     ?>
         <!-- Step 1: Company info -->
         <h1 class="text-2xl font-bold mb-2"><?php 
-    echo t('setup_step1_title');
+    echo Translator::translate('setup_step1_title');
     ?></h1>
         <p class="text-gray-500 mb-6"><?php 
-    echo t('setup_step1_subtitle');
+    echo Translator::translate('setup_step1_subtitle');
     ?></p>
 
         <form method="POST">
@@ -187,7 +188,7 @@ if ($step === 1) {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_company_name');
+    echo Translator::translate('setup_field_company_name');
     ?></label>
                     <input type="text" name="bedrijfsnaam" value="<?php 
     echo htmlspecialchars($siteData['company']['name'] ?? '');
@@ -195,17 +196,17 @@ if ($step === 1) {
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_tagline');
+    echo Translator::translate('setup_field_tagline');
     ?></label>
                     <input type="text" name="tagline" value="<?php 
     echo htmlspecialchars($siteData['company']['tagline'] ?? '');
     ?>" class="w-full border border-gray-300 rounded-lg p-2.5" placeholder="<?php 
-    echo t('setup_placeholder_tagline');
+    echo Translator::translate('setup_placeholder_tagline');
     ?>">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_email');
+    echo Translator::translate('setup_field_email');
     ?></label>
                     <input type="email" name="email" value="<?php 
     echo htmlspecialchars($siteData['company']['email'] ?? '');
@@ -213,7 +214,7 @@ if ($step === 1) {
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_phone');
+    echo Translator::translate('setup_field_phone');
     ?></label>
                     <input type="tel" name="telefoon" value="<?php 
     echo htmlspecialchars($siteData['company']['phone'] ?? '');
@@ -221,7 +222,7 @@ if ($step === 1) {
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_address');
+    echo Translator::translate('setup_field_address');
     ?></label>
                     <input type="text" name="adres" value="<?php 
     echo htmlspecialchars($siteData['company']['address'] ?? '');
@@ -229,7 +230,7 @@ if ($step === 1) {
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_postcode');
+    echo Translator::translate('setup_field_postcode');
     ?></label>
                     <input type="text" name="postcode" value="<?php 
     echo htmlspecialchars($siteData['company']['postcode'] ?? '');
@@ -237,7 +238,7 @@ if ($step === 1) {
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_city');
+    echo Translator::translate('setup_field_city');
     ?></label>
                     <input type="text" name="plaats" value="<?php 
     echo htmlspecialchars($siteData['company']['city'] ?? '');
@@ -245,7 +246,7 @@ if ($step === 1) {
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_kvk');
+    echo Translator::translate('setup_field_kvk');
     ?></label>
                     <input type="text" name="kvk" value="<?php 
     echo htmlspecialchars($siteData['company']['kvk'] ?? '');
@@ -253,7 +254,7 @@ if ($step === 1) {
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_btw');
+    echo Translator::translate('setup_field_btw');
     ?></label>
                     <input type="text" name="btw" value="<?php 
     echo htmlspecialchars($siteData['company']['btw'] ?? '');
@@ -263,7 +264,7 @@ if ($step === 1) {
 
             <div class="flex justify-end mt-6">
                 <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700"><?php 
-    echo t('setup_button_next');
+    echo Translator::translate('setup_button_next');
     ?></button>
             </div>
         </form>
@@ -273,10 +274,10 @@ if ($step === 1) {
     ?>
         <!-- Step 2: Branding -->
         <h1 class="text-2xl font-bold mb-2"><?php 
-    echo t('setup_step2_title');
+    echo Translator::translate('setup_step2_title');
     ?></h1>
         <p class="text-gray-500 mb-6"><?php 
-    echo t('setup_step2_subtitle');
+    echo Translator::translate('setup_step2_subtitle');
     ?></p>
 
         <form method="POST">
@@ -285,11 +286,11 @@ if ($step === 1) {
 
             <div class="mb-6">
                 <h3 class="font-medium mb-3"><?php 
-    echo t('setup_colors_heading');
+    echo Translator::translate('setup_colors_heading');
     ?></h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <?php 
-    $colorFields = ['color_primary' => [t('color_primary_label'), '#2563EB'], 'color_secondary' => [t('color_secondary_label'), '#EA580C'], 'color_dark' => [t('color_dark_label'), '#111827'], 'color_muted' => [t('color_muted_label'), '#9CA3AF']];
+    $colorFields = ['color_primary' => [Translator::translate('color_primary_label'), '#2563EB'], 'color_secondary' => [Translator::translate('color_secondary_label'), '#EA580C'], 'color_dark' => [Translator::translate('color_dark_label'), '#111827'], 'color_muted' => [Translator::translate('color_muted_label'), '#9CA3AF']];
     foreach ($colorFields as $key => [$label, $default]) {
         $val = $siteData['brand'][$key] ?? $default;
         ?>
@@ -316,7 +317,7 @@ if ($step === 1) {
 
             <div class="mb-6">
                 <h3 class="font-medium mb-3"><?php 
-    echo t('setup_fonts_heading');
+    echo Translator::translate('setup_fonts_heading');
     ?></h3>
                 <div class="grid grid-cols-2 gap-4">
                     <?php 
@@ -324,7 +325,7 @@ if ($step === 1) {
     ?>
                     <div>
                         <label class="block text-sm text-gray-600 mb-1"><?php 
-    echo t('setup_font_titles_label');
+    echo Translator::translate('setup_font_titles_label');
     ?></label>
                         <select name="font_display" class="w-full border border-gray-300 rounded-lg p-2.5">
                             <?php 
@@ -344,7 +345,7 @@ if ($step === 1) {
                     </div>
                     <div>
                         <label class="block text-sm text-gray-600 mb-1"><?php 
-    echo t('setup_font_body_label');
+    echo Translator::translate('setup_font_body_label');
     ?></label>
                         <select name="font_body" class="w-full border border-gray-300 rounded-lg p-2.5">
                             <?php 
@@ -367,10 +368,10 @@ if ($step === 1) {
 
             <div class="flex justify-between mt-6">
                 <a href="/setup.php?step=1" class="text-gray-500 hover:text-gray-700 py-2.5"><?php 
-    echo t('setup_button_previous');
+    echo Translator::translate('setup_button_previous');
     ?></a>
                 <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700"><?php 
-    echo t('setup_button_next');
+    echo Translator::translate('setup_button_next');
     ?></button>
             </div>
         </form>
@@ -380,10 +381,10 @@ if ($step === 1) {
     ?>
         <!-- Step 3: Pages -->
         <h1 class="text-2xl font-bold mb-2"><?php 
-    echo t('setup_step3_title');
+    echo Translator::translate('setup_step3_title');
     ?></h1>
         <p class="text-gray-500 mb-6"><?php 
-    echo t('setup_step3_subtitle');
+    echo Translator::translate('setup_step3_subtitle');
     ?></p>
 
         <?php 
@@ -396,7 +397,7 @@ if ($step === 1) {
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_hero_title');
+    echo Translator::translate('setup_field_hero_title');
     ?></label>
                     <input type="text" name="hero_titel" value="<?php 
     echo htmlspecialchars($contentData['home']['hero_titel'] ?? '');
@@ -404,7 +405,7 @@ if ($step === 1) {
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_hero_text');
+    echo Translator::translate('setup_field_hero_text');
     ?></label>
                     <textarea name="hero_tekst" rows="3" class="w-full border border-gray-300 rounded-lg p-2.5"><?php 
     echo htmlspecialchars($contentData['home']['hero_tekst'] ?? '');
@@ -412,7 +413,7 @@ if ($step === 1) {
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_about_text');
+    echo Translator::translate('setup_field_about_text');
     ?></label>
                     <textarea name="over_tekst" rows="4" class="w-full border border-gray-300 rounded-lg p-2.5"><?php 
     echo htmlspecialchars($contentData['over']['inhoud_tekst'] ?? '');
@@ -422,10 +423,10 @@ if ($step === 1) {
 
             <div class="flex justify-between mt-6">
                 <a href="/setup.php?step=2" class="text-gray-500 hover:text-gray-700 py-2.5"><?php 
-    echo t('setup_button_previous');
+    echo Translator::translate('setup_button_previous');
     ?></a>
                 <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700"><?php 
-    echo t('setup_button_next');
+    echo Translator::translate('setup_button_next');
     ?></button>
             </div>
         </form>
@@ -435,10 +436,10 @@ if ($step === 1) {
     ?>
         <!-- Step 4: Admin account -->
         <h1 class="text-2xl font-bold mb-2"><?php 
-    echo t('setup_step4_title');
+    echo Translator::translate('setup_step4_title');
     ?></h1>
         <p class="text-gray-500 mb-6"><?php 
-    echo t('setup_step4_subtitle');
+    echo Translator::translate('setup_step4_subtitle');
     ?></p>
 
         <form method="POST">
@@ -448,25 +449,25 @@ if ($step === 1) {
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_name');
+    echo Translator::translate('setup_field_name');
     ?></label>
                     <input type="text" name="naam" required class="w-full border border-gray-300 rounded-lg p-2.5" autofocus>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_email');
+    echo Translator::translate('setup_field_email');
     ?></label>
                     <input type="email" name="email" required class="w-full border border-gray-300 rounded-lg p-2.5">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_password');
+    echo Translator::translate('setup_field_password');
     ?></label>
                     <input type="password" name="wachtwoord" required minlength="8" class="w-full border border-gray-300 rounded-lg p-2.5">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1"><?php 
-    echo t('setup_field_password_confirm');
+    echo Translator::translate('setup_field_password_confirm');
     ?></label>
                     <input type="password" name="wachtwoord2" required minlength="8" class="w-full border border-gray-300 rounded-lg p-2.5">
                 </div>
@@ -474,10 +475,10 @@ if ($step === 1) {
 
             <div class="flex justify-between mt-6">
                 <a href="/setup.php?step=3" class="text-gray-500 hover:text-gray-700 py-2.5"><?php 
-    echo t('setup_button_previous');
+    echo Translator::translate('setup_button_previous');
     ?></a>
                 <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700"><?php 
-    echo t('setup_button_finish');
+    echo Translator::translate('setup_button_finish');
     ?></button>
             </div>
         </form>
@@ -491,18 +492,18 @@ if ($step === 1) {
                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
             </div>
             <h1 class="text-2xl font-bold mb-2"><?php 
-    echo t('setup_step5_title');
+    echo Translator::translate('setup_step5_title');
     ?></h1>
             <p class="text-gray-500 mb-8"><?php 
-    echo t('setup_step5_subtitle');
+    echo Translator::translate('setup_step5_subtitle');
     ?></p>
 
             <div class="flex justify-center gap-4">
                 <a href="/" class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"><?php 
-    echo t('setup_view_site_button');
+    echo Translator::translate('setup_view_site_button');
     ?></a>
                 <a href="/beheer/?tab=login" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium hover:bg-blue-700"><?php 
-    echo t('setup_go_to_admin_button');
+    echo Translator::translate('setup_go_to_admin_button');
     ?></a>
             </div>
         </div>

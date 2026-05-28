@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Homepage with template sections
  */
@@ -23,9 +24,9 @@ if (!empty($home['sectie2_titel'])) {
     include __DIR__ . '/templates/text-block.php';
 }
 // Latest blog posts
-$data = ['titel' => t('homepage_latest_posts_title'), 'tekst' => '', 'aantal' => 3];
+$data = ['titel' => Translator::translate('homepage_latest_posts_title'), 'tekst' => '', 'aantal' => 3];
 include __DIR__ . '/templates/blog-latest.php';
 // CTA section
-$data = ['titel' => t('homepage_cta_title'), 'tekst' => t('homepage_cta_text'), 'knop_tekst' => t('homepage_cta_button'), 'knop_url' => '/contact', 'achtergrond' => 'primary'];
+$data = ['titel' => Translator::translate('homepage_cta_title'), 'tekst' => Translator::translate('homepage_cta_text'), 'knop_tekst' => Translator::translate('homepage_cta_button'), 'knop_url' => '/contact', 'achtergrond' => 'primary'];
 include __DIR__ . '/templates/cta-block.php';
 require_once EASEO_CORE . '/src/legacy/footer.php';

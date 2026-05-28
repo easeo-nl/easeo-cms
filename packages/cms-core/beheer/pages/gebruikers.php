@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — User management (admin only)
  */
@@ -7,7 +8,7 @@ $users = get_users();
 // Handle create/edit user
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $email = strtolower(trim($_POST['email'] ?? ''));
         $naam = trim($_POST['naam'] ?? '');
@@ -15,9 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
         $password = $_POST['wachtwoord'] ?? '';
         $editIndex = $_POST['edit_index'] ?? '';
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['flash_error'] = t('error_invalid_email');
+            $_SESSION['flash_error'] = Translator::translate('error_invalid_email');
         } elseif (empty($naam)) {
-            $_SESSION['flash_error'] = t('error_name_required');
+            $_SESSION['flash_error'] = Translator::translate('error_name_required');
         } else {
             if ($editIndex !== '') {
                 // Edit existing
@@ -33,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
                     }
                     save_users($users);
                     audit_log('gebruiker_bewerkt', "Gebruiker: {$naam}");
-                    $_SESSION['flash_success'] = t('success_user_updated');
+                    $_SESSION['flash_success'] = Translator::translate('success_user_updated');
                 }
             } else {
                 // Check duplicate email
@@ -45,14 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
                     }
                 }
                 if ($exists) {
-                    $_SESSION['flash_error'] = t('error_email_in_use');
+                    $_SESSION['flash_error'] = Translator::translate('error_email_in_use');
                 } elseif (empty($password)) {
-                    $_SESSION['flash_error'] = t('error_password_required');
+                    $_SESSION['flash_error'] = Translator::translate('error_password_required');
                 } else {
                     $users[] = ['email' => $email, 'naam' => $naam, 'rol' => $rol, 'wachtwoord' => password_hash($password, PASSWORD_DEFAULT), 'aangemaakt' => date('Y-m-d H:i:s')];
                     save_users($users);
                     audit_log('gebruiker_aangemaakt', "Gebruiker: {$naam}");
-                    $_SESSION['flash_success'] = t('success_user_created');
+                    $_SESSION['flash_success'] = Translator::translate('success_user_created');
                 }
             }
         }
@@ -63,14 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_user'])) {
 // Handle 2FA toggle
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_2fa'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $idx = (int) ($_POST['toggle_index'] ?? -1);
         if (isset($users[$idx])) {
             $current = !empty($users[$idx]['two_factor_enabled']);
             $smtpEnabled = !empty(ContentRepository::siteValue('smtp.enabled'));
             if (!$current && !$smtpEnabled) {
-                $_SESSION['flash_error'] = t('error_2fa_requires_smtp');
+                $_SESSION['flash_error'] = Translator::translate('error_2fa_requires_smtp');
             } else {
                 $users[$idx]['two_factor_enabled'] = !$current;
                 save_users($users);
@@ -87,19 +88,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_2fa'])) {
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_user'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $idx = (int) ($_POST['delete_index'] ?? -1);
         if (isset($users[$idx])) {
             // Don't allow deleting yourself
             if (strcasecmp($users[$idx]['email'], current_user()['email']) === 0) {
-                $_SESSION['flash_error'] = t('error_cannot_delete_self');
+                $_SESSION['flash_error'] = Translator::translate('error_cannot_delete_self');
             } else {
                 $naam = $users[$idx]['naam'];
                 array_splice($users, $idx, 1);
                 save_users($users);
                 audit_log('gebruiker_verwijderd', "Gebruiker: {$naam}");
-                $_SESSION['flash_success'] = t('success_user_deleted');
+                $_SESSION['flash_success'] = Translator::translate('success_user_deleted');
             }
         }
     }
@@ -118,14 +119,14 @@ if (isset($_GET['edit']) && isset($users[(int) $_GET['edit']])) {
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-white"><?php 
-echo t('users_title');
+echo Translator::translate('users_title');
 ?></h1>
 </div>
 
 <!-- User form -->
 <div class="admin-card mb-6">
     <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo $editUser ? t('user_edit_heading') : t('user_new_heading');
+echo $editUser ? Translator::translate('user_edit_heading') : Translator::translate('user_new_heading');
 ?></h2>
     <form method="POST">
         <?php 
@@ -144,7 +145,7 @@ if ($editUser) {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_name');
+echo Translator::translate('field_label_name');
 ?></label>
                 <input type="text" name="naam" value="<?php 
 echo ContentRepository::escape($editUser['naam'] ?? '');
@@ -152,7 +153,7 @@ echo ContentRepository::escape($editUser['naam'] ?? '');
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_email_address');
+echo Translator::translate('field_label_email_address');
 ?></label>
                 <input type="email" name="email" value="<?php 
 echo ContentRepository::escape($editUser['email'] ?? '');
@@ -160,9 +161,9 @@ echo ContentRepository::escape($editUser['email'] ?? '');
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_password');
+echo Translator::translate('field_label_password');
 ?> <?php 
-echo $editUser ? t('hint_password_leave_blank') : '';
+echo $editUser ? Translator::translate('hint_password_leave_blank') : '';
 ?></label>
                 <input type="password" name="wachtwoord" <?php 
 echo $editUser ? '' : 'required';
@@ -170,20 +171,20 @@ echo $editUser ? '' : 'required';
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_role');
+echo Translator::translate('field_label_role');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_user_role');
+echo Translator::translate('tooltip_user_role');
 ?>">?</span></label>
                 <select name="rol" class="admin-input w-full">
                     <option value="admin" <?php 
 echo ($editUser['rol'] ?? '') === 'admin' ? 'selected' : '';
 ?>><?php 
-echo t('role_admin');
+echo Translator::translate('role_admin');
 ?></option>
                     <option value="redacteur" <?php 
 echo ($editUser['rol'] ?? 'redacteur') === 'redacteur' ? 'selected' : '';
 ?>><?php 
-echo t('role_editor');
+echo Translator::translate('role_editor');
 ?></option>
                 </select>
             </div>
@@ -192,14 +193,14 @@ echo t('role_editor');
         <div class="flex gap-2 mt-4">
             <button type="submit" name="save_user" class="btn-admin btn-admin-primary">
                 <?php 
-echo $editUser ? t('button_update') : t('button_create');
+echo $editUser ? Translator::translate('button_update') : Translator::translate('button_create');
 ?>
             </button>
             <?php 
 if ($editUser) {
     ?>
             <a href="/beheer/?tab=gebruikers" class="btn-admin btn-admin-outline"><?php 
-    echo t('button_cancel');
+    echo Translator::translate('button_cancel');
     ?></a>
             <?php 
 }
@@ -214,19 +215,19 @@ if ($editUser) {
         <thead>
             <tr>
                 <th><?php 
-echo t('field_label_name');
+echo Translator::translate('field_label_name');
 ?></th>
                 <th><?php 
-echo t('table_header_email');
+echo Translator::translate('table_header_email');
 ?></th>
                 <th><?php 
-echo t('table_header_role');
+echo Translator::translate('table_header_role');
 ?></th>
                 <th><?php 
-echo t('table_header_2fa');
+echo Translator::translate('table_header_2fa');
 ?></th>
                 <th><?php 
-echo t('table_header_created');
+echo Translator::translate('table_header_created');
 ?></th>
                 <th></th>
             </tr>
@@ -265,10 +266,10 @@ foreach ($users as $idx => $user) {
     echo $is2fa ? 'bg-green-900/50 text-green-400' : 'bg-gray-700 text-gray-400';
     ?>"
                             <?php 
-    echo !$canToggle ? 'disabled title="' . t('tooltip_2fa_smtp_required') . '"' : '';
+    echo !$canToggle ? 'disabled title="' . Translator::translate('tooltip_2fa_smtp_required') . '"' : '';
     ?>>
                             <?php 
-    echo $is2fa ? t('toggle_2fa_on') : t('toggle_2fa_off');
+    echo $is2fa ? Translator::translate('toggle_2fa_on') : Translator::translate('toggle_2fa_off');
     ?>
                         </button>
                     </form>
@@ -280,10 +281,10 @@ foreach ($users as $idx => $user) {
                     <a href="/beheer/?tab=gebruikers&edit=<?php 
     echo $idx;
     ?>" class="text-blue-400 hover:text-blue-300 text-sm mr-2"><?php 
-    echo t('action_edit');
+    echo Translator::translate('action_edit');
     ?></a>
                     <form method="POST" class="inline" onsubmit="return confirm('<?php 
-    echo t('confirm_delete_user');
+    echo Translator::translate('confirm_delete_user');
     ?>')">
                         <?php 
     echo csrf_field();
@@ -292,7 +293,7 @@ foreach ($users as $idx => $user) {
     echo $idx;
     ?>">
                         <button type="submit" name="delete_user" class="text-red-400 hover:text-red-300 text-sm"><?php 
-    echo t('action_delete');
+    echo Translator::translate('action_delete');
     ?></button>
                     </form>
                 </td>

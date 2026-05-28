@@ -1,12 +1,13 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Tracking settings
  */
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_tracking'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $siteData = ContentRepository::loadJson('site.json');
         // Sanitize tracking IDs: only alphanumeric + hyphens + underscores
@@ -24,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_tracking'])) {
         $siteData['tracking'] = $tracking_data;
         ContentRepository::saveJson('site.json', $siteData);
         audit_log('tracking_bewerkt', 'Tracking instellingen bijgewerkt');
-        $_SESSION['flash_success'] = t('success_tracking_saved');
+        $_SESSION['flash_success'] = Translator::translate('success_tracking_saved');
     }
     header('Location: /beheer/?tab=tracking');
     exit;
@@ -36,7 +37,7 @@ if (!is_array($tracking)) {
 ?>
 
 <h1 class="text-2xl font-bold text-white mb-6"><?php 
-echo t('tracking_title');
+echo Translator::translate('tracking_title');
 ?></h1>
 
 <form method="POST" class="admin-card">
@@ -47,29 +48,29 @@ echo csrf_field();
     <div class="space-y-6">
         <div>
             <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('tracking_gtm_heading');
+echo Translator::translate('tracking_gtm_heading');
 ?></h2>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('tracking_gtm_id_label');
+echo Translator::translate('tracking_gtm_id_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_gtm_id');
+echo Translator::translate('tooltip_gtm_id');
 ?>">?</span></label>
             <input type="text" name="gtm_id" value="<?php 
 echo ContentRepository::escape($tracking['gtm_id'] ?? '');
 ?>" class="admin-input w-full max-w-md" placeholder="GTM-XXXXXXX">
             <p class="text-xs text-gray-500 mt-1"><?php 
-echo t('tracking_gtm_hint');
+echo Translator::translate('tracking_gtm_hint');
 ?></p>
         </div>
 
         <div>
             <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('tracking_ga4_heading');
+echo Translator::translate('tracking_ga4_heading');
 ?></h2>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('tracking_ga4_id_label');
+echo Translator::translate('tracking_ga4_id_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_ga4_id');
+echo Translator::translate('tooltip_ga4_id');
 ?>">?</span></label>
             <input type="text" name="google_analytics_id" value="<?php 
 echo ContentRepository::escape($tracking['google_analytics_id'] ?? '');
@@ -78,12 +79,12 @@ echo ContentRepository::escape($tracking['google_analytics_id'] ?? '');
 
         <div>
             <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('tracking_gsc_heading');
+echo Translator::translate('tracking_gsc_heading');
 ?></h2>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('tracking_gsc_code_label');
+echo Translator::translate('tracking_gsc_code_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_gsc_code');
+echo Translator::translate('tooltip_gsc_code');
 ?>">?</span></label>
             <input type="text" name="google_search_console" value="<?php 
 echo ContentRepository::escape($tracking['google_search_console'] ?? '');
@@ -92,14 +93,14 @@ echo ContentRepository::escape($tracking['google_search_console'] ?? '');
 
         <div>
             <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('tracking_gads_heading');
+echo Translator::translate('tracking_gads_heading');
 ?></h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('tracking_gads_conversion_id_label');
+echo Translator::translate('tracking_gads_conversion_id_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_gads_conversion_id');
+echo Translator::translate('tooltip_gads_conversion_id');
 ?>">?</span></label>
                     <input type="text" name="google_ads_conversion_id" value="<?php 
 echo ContentRepository::escape($tracking['google_ads_conversion_id'] ?? '');
@@ -107,7 +108,7 @@ echo ContentRepository::escape($tracking['google_ads_conversion_id'] ?? '');
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('tracking_gads_conversion_label_label');
+echo Translator::translate('tracking_gads_conversion_label_label');
 ?></label>
                     <input type="text" name="google_ads_conversion_label" value="<?php 
 echo ContentRepository::escape($tracking['google_ads_conversion_label'] ?? '');
@@ -118,12 +119,12 @@ echo ContentRepository::escape($tracking['google_ads_conversion_label'] ?? '');
 
         <div>
             <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('tracking_fb_heading');
+echo Translator::translate('tracking_fb_heading');
 ?></h2>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('tracking_fb_pixel_id_label');
+echo Translator::translate('tracking_fb_pixel_id_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_fb_pixel_id');
+echo Translator::translate('tooltip_fb_pixel_id');
 ?>">?</span></label>
             <input type="text" name="facebook_pixel_id" value="<?php 
 echo ContentRepository::escape($tracking['facebook_pixel_id'] ?? '');
@@ -132,19 +133,19 @@ echo ContentRepository::escape($tracking['facebook_pixel_id'] ?? '');
 
         <div>
             <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('tracking_custom_code_heading');
+echo Translator::translate('tracking_custom_code_heading');
 ?> <?php 
 if (!is_admin()) {
     ?><span class="text-sm text-gray-500"><?php 
-    echo t('tracking_admin_only');
+    echo Translator::translate('tracking_admin_only');
     ?></span><?php 
 }
 ?></h2>
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('tracking_custom_head_label');
+echo Translator::translate('tracking_custom_head_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_custom_head');
+echo Translator::translate('tooltip_custom_head');
 ?>">?</span></label>
                 <textarea name="custom_head_code" rows="4" class="admin-input w-full font-mono text-sm" <?php 
 echo !is_admin() ? 'disabled' : '';
@@ -154,9 +155,9 @@ echo ContentRepository::escape($tracking['custom_head_code'] ?? '');
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('tracking_custom_body_label');
+echo Translator::translate('tracking_custom_body_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_custom_body');
+echo Translator::translate('tooltip_custom_body');
 ?>">?</span></label>
                 <textarea name="custom_body_code" rows="4" class="admin-input w-full font-mono text-sm" <?php 
 echo !is_admin() ? 'disabled' : '';
@@ -169,7 +170,7 @@ echo ContentRepository::escape($tracking['custom_body_code'] ?? '');
 
     <div class="flex justify-end pt-6 border-t border-gray-700 mt-6">
         <button type="submit" name="save_tracking" class="btn-admin btn-admin-primary"><?php 
-echo t('button_save');
+echo Translator::translate('button_save');
 ?></button>
     </div>
 </form>

@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Redirect management
  */
@@ -8,7 +9,7 @@ $redirects = $redirectData['redirects'] ?? [];
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_redirects'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $vans = $_POST['van'] ?? [];
         $naars = $_POST['naar'] ?? [];
@@ -24,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_redirects'])) {
         }
         ContentRepository::saveJson('redirects.json', ['redirects' => $newRedirects]);
         audit_log('redirects_bewerkt', count($newRedirects) . ' redirects');
-        $_SESSION['flash_success'] = t('success_redirects_saved');
+        $_SESSION['flash_success'] = Translator::translate('success_redirects_saved');
     }
     header('Location: /beheer/?tab=redirects');
     exit;
@@ -34,19 +35,19 @@ $redirects = $redirectData['redirects'] ?? [];
 ?>
 
 <h1 class="text-2xl font-bold text-white mb-6"><?php 
-echo t('redirects_title');
+echo Translator::translate('redirects_title');
 ?></h1>
 
 <p class="text-sm text-gray-400 mb-4">
     <strong><?php 
-echo t('redirect_from_label');
+echo Translator::translate('redirect_from_label');
 ?></strong> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_redirect_from');
+echo Translator::translate('tooltip_redirect_from');
 ?>">?</span> &rarr;
     <strong><?php 
-echo t('redirect_to_label');
+echo Translator::translate('redirect_to_label');
 ?></strong> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_redirect_to');
+echo Translator::translate('tooltip_redirect_to');
 ?>">?</span>
 </p>
 
@@ -81,12 +82,12 @@ foreach ($redirects as $r) {
                     <option value="301" <?php 
     echo ($r['type'] ?? '') === '301' ? 'selected' : '';
     ?>><?php 
-    echo t('redirect_type_301');
+    echo Translator::translate('redirect_type_301');
     ?></option>
                     <option value="302" <?php 
     echo ($r['type'] ?? '') === '302' ? 'selected' : '';
     ?>><?php 
-    echo t('redirect_type_302');
+    echo Translator::translate('redirect_type_302');
     ?></option>
                 </select>
             </div>
@@ -101,20 +102,20 @@ foreach ($redirects as $r) {
 
     <div class="flex items-center gap-3 mt-4">
         <button type="button" onclick="addRedirect()" class="btn-admin btn-admin-outline text-sm"><?php 
-echo t('button_add_redirect');
+echo Translator::translate('button_add_redirect');
 ?></button>
         <button type="submit" name="save_redirects" class="btn-admin btn-admin-primary"><?php 
-echo t('button_save');
+echo Translator::translate('button_save');
 ?></button>
     </div>
 </form>
 
 <div class="admin-card mt-6">
     <h3 class="text-md font-semibold text-white mb-2"><?php 
-echo t('redirect_info_heading');
+echo Translator::translate('redirect_info_heading');
 ?></h3>
     <p class="text-sm text-gray-400"><?php 
-echo t('redirect_info_text');
+echo Translator::translate('redirect_info_text');
 ?></p>
 </div>
 
@@ -127,9 +128,9 @@ function addRedirect() {
         '<div class="col-span-1 text-center text-gray-500">&rarr;</div>' +
         '<div class="col-span-4"><input type="text" name="naar[]" class="admin-input w-full" placeholder="/nieuw-pad"></div>' +
         '<div class="col-span-2"><select name="type[]" class="admin-input w-full"><option value="301"><?php 
-echo t('redirect_type_301');
+echo Translator::translate('redirect_type_301');
 ?></option><option value="302"><?php 
-echo t('redirect_type_302');
+echo Translator::translate('redirect_type_302');
 ?></option></select></div>' +
         '<div class="col-span-1"><button type="button" onclick="this.closest(\'.redirect-row\').remove()" class="text-red-400 hover:text-red-300">&times;</button></div>';
     container.appendChild(div);

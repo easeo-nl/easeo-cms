@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Form POST handler
  */
@@ -12,18 +13,18 @@ $formId = $_POST['form_id'] ?? '';
 $form = get_form($formId);
 if (!$form) {
     http_response_code(400);
-    exit(t('error_form_not_found'));
+    exit(Translator::translate('error_form_not_found'));
 }
 // CSRF check
 if (!verify_csrf_frontend()) {
-    $_SESSION['form_error'] = t('error_security_csrf');
+    $_SESSION['form_error'] = Translator::translate('error_security_csrf');
     header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
     exit;
 }
 // Rate limiting
 $limiter = new RateLimiter(10, 300);
 if ($limiter->isLimited()) {
-    $_SESSION['form_error'] = t('error_too_many_requests');
+    $_SESSION['form_error'] = Translator::translate('error_too_many_requests');
     header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
     exit;
 }
@@ -41,12 +42,12 @@ foreach ($fields as $field) {
     $name = $field['naam'] ?? '';
     $value = trim($_POST[$name] ?? '');
     if (!empty($field['verplicht']) && $value === '') {
-        $errors[] = t('error_field_required', ['field' => $field['label'] ?? $name]);
+        $errors[] = Translator::translate('error_field_required', ['field' => $field['label'] ?? $name]);
     }
     // Basic type validation
     if ($value !== '' && ($field['type'] ?? 'text') === 'email') {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = t('error_invalid_email');
+            $errors[] = Translator::translate('error_invalid_email');
         }
     }
     $data[$name] = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
@@ -68,23 +69,22 @@ audit_log('formulier_verzonden', "Formulier: {$form['naam']}", 'bezoeker');
 // Send email notification
 $emailTo = $form['email_naar'] ?? ContentRepository::siteValue('company.email');
 if ($emailTo && filter_var($emailTo, FILTER_VALIDATE_EMAIL)) {
-    $subject = t('email_subject_new_submission', ['form' => $form['naam'] ?? 'formulier']) . ' — ' . ContentRepository::siteValue('company.name', 'EASEO');
-    $body = '<h2>' . t('email_body_heading') . '</h2>';
+    $subject = Translator::translate('email_subject_new_submission', ['form' => $form['naam'] ?? 'formulier']) . ' — ' . ContentRepository::siteValue('company.name', 'EASEO');
+    $body = '<h2>' . Translator::translate('email_body_heading') . '</h2>';
     $body .= '<table style="border-collapse:collapse;width:100%">';
     foreach ($data as $key => $value) {
         $body .= '<tr><td style="padding:6px 12px;border:1px solid #ddd;font-weight:bold">' . ContentRepository::escape(ucfirst($key)) . '</td>';
         $body .= '<td style="padding:6px 12px;border:1px solid #ddd">' . ContentRepository::escape($value) . '</td></tr>';
     }
     $body .= '</table>';
-    $body .= '<p style="color:#888;font-size:12px">' . t('email_body_date_label') . ' ' . ContentRepository::escape($submission['datum']) . ' — ' . t('email_body_ip_label') . ' ' . ContentRepository::escape($submission['ip']) . '</p>';
+    $body .= '<p style="color:#888;font-size:12px">' . Translator::translate('email_body_date_label') . ' ' . ContentRepository::escape($submission['datum']) . ' — ' . Translator::translate('email_body_ip_label') . ' ' . ContentRepository::escape($submission['ip']) . '</p>';
     $replyTo = $data['email'] ?? '';
     send_mail($emailTo, $subject, $body, $replyTo);
 }
 // Regenerate CSRF token
 $_SESSION['csrf_frontend'] = bin2hex(random_bytes(32));
 // Success message
-$_SESSION['form_success'] = $form['bevestiging'] ?? t('default_confirmation_message');
-
+$_SESSION['form_success'] = $form['bevestiging'] ?? Translator::translate('default_confirmation_message');
 // Bewaar context voor dataLayer push op de vervolgpagina.
 // `form_type` pakt het eerste select-veld — in een generieke CMS is dat de
 // meest plausibele categorisering (bv. onderwerp, interesse, type project).
@@ -95,11 +95,6 @@ foreach ($fields as $field) {
         break;
     }
 }
-$_SESSION['form_success_data'] = [
-    'form_id' => $formId,
-    'form_name' => $form['naam'] ?? $formId,
-    'form_type' => $formType,
-];
-
+$_SESSION['form_success_data'] = ['form_id' => $formId, 'form_name' => $form['naam'] ?? $formId, 'form_type' => $formType];
 header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
 exit;

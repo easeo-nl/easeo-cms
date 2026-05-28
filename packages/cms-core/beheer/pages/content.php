@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Page content editor with auto field config
  */
@@ -8,7 +9,7 @@ $currentPage = $_GET['pagina'] ?? array_key_first($pages) ?? 'home';
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $pageName = $_POST['page_name'] ?? '';
         if (isset($pages[$pageName])) {
@@ -26,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
             // Reload
             $content = $pages;
             audit_log('content_bewerkt', "Pagina: {$pageName}");
-            $_SESSION['flash_success'] = t('success_content_saved');
+            $_SESSION['flash_success'] = Translator::translate('success_content_saved');
         }
     }
     header('Location: /beheer/?tab=content&pagina=' . urlencode($currentPage));
@@ -35,17 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
 // Handle add new page
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_page'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $newSlug = preg_replace('/[^a-z0-9-]/', '', strtolower(trim($_POST['new_page_slug'] ?? '')));
         if ($newSlug && !isset($pages[$newSlug])) {
             $pages[$newSlug] = ['meta_title' => ucfirst($newSlug), 'meta_description' => '', 'titel' => ucfirst($newSlug), 'intro_tekst' => '', 'inhoud_tekst' => '', 'afbeelding' => ''];
             ContentRepository::saveJson('content.json', $pages);
             audit_log('pagina_toegevoegd', "Pagina: {$newSlug}");
-            $_SESSION['flash_success'] = t('success_page_added');
+            $_SESSION['flash_success'] = Translator::translate('success_page_added');
             $currentPage = $newSlug;
         } else {
-            $_SESSION['flash_error'] = t('error_invalid_slug_or_exists');
+            $_SESSION['flash_error'] = Translator::translate('error_invalid_slug_or_exists');
         }
     }
     header('Location: /beheer/?tab=content&pagina=' . urlencode($currentPage));
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_page'])) {
 // Handle delete page
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $delPage = $_POST['page_name'] ?? '';
         $protected = ['home', 'over', 'contact'];
@@ -62,10 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
             unset($pages[$delPage]);
             ContentRepository::saveJson('content.json', $pages);
             audit_log('pagina_verwijderd', "Pagina: {$delPage}");
-            $_SESSION['flash_success'] = t('success_page_deleted');
+            $_SESSION['flash_success'] = Translator::translate('success_page_deleted');
             $currentPage = 'home';
         } else {
-            $_SESSION['flash_error'] = t('error_page_cannot_delete');
+            $_SESSION['flash_error'] = Translator::translate('error_page_cannot_delete');
         }
     }
     header('Location: /beheer/?tab=content&pagina=' . urlencode($currentPage));
@@ -74,14 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
 // Handle add field
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_field'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $pageName = $_POST['page_name'] ?? '';
         $fieldKey = preg_replace('/[^a-z0-9_]/', '', strtolower(trim($_POST['new_field_key'] ?? '')));
         if ($pageName && $fieldKey && isset($pages[$pageName]) && !isset($pages[$pageName][$fieldKey])) {
             $pages[$pageName][$fieldKey] = '';
             ContentRepository::saveJson('content.json', $pages);
-            $_SESSION['flash_success'] = t('success_field_added');
+            $_SESSION['flash_success'] = Translator::translate('success_field_added');
         }
     }
     header('Location: /beheer/?tab=content&pagina=' . urlencode($currentPage));
@@ -94,7 +95,7 @@ $pageData = $pages[$currentPage] ?? [];
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-white"><?php 
-echo t('content_edit_title');
+echo Translator::translate('content_edit_title');
 ?></h1>
 </div>
 
@@ -123,10 +124,10 @@ foreach (array_keys($pages) as $slug) {
 echo csrf_field();
 ?>
         <input type="text" name="new_page_slug" placeholder="<?php 
-echo t('placeholder_new_page_slug');
+echo Translator::translate('placeholder_new_page_slug');
 ?>" class="admin-input text-sm py-1 w-36">
         <button type="submit" name="add_page" class="btn-admin-sm"><?php 
-echo t('button_add_page');
+echo Translator::translate('button_add_page');
 ?></button>
     </form>
 </div>
@@ -152,10 +153,10 @@ if ($pageData) {
         ?>
         <button type="submit" name="delete_page" class="btn-admin btn-admin-danger text-sm"
                 onclick="return confirm('<?php 
-        echo t('confirm_delete_page');
+        echo Translator::translate('confirm_delete_page');
         ?>')">
             <?php 
-        echo t('button_delete');
+        echo Translator::translate('button_delete');
         ?>
         </button>
         <?php 
@@ -174,20 +175,20 @@ if ($pageData) {
     <div class="border-t border-gray-700 pt-4 mt-4 mb-4">
         <div class="flex items-center gap-2">
             <input type="text" name="new_field_key" placeholder="<?php 
-    echo t('placeholder_new_field_key');
+    echo Translator::translate('placeholder_new_field_key');
     ?>" class="admin-input text-sm py-1 w-48">
             <button type="submit" name="add_field" class="btn-admin-sm text-xs"><?php 
-    echo t('button_add_field');
+    echo Translator::translate('button_add_field');
     ?></button>
         </div>
         <p class="text-xs text-gray-500 mt-1"><?php 
-    echo t('hint_field_naming');
+    echo Translator::translate('hint_field_naming');
     ?></p>
     </div>
 
     <div class="flex justify-end pt-4 border-t border-gray-700">
         <button type="submit" name="save_content" class="btn-admin btn-admin-primary"><?php 
-    echo t('button_save');
+    echo Translator::translate('button_save');
     ?></button>
     </div>
 </form>
@@ -196,7 +197,7 @@ if ($pageData) {
     ?>
 <div class="admin-card">
     <p class="text-gray-400"><?php 
-    echo t('error_page_not_found');
+    echo Translator::translate('error_page_not_found');
     ?></p>
 </div>
 <?php 

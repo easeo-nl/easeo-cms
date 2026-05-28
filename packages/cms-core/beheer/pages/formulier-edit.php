@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Form builder/editor
  */
@@ -9,7 +10,7 @@ $form = $formId ? get_form($formId) : null;
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_form'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $id = $_POST['form_id_key'] ?? '';
         $naam = trim($_POST['form_naam'] ?? '');
@@ -17,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_form'])) {
         $bevestiging = trim($_POST['bevestiging'] ?? '');
         $knopTekst = trim($_POST['knop_tekst'] ?? 'Versturen');
         if (empty($naam)) {
-            $_SESSION['flash_error'] = t('error_name_required');
+            $_SESSION['flash_error'] = Translator::translate('error_name_required');
         } else {
             if (!$id) {
                 $id = preg_replace('/[^a-z0-9-]/', '', strtolower($naam));
@@ -54,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_form'])) {
             }
             save_forms($forms);
             audit_log('formulier_bewerkt', "Formulier: {$naam}");
-            $_SESSION['flash_success'] = t('success_form_saved');
+            $_SESSION['flash_success'] = Translator::translate('success_form_saved');
             header('Location: /beheer/?tab=formulier-edit&id=' . urlencode($id));
             exit;
         }
@@ -65,10 +66,10 @@ $form = $formId ? get_form($formId) : null;
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-white"><?php 
-echo $form ? t('form_edit_title') : t('form_new_title');
+echo $form ? Translator::translate('form_edit_title') : Translator::translate('form_new_title');
 ?></h1>
     <a href="/beheer/?tab=formulieren" class="btn-admin btn-admin-outline text-sm">&larr; <?php 
-echo t('button_back');
+echo Translator::translate('button_back');
 ?></a>
 </div>
 
@@ -90,9 +91,9 @@ if ($formId) {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_form_name');
+echo Translator::translate('field_label_form_name');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_form_name');
+echo Translator::translate('tooltip_form_name');
 ?>">?</span></label>
                 <input type="text" name="form_naam" value="<?php 
 echo ContentRepository::escape($form['naam'] ?? '');
@@ -100,29 +101,29 @@ echo ContentRepository::escape($form['naam'] ?? '');
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_email_notification_to');
+echo Translator::translate('field_label_email_notification_to');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_form_email_to');
+echo Translator::translate('tooltip_form_email_to');
 ?>">?</span></label>
                 <input type="email" name="email_naar" value="<?php 
 echo ContentRepository::escape($form['email_naar'] ?? '');
 ?>" class="admin-input w-full" placeholder="<?php 
-echo t('placeholder_form_email_empty');
+echo Translator::translate('placeholder_form_email_empty');
 ?>">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_confirmation_message');
+echo Translator::translate('field_label_confirmation_message');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_form_confirmation');
+echo Translator::translate('tooltip_form_confirmation');
 ?>">?</span></label>
                 <input type="text" name="bevestiging" value="<?php 
-echo ContentRepository::escape($form['bevestiging'] ?? t('default_confirmation_message'));
+echo ContentRepository::escape($form['bevestiging'] ?? Translator::translate('default_confirmation_message'));
 ?>" class="admin-input w-full">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_button_text');
+echo Translator::translate('field_label_button_text');
 ?></label>
                 <input type="text" name="knop_tekst" value="<?php 
 echo ContentRepository::escape($form['knop_tekst'] ?? 'Versturen');
@@ -133,7 +134,7 @@ echo ContentRepository::escape($form['knop_tekst'] ?? 'Versturen');
 
     <div class="admin-card">
         <h3 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('section_fields');
+echo Translator::translate('section_fields');
 ?></h3>
         <div id="fields-container">
             <?php 
@@ -148,7 +149,7 @@ foreach ($fields as $i => $field) {
                     <?php 
     if ($i === 0) {
         ?><label class="block text-xs text-gray-500 mb-1"><?php 
-        echo t('field_col_name_slug');
+        echo Translator::translate('field_col_name_slug');
         ?></label><?php 
     }
     ?>
@@ -160,7 +161,7 @@ foreach ($fields as $i => $field) {
                     <?php 
     if ($i === 0) {
         ?><label class="block text-xs text-gray-500 mb-1"><?php 
-        echo t('field_col_label');
+        echo Translator::translate('field_col_label');
         ?></label><?php 
     }
     ?>
@@ -172,9 +173,9 @@ foreach ($fields as $i => $field) {
                     <?php 
     if ($i === 0) {
         ?><label class="block text-xs text-gray-500 mb-1"><?php 
-        echo t('field_col_type');
+        echo Translator::translate('field_col_type');
         ?> <span class="help-tooltip" data-help="<?php 
-        echo t('tooltip_field_type');
+        echo Translator::translate('tooltip_field_type');
         ?>">?</span></label><?php 
     }
     ?>
@@ -198,9 +199,9 @@ foreach ($fields as $i => $field) {
                     <?php 
     if ($i === 0) {
         ?><label class="block text-xs text-gray-500 mb-1"><?php 
-        echo t('field_col_required');
+        echo Translator::translate('field_col_required');
         ?> <span class="help-tooltip" data-help="<?php 
-        echo t('tooltip_field_required');
+        echo Translator::translate('tooltip_field_required');
         ?>">?</span></label><?php 
     }
     ?>
@@ -208,12 +209,12 @@ foreach ($fields as $i => $field) {
                         <option value="1" <?php 
     echo !empty($field['verplicht']) ? 'selected' : '';
     ?>><?php 
-    echo t('option_yes');
+    echo Translator::translate('option_yes');
     ?></option>
                         <option value="" <?php 
     echo empty($field['verplicht']) ? 'selected' : '';
     ?>><?php 
-    echo t('option_no');
+    echo Translator::translate('option_no');
     ?></option>
                     </select>
                 </div>
@@ -227,13 +228,13 @@ foreach ($fields as $i => $field) {
         </div>
 
         <button type="button" onclick="addField()" class="btn-admin btn-admin-outline text-sm mt-2"><?php 
-echo t('button_add_field_form');
+echo Translator::translate('button_add_field_form');
 ?></button>
     </div>
 
     <div class="flex justify-end">
         <button type="submit" name="save_form" class="btn-admin btn-admin-primary"><?php 
-echo t('button_save');
+echo Translator::translate('button_save');
 ?></button>
     </div>
 </form>
@@ -247,9 +248,9 @@ function addField() {
         '<div class="col-span-3"><input type="text" name="veld_label[]" class="admin-input w-full" placeholder="Label"></div>' +
         '<div class="col-span-2"><select name="veld_type[]" class="admin-input w-full"><option value="text">text</option><option value="email">email</option><option value="tel">tel</option><option value="number">number</option><option value="textarea">textarea</option><option value="select">select</option><option value="checkbox">checkbox</option><option value="date">date</option><option value="url">url</option></select></div>' +
         '<div class="col-span-2"><select name="veld_verplicht[]" class="admin-input w-full"><option value="1"><?php 
-echo t('option_yes');
+echo Translator::translate('option_yes');
 ?></option><option value=""><?php 
-echo t('option_no');
+echo Translator::translate('option_no');
 ?></option></select></div>' +
         '<div class="col-span-2 flex gap-1"><button type="button" onclick="removeField(this)" class="btn-admin-sm bg-red-600 hover:bg-red-700 text-xs">&times;</button></div>';
     container.appendChild(row);

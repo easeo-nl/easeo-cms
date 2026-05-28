@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Brand editor (colors, fonts, logo)
  */
@@ -7,7 +8,7 @@ $siteData = ContentRepository::loadJson('site.json');
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_brand'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $siteData['brand']['logo'] = sanitize_input($_POST['logo'] ?? '');
         $siteData['brand']['favicon'] = sanitize_input($_POST['favicon'] ?? '');
@@ -23,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_brand'])) {
         $siteData['brand']['font_body'] = sanitize_input($_POST['font_body'] ?? 'Inter');
         ContentRepository::saveJson('site.json', $siteData);
         audit_log('huisstijl_bewerkt', 'Huisstijl bijgewerkt');
-        $_SESSION['flash_success'] = t('success_branding_saved');
+        $_SESSION['flash_success'] = Translator::translate('success_branding_saved');
     }
     header('Location: /beheer/?tab=huisstijl');
     exit;
@@ -32,7 +33,7 @@ $brand = $siteData['brand'] ?? [];
 ?>
 
 <h1 class="text-2xl font-bold text-white mb-6"><?php 
-echo t('branding_title');
+echo Translator::translate('branding_title');
 ?></h1>
 
 <form method="POST" class="space-y-6">
@@ -43,19 +44,19 @@ echo csrf_field();
     <!-- Logo & Favicon -->
     <div class="admin-card">
         <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('branding_logo_section');
+echo Translator::translate('branding_logo_section');
 ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_logo');
+echo Translator::translate('field_label_logo');
 ?></label>
                 <div class="flex items-center gap-2">
                     <input type="text" name="logo" id="brand-logo" value="<?php 
 echo ContentRepository::escape($brand['logo'] ?? '');
 ?>" class="admin-input flex-1" placeholder="/images/uploads/logo.png">
                     <button type="button" onclick="openMediaPicker('brand-logo')" class="btn-admin-sm"><?php 
-echo t('button_choose_media');
+echo Translator::translate('button_choose_media');
 ?></button>
                 </div>
                 <?php 
@@ -70,14 +71,14 @@ if (!empty($brand['logo'])) {
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('field_label_favicon');
+echo Translator::translate('field_label_favicon');
 ?></label>
                 <div class="flex items-center gap-2">
                     <input type="text" name="favicon" id="brand-favicon" value="<?php 
 echo ContentRepository::escape($brand['favicon'] ?? '');
 ?>" class="admin-input flex-1" placeholder="/images/uploads/favicon.ico">
                     <button type="button" onclick="openMediaPicker('brand-favicon')" class="btn-admin-sm"><?php 
-echo t('button_choose_media');
+echo Translator::translate('button_choose_media');
 ?></button>
                 </div>
             </div>
@@ -87,7 +88,7 @@ echo t('button_choose_media');
     <!-- Colors -->
     <div class="admin-card">
         <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('branding_colors_section');
+echo Translator::translate('branding_colors_section');
 ?></h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             <?php 
@@ -97,10 +98,10 @@ foreach ($colors as $key => [$labelKey, $tooltipKey]) {
     ?>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t($labelKey);
+    echo Translator::translate($labelKey);
     if ($tooltipKey) {
         ?> <span class="help-tooltip" data-help="<?php 
-        echo t($tooltipKey);
+        echo Translator::translate($tooltipKey);
         ?>">?</span><?php 
     }
     ?></label>
@@ -125,7 +126,7 @@ foreach ($colors as $key => [$labelKey, $tooltipKey]) {
         <!-- Preview -->
         <div class="mt-4 pt-4 border-t border-gray-700">
             <p class="text-sm text-gray-400 mb-2"><?php 
-echo t('color_preview_label');
+echo Translator::translate('color_preview_label');
 ?></p>
             <div class="flex gap-2">
                 <?php 
@@ -136,7 +137,7 @@ foreach ($colors as $key => [$labelKey, $tooltipKey]) {
     echo ContentRepository::escape($brand[$key] ?? '#000');
     ?>"></div>
                     <span class="text-xs text-gray-500"><?php 
-    echo t($labelKey);
+    echo Translator::translate($labelKey);
     ?></span>
                 </div>
                 <?php 
@@ -149,14 +150,14 @@ foreach ($colors as $key => [$labelKey, $tooltipKey]) {
     <!-- Fonts -->
     <div class="admin-card">
         <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('branding_fonts_section');
+echo Translator::translate('branding_fonts_section');
 ?></h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('font_display_label');
+echo Translator::translate('font_display_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_font_display');
+echo Translator::translate('tooltip_font_display');
 ?>">?</span></label>
                 <select name="font_display" class="admin-input w-full">
                     <?php 
@@ -177,9 +178,9 @@ foreach ($fonts as $font) {
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('font_body_label');
+echo Translator::translate('font_body_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_font_body');
+echo Translator::translate('tooltip_font_body');
 ?>">?</span></label>
                 <select name="font_body" class="admin-input w-full">
                     <?php 
@@ -202,7 +203,7 @@ foreach ($fonts as $font) {
 
     <div class="flex justify-end">
         <button type="submit" name="save_brand" class="btn-admin btn-admin-primary"><?php 
-echo t('button_save');
+echo Translator::translate('button_save');
 ?></button>
     </div>
 </form>

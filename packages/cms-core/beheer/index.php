@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Admin router
  */
@@ -16,9 +17,9 @@ if (!empty($_SESSION['2fa_pending']) && !is_logged_in()) {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title><?php 
-    echo t('admin_2fa_title');
+    echo Translator::translate('admin_2fa_title');
     ?> — <?php 
-    echo t('admin_login_title');
+    echo Translator::translate('admin_login_title');
     ?></title>
         <meta name="robots" content="noindex, nofollow">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -29,10 +30,10 @@ if (!empty($_SESSION['2fa_pending']) && !is_logged_in()) {
         <div class="w-full max-w-md p-8">
             <div class="admin-card">
                 <h1 class="text-2xl font-bold text-white mb-2 text-center"><?php 
-    echo t('admin_2fa_title');
+    echo Translator::translate('admin_2fa_title');
     ?></h1>
                 <p class="text-gray-400 text-sm text-center mb-6"><?php 
-    echo t('admin_2fa_sent_to');
+    echo Translator::translate('admin_2fa_sent_to');
     ?> <?php 
     echo ContentRepository::escape($maskedEmail);
     ?></p>
@@ -65,7 +66,7 @@ if (!empty($_SESSION['2fa_pending']) && !is_logged_in()) {
     ?>
                     <div class="mb-6">
                         <label for="2fa_code" class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('admin_2fa_code_label');
+    echo Translator::translate('admin_2fa_code_label');
     ?></label>
                         <input type="text" id="2fa_code" name="2fa_code" required autofocus
                                class="admin-input w-full text-center text-2xl tracking-widest"
@@ -73,7 +74,7 @@ if (!empty($_SESSION['2fa_pending']) && !is_logged_in()) {
                                placeholder="000000" autocomplete="one-time-code">
                     </div>
                     <button type="submit" name="verify_2fa" class="btn-admin btn-admin-primary w-full py-2.5"><?php 
-    echo t('admin_2fa_verify_button');
+    echo Translator::translate('admin_2fa_verify_button');
     ?></button>
                 </form>
 
@@ -82,13 +83,13 @@ if (!empty($_SESSION['2fa_pending']) && !is_logged_in()) {
     echo csrf_field();
     ?>
                     <button type="submit" name="resend_2fa" class="text-sm text-blue-400 hover:text-blue-300"><?php 
-    echo t('admin_2fa_resend_button');
+    echo Translator::translate('admin_2fa_resend_button');
     ?></button>
                 </form>
 
                 <div class="mt-4 text-center">
                     <a href="/beheer/?tab=login" class="text-sm text-gray-500 hover:text-gray-400">&larr; <?php 
-    echo t('admin_2fa_back_to_login');
+    echo Translator::translate('admin_2fa_back_to_login');
     ?></a>
                 </div>
             </div>
@@ -107,9 +108,9 @@ if ($tab === 'login') {
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title><?php 
-    echo t('admin_login_button');
+    echo Translator::translate('admin_login_button');
     ?> — <?php 
-    echo t('admin_login_title');
+    echo Translator::translate('admin_login_title');
     ?></title>
         <meta name="robots" content="noindex, nofollow">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -120,14 +121,14 @@ if ($tab === 'login') {
         <div class="w-full max-w-md p-8">
             <div class="admin-card">
                 <h1 class="text-2xl font-bold text-white mb-6 text-center"><?php 
-    echo t('admin_login_title');
+    echo Translator::translate('admin_login_title');
     ?></h1>
 
                 <?php 
     if (isset($_GET['timeout'])) {
         ?>
                 <div class="mb-4 p-3 bg-yellow-900/50 border border-yellow-700 text-yellow-300 rounded-lg text-sm"><?php 
-        echo t('admin_session_timeout');
+        echo Translator::translate('admin_session_timeout');
         ?></div>
                 <?php 
     }
@@ -150,18 +151,18 @@ if ($tab === 'login') {
     ?>
                     <div class="mb-4">
                         <label for="email" class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('admin_login_email_label');
+    echo Translator::translate('admin_login_email_label');
     ?></label>
                         <input type="email" id="email" name="email" required autofocus class="admin-input w-full" placeholder="admin@voorbeeld.nl">
                     </div>
                     <div class="mb-6">
                         <label for="wachtwoord" class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('admin_login_password_label');
+    echo Translator::translate('admin_login_password_label');
     ?></label>
                         <input type="password" id="wachtwoord" name="wachtwoord" required class="admin-input w-full">
                     </div>
                     <button type="submit" class="btn-admin btn-admin-primary w-full py-2.5"><?php 
-    echo t('admin_login_button');
+    echo Translator::translate('admin_login_button');
     ?></button>
                 </form>
             </div>
@@ -189,6 +190,6 @@ $pageFile = __DIR__ . '/pages/' . $tab . '.php';
 if (file_exists($pageFile)) {
     require_once $pageFile;
 } else {
-    echo '<div class="admin-card"><p class="text-gray-400">' . t('admin_page_not_found') . '</p></div>';
+    echo '<div class="admin-card"><p class="text-gray-400">' . Translator::translate('admin_page_not_found') . '</p></div>';
 }
 require_once __DIR__ . '/inc/layout-bottom.php';

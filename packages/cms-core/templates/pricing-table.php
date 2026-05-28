@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * Template: Pricing table section
  * Expects: $data array with titel, tekst, plannen (array of [naam, prijs, features, knop_tekst, knop_url, uitgelicht])
@@ -45,7 +46,7 @@ foreach ($plannen as $plan) {
     if ($uitgelicht) {
         ?>
                 <span class="inline-block bg-primary text-white text-xs px-2 py-1 rounded-full mb-4"><?php 
-        echo t('pricing_popular_badge');
+        echo Translator::translate('pricing_popular_badge');
         ?></span>
                 <?php 
     }

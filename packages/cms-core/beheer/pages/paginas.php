@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Pagina's beheren (overzicht + editor)
  */
@@ -56,11 +57,11 @@ function has_children(array $pages, string $id) : bool
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $deleteId = $_POST['delete_id'] ?? '';
         if (has_children($pages, $deleteId)) {
-            $_SESSION['flash_error'] = t('error_page_has_children');
+            $_SESSION['flash_error'] = Translator::translate('error_page_has_children');
         } else {
             $deletedPage = find_page($pages, $deleteId);
             $pages = array_values(array_filter($pages, fn($p) => $p['id'] !== $deleteId));
@@ -75,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
                     ContentRepository::saveJson('redirects.json', $redirects);
                 }
             }
-            $_SESSION['flash_success'] = t('success_page_deleted');
+            $_SESSION['flash_success'] = Translator::translate('success_page_deleted');
         }
     }
     header('Location: /beheer/?tab=paginas');
@@ -84,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $title = sanitize_input($_POST['title'] ?? '');
         $slug = sanitize_input($_POST['slug'] ?? '');
@@ -98,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
         $seo_title = strip_tags(sanitize_input($_POST['seo_title'] ?? ''));
         $seo_description = strip_tags(sanitize_input($_POST['seo_description'] ?? ''));
         if (empty($title)) {
-            $_SESSION['flash_error'] = t('error_title_required');
+            $_SESSION['flash_error'] = Translator::translate('error_title_required');
         } else {
             if (empty($slug)) {
                 $slug = slugify($title);
@@ -143,13 +144,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
                     }
                 }
                 audit_log('pagina_bewerkt', "Pagina: {$title}");
-                $_SESSION['flash_success'] = t('success_page_updated');
+                $_SESSION['flash_success'] = Translator::translate('success_page_updated');
             } else {
                 // Create new
                 $pageData['created_at'] = date('Y-m-d');
                 $pages[] = $pageData;
                 audit_log('pagina_aangemaakt', "Pagina: {$title}");
-                $_SESSION['flash_success'] = t('success_page_created');
+                $_SESSION['flash_success'] = Translator::translate('success_page_created');
             }
             $pagesData['pages'] = $pages;
             ContentRepository::saveJson('pages.json', $pagesData);
@@ -185,10 +186,10 @@ if ($action === 'edit' || $action === 'new') {
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-white"><?php 
-    echo $page ? t('page_edit_title') : t('page_new_title');
+    echo $page ? Translator::translate('page_edit_title') : Translator::translate('page_new_title');
     ?></h1>
     <a href="/beheer/?tab=paginas" class="btn-admin btn-admin-outline text-sm">&larr; <?php 
-    echo t('button_back');
+    echo Translator::translate('button_back');
     ?></a>
 </div>
 
@@ -203,9 +204,9 @@ if ($action === 'edit' || $action === 'new') {
             <div class="admin-card">
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_title');
+    echo Translator::translate('field_label_title');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_page_title');
+    echo Translator::translate('tooltip_page_title');
     ?>">?</span></label>
                     <input type="text" name="title" id="page-title" value="<?php 
     echo ContentRepository::escape($page['title'] ?? '');
@@ -214,23 +215,23 @@ if ($action === 'edit' || $action === 'new') {
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_slug');
+    echo Translator::translate('field_label_slug');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_page_slug');
+    echo Translator::translate('tooltip_page_slug');
     ?>">?</span></label>
                     <div class="flex items-center gap-2">
                         <span class="text-gray-500 text-sm">/</span>
                         <input type="text" name="slug" id="page-slug" value="<?php 
     echo ContentRepository::escape($page['slug'] ?? '');
     ?>" class="admin-input flex-1" placeholder="<?php 
-    echo t('placeholder_slug_auto');
+    echo Translator::translate('placeholder_slug_auto');
     ?>">
                     </div>
                     <?php 
     if ($page) {
         ?>
                     <p class="text-xs text-yellow-500 mt-1"><?php 
-        echo t('warning_slug_change');
+        echo Translator::translate('warning_slug_change');
         ?></p>
                     <?php 
     }
@@ -239,9 +240,9 @@ if ($action === 'edit' || $action === 'new') {
 
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_content');
+    echo Translator::translate('field_label_content');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_page_content');
+    echo Translator::translate('tooltip_page_content');
     ?>">?</span></label>
                     <textarea name="content" rows="15" class="admin-input w-full"><?php 
     echo ContentRepository::escape($page['content'] ?? '');
@@ -252,13 +253,13 @@ if ($action === 'edit' || $action === 'new') {
             <!-- SEO -->
             <div class="admin-card">
                 <h3 class="text-md font-semibold text-white mb-3"><?php 
-    echo t('section_seo');
+    echo Translator::translate('section_seo');
     ?></h3>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_seo_title');
+    echo Translator::translate('field_label_seo_title');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_seo_title');
+    echo Translator::translate('tooltip_seo_title');
     ?>">?</span></label>
                     <input type="text" name="seo_title" id="seo-title" value="<?php 
     echo ContentRepository::escape($page['seo_title'] ?? '');
@@ -266,14 +267,14 @@ if ($action === 'edit' || $action === 'new') {
                     <p class="text-xs text-gray-500 mt-1"><span id="seo-title-count"><?php 
     echo strlen($page['seo_title'] ?? '');
     ?></span><?php 
-    echo t('char_count_of_60');
+    echo Translator::translate('char_count_of_60');
     ?></p>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_seo_description');
+    echo Translator::translate('field_label_seo_description');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_seo_description');
+    echo Translator::translate('tooltip_seo_description');
     ?>">?</span></label>
                     <textarea name="seo_description" id="seo-desc" rows="2" class="admin-input w-full" maxlength="155"><?php 
     echo ContentRepository::escape($page['seo_description'] ?? '');
@@ -281,14 +282,14 @@ if ($action === 'edit' || $action === 'new') {
                     <p class="text-xs text-gray-500 mt-1"><span id="seo-desc-count"><?php 
     echo strlen($page['seo_description'] ?? '');
     ?></span><?php 
-    echo t('char_count_of_155');
+    echo Translator::translate('char_count_of_155');
     ?></p>
                 </div>
 
                 <!-- SEO Preview -->
                 <div class="mt-4 pt-4 border-t border-gray-700">
                     <p class="text-xs text-gray-500 mb-2"><?php 
-    echo t('google_preview_label');
+    echo Translator::translate('google_preview_label');
     ?></p>
                     <div style="background:#0f172a;border:1px solid #334155;border-radius:8px;padding:16px;">
                         <p style="color:#8ab4f8;font-size:13px;margin:0 0 4px;" id="seo-preview-url"><?php 
@@ -297,7 +298,7 @@ if ($action === 'edit' || $action === 'new') {
     echo ContentRepository::escape($page['slug'] ?? '');
     ?></p>
                         <p style="color:#e8eaed;font-size:16px;margin:0 0 4px;" id="seo-preview-title"><?php 
-    echo ContentRepository::escape($page['seo_title'] ?? $page['title'] ?? t('placeholder_page_title_preview'));
+    echo ContentRepository::escape($page['seo_title'] ?? $page['title'] ?? Translator::translate('placeholder_page_title_preview'));
     ?></p>
                         <p style="color:#bdc1c6;font-size:13px;margin:0;line-height:1.4;" id="seo-preview-desc"><?php 
     echo ContentRepository::escape($page['seo_description'] ?? '');
@@ -311,34 +312,34 @@ if ($action === 'edit' || $action === 'new') {
         <div class="space-y-6">
             <div class="admin-card">
                 <h3 class="text-md font-semibold text-white mb-3"><?php 
-    echo t('section_publish');
+    echo Translator::translate('section_publish');
     ?></h3>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_status');
+    echo Translator::translate('field_label_status');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_page_status');
+    echo Translator::translate('tooltip_page_status');
     ?>">?</span></label>
                     <select name="status" class="admin-input w-full">
                         <option value="draft" <?php 
     echo ($page['status'] ?? '') === 'draft' ? 'selected' : '';
     ?>><?php 
-    echo t('status_draft');
+    echo Translator::translate('status_draft');
     ?></option>
                         <option value="published" <?php 
     echo ($page['status'] ?? '') === 'published' ? 'selected' : '';
     ?>><?php 
-    echo t('status_published');
+    echo Translator::translate('status_published');
     ?></option>
                     </select>
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_template');
+    echo Translator::translate('field_label_template');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_page_template');
+    echo Translator::translate('tooltip_page_template');
     ?>">?</span></label>
                     <select name="template" class="admin-input w-full">
                         <option value="default" <?php 
@@ -352,13 +353,13 @@ if ($action === 'edit' || $action === 'new') {
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_parent');
+    echo Translator::translate('field_label_parent');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_page_parent');
+    echo Translator::translate('tooltip_page_parent');
     ?>">?</span></label>
                     <select name="parent" id="page-parent" class="admin-input w-full">
                         <option value=""><?php 
-    echo t('option_no_parent');
+    echo Translator::translate('option_no_parent');
     ?></option>
                         <?php 
     foreach ($parentPages as $pp) {
@@ -378,7 +379,7 @@ if ($action === 'edit' || $action === 'new') {
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_sort_order');
+    echo Translator::translate('field_label_sort_order');
     ?></label>
                     <input type="number" name="sort_order" value="<?php 
     echo (int) ($page['sort_order'] ?? 0);
@@ -387,14 +388,14 @@ if ($action === 'edit' || $action === 'new') {
 
                 <button type="submit" name="save_page" class="btn-admin btn-admin-primary w-full">
                     <?php 
-    echo $page ? t('button_update') : t('button_create');
+    echo $page ? Translator::translate('button_update') : Translator::translate('button_create');
     ?>
                 </button>
             </div>
 
             <div class="admin-card">
                 <h3 class="text-md font-semibold text-white mb-3"><?php 
-    echo t('section_menu');
+    echo Translator::translate('section_menu');
     ?></h3>
 
                 <div class="mb-4">
@@ -404,43 +405,43 @@ if ($action === 'edit' || $action === 'new') {
     echo !empty($page['show_in_menu']) ? 'checked' : '';
     ?> class="w-4 h-4 rounded">
                         <span class="text-sm text-gray-300"><?php 
-    echo t('field_label_show_in_menu');
+    echo Translator::translate('field_label_show_in_menu');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_show_in_menu');
+    echo Translator::translate('tooltip_show_in_menu');
     ?>">?</span></span>
                     </label>
                 </div>
 
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_menu_label');
+    echo Translator::translate('field_label_menu_label');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_menu_label');
+    echo Translator::translate('tooltip_menu_label');
     ?>">?</span></label>
                     <input type="text" name="menu_label" value="<?php 
     echo ContentRepository::escape($page['menu_label'] ?? '');
     ?>" class="admin-input w-full" placeholder="<?php 
-    echo t('placeholder_menu_label');
+    echo Translator::translate('placeholder_menu_label');
     ?>">
                 </div>
             </div>
 
             <div class="admin-card">
                 <h3 class="text-md font-semibold text-white mb-3"><?php 
-    echo t('section_image');
+    echo Translator::translate('section_image');
     ?></h3>
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-    echo t('field_label_featured_image');
+    echo Translator::translate('field_label_featured_image');
     ?> <span class="help-tooltip" data-help="<?php 
-    echo t('tooltip_page_image');
+    echo Translator::translate('tooltip_page_image');
     ?>">?</span></label>
                     <div class="flex items-center gap-2">
                         <input type="text" name="image" id="page-image" value="<?php 
     echo ContentRepository::escape($page['image'] ?? '');
     ?>" class="admin-input flex-1" placeholder="/images/uploads/...">
                         <button type="button" onclick="openMediaPicker('page-image')" class="btn-admin-sm"><?php 
-    echo t('button_choose_media');
+    echo Translator::translate('button_choose_media');
     ?></button>
                     </div>
                     <?php 
@@ -460,17 +461,17 @@ if ($action === 'edit' || $action === 'new') {
         ?>
             <div class="admin-card">
                 <p class="text-xs text-gray-500"><?php 
-        echo t('label_page_id');
+        echo Translator::translate('label_page_id');
         ?> <?php 
         echo ContentRepository::escape($page['id']);
         ?></p>
                 <p class="text-xs text-gray-500 mt-1"><?php 
-        echo t('label_created');
+        echo Translator::translate('label_created');
         ?> <?php 
         echo ContentRepository::escape($page['created_at'] ?? '');
         ?></p>
                 <p class="text-xs text-gray-500 mt-1"><?php 
-        echo t('label_updated');
+        echo Translator::translate('label_updated');
         ?> <?php 
         echo ContentRepository::escape($page['updated_at'] ?? '');
         ?></p>
@@ -480,7 +481,7 @@ if ($action === 'edit' || $action === 'new') {
                 <a href="/<?php 
             echo ContentRepository::escape($page['slug']);
             ?>" target="_blank" class="text-sm text-blue-400 hover:text-blue-300 mt-2 inline-block"><?php 
-            echo t('link_view_page');
+            echo Translator::translate('link_view_page');
             ?></a>
                 <?php 
         }
@@ -525,7 +526,7 @@ if (isNewPage) {
 // SEO character counters + live preview
 function updateSeoPreview() {
     var title = document.getElementById('seo-title').value || document.getElementById('page-title').value || '<?php 
-    echo t('placeholder_page_title_preview');
+    echo Translator::translate('placeholder_page_title_preview');
     ?>';
     var desc = document.getElementById('seo-desc').value || '';
     var slug = document.getElementById('page-slug').value || '';
@@ -557,10 +558,10 @@ document.getElementById('page-slug').addEventListener('input', updateSeoPreview)
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-white"><?php 
-    echo t('pages_list_title');
+    echo Translator::translate('pages_list_title');
     ?></h1>
     <a href="/beheer/?tab=paginas&action=new" class="btn-admin btn-admin-primary text-sm"><?php 
-    echo t('button_new_page');
+    echo Translator::translate('button_new_page');
     ?></a>
 </div>
 
@@ -569,7 +570,7 @@ document.getElementById('page-slug').addEventListener('input', updateSeoPreview)
         ?>
 <div class="admin-card">
     <p class="text-gray-400"><?php 
-        echo t('pages_no_pages');
+        echo Translator::translate('pages_no_pages');
         ?></p>
 </div>
 <?php 
@@ -580,22 +581,22 @@ document.getElementById('page-slug').addEventListener('input', updateSeoPreview)
         <thead>
             <tr class="text-left text-gray-400 border-b border-gray-700">
                 <th class="pb-3 font-medium"><?php 
-        echo t('table_header_title');
+        echo Translator::translate('table_header_title');
         ?></th>
                 <th class="pb-3 font-medium"><?php 
-        echo t('table_header_slug');
+        echo Translator::translate('table_header_slug');
         ?></th>
                 <th class="pb-3 font-medium"><?php 
-        echo t('table_header_status');
+        echo Translator::translate('table_header_status');
         ?></th>
                 <th class="pb-3 font-medium"><?php 
-        echo t('table_header_menu');
+        echo Translator::translate('table_header_menu');
         ?></th>
                 <th class="pb-3 font-medium"><?php 
-        echo t('table_header_sort_order');
+        echo Translator::translate('table_header_sort_order');
         ?></th>
                 <th class="pb-3 font-medium text-right"><?php 
-        echo t('table_header_actions');
+        echo Translator::translate('table_header_actions');
         ?></th>
             </tr>
         </thead>
@@ -628,13 +629,13 @@ document.getElementById('page-slug').addEventListener('input', updateSeoPreview)
             if ($p['status'] === 'published') {
                 ?>
                         <span class="inline-block px-2 py-0.5 bg-green-900/50 text-green-400 text-xs rounded"><?php 
-                echo t('status_published');
+                echo Translator::translate('status_published');
                 ?></span>
                     <?php 
             } else {
                 ?>
                         <span class="inline-block px-2 py-0.5 bg-yellow-900/50 text-yellow-400 text-xs rounded"><?php 
-                echo t('status_draft');
+                echo Translator::translate('status_draft');
                 ?></span>
                     <?php 
             }
@@ -660,10 +661,10 @@ document.getElementById('page-slug').addEventListener('input', updateSeoPreview)
                     <a href="/beheer/?tab=paginas&action=edit&id=<?php 
             echo ContentRepository::escape($p['id']);
             ?>" class="text-blue-400 hover:text-blue-300 text-xs mr-3"><?php 
-            echo t('action_edit');
+            echo Translator::translate('action_edit');
             ?></a>
                     <form method="POST" class="inline" onsubmit="return confirm('<?php 
-            echo t('confirm_delete_page_msg');
+            echo Translator::translate('confirm_delete_page_msg');
             ?>');">
                         <?php 
             echo csrf_field();
@@ -673,11 +674,11 @@ document.getElementById('page-slug').addEventListener('input', updateSeoPreview)
             ?>">
                         <label class="inline-flex items-center gap-1 text-xs text-gray-500 mr-2">
                             <input type="checkbox" name="create_redirect" value="1" class="w-3 h-3"> <?php 
-            echo t('label_redirect_checkbox');
+            echo Translator::translate('label_redirect_checkbox');
             ?>
                         </label>
                         <button type="submit" name="delete_page" class="text-red-400 hover:text-red-300 text-xs"><?php 
-            echo t('action_delete');
+            echo Translator::translate('action_delete');
             ?></button>
                     </form>
                 </td>

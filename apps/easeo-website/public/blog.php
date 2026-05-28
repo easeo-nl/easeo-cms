@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Blog overview with pagination and category filter
  */
@@ -14,8 +15,8 @@ if ($filterCat) {
 }
 $page = max(1, (int) ($_GET['pagina'] ?? 1));
 $result = paginate_posts(array_values($posts), $page);
-$pageTitle = t('blog_page_title') . ($filterCat ? ' — ' . $filterCat : '') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
-$metaDescription = t('blog_meta_description');
+$pageTitle = Translator::translate('blog_page_title') . ($filterCat ? ' — ' . $filterCat : '') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
+$metaDescription = Translator::translate('blog_meta_description');
 $structuredSchemas = [schema_breadcrumbs('Blog', 'blog')];
 require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
@@ -24,10 +25,10 @@ require_once EASEO_CORE . '/src/legacy/header.php';
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         <div class="mb-8">
             <h1 class="text-3xl font-display font-bold text-dark mb-2"><?php 
-echo t('blog_page_title');
+echo Translator::translate('blog_page_title');
 ?></h1>
             <p class="text-muted"><?php 
-echo t('blog_page_subtitle');
+echo Translator::translate('blog_page_subtitle');
 ?></p>
         </div>
 
@@ -38,7 +39,7 @@ if (!empty($categories)) {
             <a href="/blog" class="px-3 py-1 rounded-full text-sm <?php 
     echo !$filterCat ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200';
     ?> transition-colors"><?php 
-    echo t('blog_filter_all');
+    echo Translator::translate('blog_filter_all');
     ?></a>
             <?php 
     foreach ($categories as $cat) {
@@ -66,7 +67,7 @@ if (empty($result['posts'])) {
     ?>
         <div class="text-center py-12">
             <p class="text-muted"><?php 
-    echo t('blog_no_posts_found');
+    echo Translator::translate('blog_no_posts_found');
     ?></p>
         </div>
         <?php 
@@ -96,7 +97,7 @@ if (empty($result['posts'])) {
             echo $filterCat ? '?categorie=' . urlencode($filterCat) : '';
             ?>"
                class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm">&laquo; <?php 
-            echo t('pagination_previous');
+            echo Translator::translate('pagination_previous');
             ?></a>
             <?php 
         }
@@ -128,7 +129,7 @@ if (empty($result['posts'])) {
             echo $filterCat ? '?categorie=' . urlencode($filterCat) : '';
             ?>"
                class="px-4 py-2 bg-gray-100 rounded hover:bg-gray-200 text-sm"><?php 
-            echo t('pagination_next');
+            echo Translator::translate('pagination_next');
             ?> &raquo;</a>
             <?php 
         }

@@ -1,11 +1,12 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * Template: Latest blog posts section
  * Expects: $data array with titel, tekst, aantal (number of posts)
  */
 require_once EASEO_ROOT . '/includes/blog-engine.php';
-$titel = ContentRepository::escape($data['titel'] ?? t('blog_latest_default_title'));
+$titel = ContentRepository::escape($data['titel'] ?? Translator::translate('blog_latest_default_title'));
 $tekst = ContentRepository::escape($data['tekst'] ?? '');
 $aantal = (int) ($data['aantal'] ?? 3);
 $posts = get_published_posts();
@@ -46,7 +47,7 @@ if (!empty($posts)) {
 
         <div class="text-center mt-8">
             <a href="/blog" class="text-primary font-medium hover:underline"><?php 
-    echo t('blog_latest_view_all_link');
+    echo Translator::translate('blog_latest_view_all_link');
     ?></a>
         </div>
     </div>
