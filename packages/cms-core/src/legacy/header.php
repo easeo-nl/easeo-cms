@@ -2,12 +2,12 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Branding\BrandConfig;
+use Easeo\Cms\Seo\StructuredData;
 /**
  * EASEO CMS — Site header
  */
 require_once __DIR__ . '/brand.php';
 require_once __DIR__ . '/navigation.php';
-require_once __DIR__ . '/structured-data.php';
 $page_title = $pageTitle ?? ContentRepository::siteValue('company.name', 'EASEO CMS');
 $meta_desc = $metaDescription ?? '';
 ?>
@@ -61,15 +61,15 @@ echo BrandConfig::cssProperties();
 include __DIR__ . '/tracking-head.php';
 ?>
 
-    <?php 
+    <?php
 // Structured data (JSON-LD)
 $structuredSchemas = $structuredSchemas ?? [];
-$structuredSchemas[] = schema_organization();
+$structuredSchemas[] = StructuredData::schemaOrganization();
 $currentUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 if ($currentUri === '/' || $currentUri === '/index.php') {
-    $structuredSchemas[] = schema_website();
+    $structuredSchemas[] = StructuredData::schemaWebsite();
 }
-render_structured_data($structuredSchemas);
+StructuredData::render($structuredSchemas);
 ?>
 </head>
 <body class="font-body text-dark bg-white min-h-screen flex flex-col">

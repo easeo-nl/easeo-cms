@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Form\FormEngine;
+use Easeo\Cms\Seo\StructuredData;
 /**
  * EASEO CMS — Dynamic page router
  * Renders pages from data/pages.json based on slug
@@ -49,7 +50,7 @@ if (!empty($page['parent'])) {
         }
     }
 }
-$structuredSchemas = [schema_breadcrumbs($page['title'], $page['slug'], $breadcrumbParents)];
+$structuredSchemas = [StructuredData::schemaBreadcrumbs($page['title'], $page['slug'], $breadcrumbParents)];
 require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
 

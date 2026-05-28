@@ -2,6 +2,7 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Form\FormEngine;
+use Easeo\Cms\Seo\StructuredData;
 /**
  * EASEO CMS — Contact page with dynamic form
  */
@@ -11,7 +12,7 @@ $contactData = ContentRepository::pageContent('contact');
 $pageTitle = ($contactData['meta_title'] ?? 'Contact') . ' | ' . ContentRepository::siteValue('company.name', 'EASEO');
 $metaDescription = $contactData['meta_description'] ?? '';
 $formId = $contactData['formulier_id'] ?? 'contact';
-$structuredSchemas = [schema_breadcrumbs('Contact', 'contact')];
+$structuredSchemas = [StructuredData::schemaBreadcrumbs('Contact', 'contact')];
 require_once EASEO_CORE . '/src/legacy/header.php';
 ?>
 
