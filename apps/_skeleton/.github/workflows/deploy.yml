@@ -1,0 +1,127 @@
+name: Deploy naar {{SITE_DOMAIN}}
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build release tarball
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Install production dependencies
+        run: composer install --no-dev --optimize-autoloader --no-progress
+
+      - name: Check platform requirements
+        run: composer check-platform-reqs
+
+      - name: PHP syntax lint
+        run: php -l public/index.php
+
+      - name: Build release tarball (excludes data/ and uploads)
+        run: |
+          tar -czf release.tgz \
+            --exclude='./data/*.json' \
+            --exclude='./data/audit.log*' \
+            --exclude='./data/submissions' \
+            --exclude='./data/rate_limits' \
+            --exclude='./data/.schema-version' \
+            --exclude='./data/.migration.lock' \
+            --exclude='./images/uploads' \
+            --exclude='./images/thumbs' \
+            --exclude='./.git' \
+            --exclude='./.github' \
+            .
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: release.tgz
+          retention-days: 7
+
+  deploy:
+    name: Deploy via SSH + atomic symlink-swap
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "${{ secrets.DEPLOY_KNOWN_HOSTS }}" | tr -d '\r' > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          if ! ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null 2>&1; then
+            echo "::error::DEPLOY_SSH_KEY secret is geen geldige private key."
+            exit 1
+          fi
+
+      - name: Upload + atomic swap
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          SHA: ${{ github.sha }}
+        run: |
+          scp -P "$DEPLOY_PORT" release.tgz "$DEPLOY_USER@$DEPLOY_HOST:~/releases/$SHA.tgz"
+          ssh -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" \
+            DEPLOY_PATH="$DEPLOY_PATH" SHA="$SHA" bash -s <<'REMOTE'
+          set -euo pipefail
+          REL_DIR="$DEPLOY_PATH/../releases/$SHA"
+          mkdir -p "$REL_DIR"
+          tar -xzf ~/releases/$SHA.tgz -C "$REL_DIR"
+          # Link data/ and images/uploads/ from shared/ into this release
+          ln -sfn "$DEPLOY_PATH/../shared/data" "$REL_DIR/data"
+          mkdir -p "$REL_DIR/images"
+          ln -sfn "$DEPLOY_PATH/../shared/images/uploads" "$REL_DIR/images/uploads"
+          # Atomic swap via temp symlink + mv -T
+          ln -sfn "$REL_DIR" "$DEPLOY_PATH-new"
+          mv -Tf "$DEPLOY_PATH-new" "$DEPLOY_PATH"
+          # Cleanup: keep last 5 releases
+          ls -1dt "$DEPLOY_PATH/../releases/"*/ 2>/dev/null | tail -n +6 | xargs -r rm -rf
+          # Cleanup tarballs older than 7 days
+          find ~/releases -name '*.tgz' -mtime +7 -delete 2>/dev/null || true
+          REMOTE
+
+  smoke:
+    name: Smoke test (HTTP 200 + GTM aanwezig)
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check homepage + GTM
+        run: |
+          BODY=$(curl -fsS https://www.{{SITE_DOMAIN}}/)
+          echo "$BODY" | grep -q "googletagmanager.com/gtm.js" \
+            || { echo "::error::GTM script niet meer aanwezig in homepage HTML — CMS-state ging mogelijk verloren"; exit 1; }
+          GTM_ID=$(echo "$BODY" | grep -oE "GTM-[A-Z0-9]+" | head -1 || echo "(geen ID gevonden)")
+          echo "Homepage HTTP 200 — GTM ID: $GTM_ID"
+
+      - name: Check sitemap.xml
+        run: |
+          curl -fsS -o /dev/null https://www.{{SITE_DOMAIN}}/sitemap.xml \
+            || { echo "::error::sitemap.xml niet bereikbaar"; exit 1; }
+          echo "sitemap.xml OK"

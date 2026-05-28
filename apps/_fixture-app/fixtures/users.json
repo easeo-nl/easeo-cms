@@ -1,0 +1,8 @@
+[
+  {
+    "username": "fixture-admin",
+    "password_hash": "$2y$10$YIdoVfmtv2AMW4e5QLe3yOS1nhN74ELhIijj.hmqGzYn0jTMr.xLW",
+    "role": "admin",
+    "email": "admin@example.com"
+  }
+]

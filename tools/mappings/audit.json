@@ -1,0 +1,10 @@
+{
+    "engine": "audit",
+    "subdir": "Audit",
+    "class": "AuditLogger",
+    "namespace": "Easeo\\Cms\\Audit",
+    "functions": {
+        "audit_log": "log",
+        "read_audit_log": "read"
+    }
+}

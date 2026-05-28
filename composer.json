@@ -1,0 +1,33 @@
+{
+    "name": "easeo/easeo-cms-monorepo",
+    "description": "EASEO CMS monorepo — cms-core library + site-apps",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.5",
+        "nikic/php-parser": "^4.19"
+    },
+    "scripts": {
+        "test": [
+            "@test:core",
+            "@test:tools"
+        ],
+        "test:core": "phpunit --configuration packages/cms-core/phpunit.xml --testsuite cms-core",
+        "test:tools": "phpunit --configuration tools/phpunit.xml"
+    },
+    "autoload": {
+        "psr-4": {
+            "Easeo\\Cms\\": "packages/cms-core/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Easeo\\Tools\\": "tools/src/",
+            "Easeo\\Tools\\Tests\\": "tools/tests/",
+            "Easeo\\Cms\\Tests\\": "packages/cms-core/tests/"
+        }
+    }
+}

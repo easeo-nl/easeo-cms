@@ -1,0 +1,15 @@
+{
+    "engine": "form-engine",
+    "subdir": "Form",
+    "class": "FormEngine",
+    "namespace": "Easeo\\Cms\\Form",
+    "functions": {
+        "get_forms_data": "getFormsData",
+        "get_forms": "getForms",
+        "save_forms": "saveForms",
+        "get_form": "getForm",
+        "render_form": "render",
+        "csrf_token_frontend": "csrfToken",
+        "verify_csrf_frontend": "verifyCsrf"
+    }
+}

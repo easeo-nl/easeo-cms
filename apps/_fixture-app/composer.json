@@ -1,0 +1,17 @@
+{
+  "name": "easeo/fixture-app",
+  "description": "CI-only fixture site-app voor end-to-end smoke tests van cms-core",
+  "type": "project",
+  "license": "MIT",
+  "require": {
+    "easeo/cms-core": "*"
+  },
+  "repositories": [
+    {"type": "path", "url": "../../packages/*", "options": {"symlink": true}}
+  ],
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

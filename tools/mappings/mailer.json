@@ -1,0 +1,11 @@
+{
+    "engine": "mailer",
+    "subdir": "Mail",
+    "class": "Mailer",
+    "namespace": "Easeo\\Cms\\Mail",
+    "functions": {
+        "send_mail": "send",
+        "encrypt_smtp_password": "encryptSmtpPassword",
+        "decrypt_smtp_password": "decryptSmtpPassword"
+    }
+}

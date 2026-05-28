@@ -1,0 +1,12 @@
+# Fixture-app runtime — content komt uit fixtures/ via bin/seed.sh
+data/*.json
+data/audit.log*
+data/submissions/
+data/rate_limits/
+data/login_attempts.json
+data/.schema-version
+data/.migration.lock
+images/uploads/
+images/thumbs/
+vendor/
+*.log

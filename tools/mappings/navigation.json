@@ -1,0 +1,13 @@
+{
+    "engine": "navigation",
+    "subdir": "Navigation",
+    "class": "Menu",
+    "namespace": "Easeo\\Cms\\Navigation",
+    "functions": {
+        "get_dynamic_page_menu_items": "getDynamicPageMenuItems",
+        "merge_nav_with_dynamic": "mergeNavWithDynamic",
+        "render_main_nav": "renderMainNav",
+        "render_mobile_nav": "renderMobileNav",
+        "render_footer_nav": "renderFooterNav"
+    }
+}

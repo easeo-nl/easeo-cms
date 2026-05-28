@@ -1,0 +1,18 @@
+{
+    "engine": "media-engine",
+    "subdir": "Media",
+    "class": "MediaLibrary",
+    "namespace": "Easeo\\Cms\\Media",
+    "functions": {
+        "get_media": "getMedia",
+        "save_media": "saveMedia",
+        "upload_media": "uploadMedia",
+        "delete_media": "deleteMedia",
+        "resize_image": "resizeImage",
+        "create_thumbnail": "createThumbnail",
+        "create_image_from_file": "createImageFromFile",
+        "save_image": "saveImage",
+        "preserve_transparency": "preserveTransparency",
+        "format_file_size": "formatFileSize"
+    }
+}

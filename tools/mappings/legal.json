@@ -1,0 +1,11 @@
+{
+    "engine": "legal",
+    "subdir": "Legal",
+    "class": "LegalPages",
+    "namespace": "Easeo\\Cms\\Legal",
+    "functions": {
+        "get_legal_text": "getText",
+        "replace_legal_placeholders": "replacePlaceholders",
+        "get_default_legal": "getDefault"
+    }
+}

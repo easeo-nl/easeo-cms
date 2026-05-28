@@ -1,0 +1,17 @@
+{
+  "site_name": "{{SITE_NAME}}",
+  "site_url": "https://www.{{SITE_DOMAIN}}",
+  "gtm_id": "",
+  "language": "nl",
+  "branding": {
+    "primary_color": "#000000",
+    "logo": ""
+  },
+  "modules": [],
+  "smtp": {
+    "host": "",
+    "port": 587,
+    "user": "",
+    "from_email": "noreply@{{SITE_DOMAIN}}"
+  }
+}

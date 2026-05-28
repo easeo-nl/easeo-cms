@@ -1,0 +1,11 @@
+[
+  {
+    "slug": "test-post",
+    "title": "Test blog post",
+    "date": "2026-05-23",
+    "author": "Fixture Admin",
+    "excerpt": "Een test-post voor smoke testing.",
+    "content": "<p>Dit is de body van de test-post.</p>",
+    "tags": ["test"]
+  }
+]
