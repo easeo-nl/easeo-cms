@@ -16,5 +16,6 @@ class LegacyLoadTest extends TestCase {
         $this->assertTrue(class_exists(\Easeo\Cms\Media\MediaLibrary::class), 'MediaLibrary PSR-4 klasse moet beschikbaar zijn');
         $this->assertTrue(class_exists(\Easeo\Cms\Navigation\Menu::class), 'Menu PSR-4 klasse moet beschikbaar zijn');
         $this->assertTrue(class_exists(\Easeo\Cms\Seo\StructuredData::class), 'StructuredData PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Security\RateLimiter::class), 'RateLimiter PSR-4 klasse moet beschikbaar zijn');
     }
 }

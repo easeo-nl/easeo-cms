@@ -1,15 +1,21 @@
 <?php
+declare(strict_types=1);
+
+namespace Easeo\Cms\Security;
+
 /**
  * EASEO CMS — IP-based rate limiting
  */
-
 class RateLimiter {
     private string $storageDir;
     private int $maxAttempts;
     private int $windowSeconds;
 
     public function __construct(int $maxAttempts = 5, int $windowSeconds = 900, string $context = 'default') {
-        $this->storageDir = EASEO_DATA . '/rate_limits';
+        $base = (getenv('EASEO_DATA') !== false && getenv('EASEO_DATA') !== '')
+            ? getenv('EASEO_DATA')
+            : (defined('EASEO_DATA') ? constant('EASEO_DATA') : sys_get_temp_dir());
+        $this->storageDir = $base . '/rate_limits/' . preg_replace('/[^a-z0-9_-]/i', '_', $context);
         $this->maxAttempts = $maxAttempts;
         $this->windowSeconds = $windowSeconds;
 

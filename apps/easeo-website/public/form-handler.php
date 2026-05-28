@@ -4,6 +4,7 @@ use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Mail\Mailer;
 use Easeo\Cms\Form\FormEngine;
 use Easeo\Cms\Audit\AuditLogger;
+use Easeo\Cms\Security\RateLimiter;
 /**
  * EASEO CMS — Form POST handler
  */

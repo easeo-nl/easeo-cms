@@ -11,10 +11,12 @@
             <directory>tests/Content</directory>
             <directory>tests/Form</directory>
             <directory>tests/Lang</directory>
+            <directory>tests/Legal</directory>
             <directory>tests/Blog</directory>
             <directory>tests/Mail</directory>
             <directory>tests/Media</directory>
             <directory>tests/Navigation</directory>
+            <directory>tests/Security</directory>
             <directory>tests/Seo</directory>
             <file>tests/LegacyLoadTest.php</file>
             <file>tests/SmokeTest.php</file>

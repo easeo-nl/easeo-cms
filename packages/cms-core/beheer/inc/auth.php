@@ -3,11 +3,10 @@ use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Mail\Mailer;
 use Easeo\Cms\Audit\AuditLogger;
+use Easeo\Cms\Security\RateLimiter;
 /**
  * EASEO CMS — Authentication, session management, CSRF, 2FA, account lockout
  */
-require_once dirname(__DIR__, 2) . '/includes/rate-limiter.php';
-require_once dirname(__DIR__, 2) . '/includes/audit.php';
 // Secure session config
 ini_set('session.cookie_httponly', '1');
 ini_set('session.cookie_secure', '1');
