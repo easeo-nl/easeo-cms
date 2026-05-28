@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Blog\BlogEngine;
 /**
  * EASEO CMS — Blog post list in admin
  */
@@ -11,8 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_post'])) {
         $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $postId = $_POST['post_id'] ?? '';
-        $post = get_post_by_id($postId);
-        if ($post && delete_post($postId)) {
+        $post = BlogEngine::getPostById($postId);
+        if ($post && BlogEngine::deletePost($postId)) {
             audit_log('blog_verwijderd', "Post: {$post['titel']}");
             $_SESSION['flash_success'] = Translator::translate('success_post_deleted');
         }
@@ -20,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_post'])) {
     header('Location: /beheer/?tab=blog');
     exit;
 }
-$posts = get_posts();
+$posts = BlogEngine::getPosts();
 usort($posts, fn($a, $b) => strcmp($b['datum'] ?? '', $a['datum'] ?? ''));
 ?>
 

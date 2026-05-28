@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Blog\BlogEngine;
 /**
  * Template: Latest blog posts section
  * Expects: $data array with titel, tekst, aantal (number of posts)
@@ -9,7 +10,7 @@ require_once EASEO_ROOT . '/includes/blog-engine.php';
 $titel = ContentRepository::escape($data['titel'] ?? Translator::translate('blog_latest_default_title'));
 $tekst = ContentRepository::escape($data['tekst'] ?? '');
 $aantal = (int) ($data['aantal'] ?? 3);
-$posts = get_published_posts();
+$posts = BlogEngine::getPublishedPosts();
 usort($posts, fn($a, $b) => strcmp($b['datum'] ?? '', $a['datum'] ?? ''));
 $posts = array_slice($posts, 0, $aantal);
 if (!empty($posts)) {
@@ -38,7 +39,7 @@ if (!empty($posts)) {
     foreach ($posts as $post) {
         ?>
                 <?php 
-        echo render_post_card($post);
+        echo BlogEngine::renderPostCard($post);
         ?>
             <?php 
     }

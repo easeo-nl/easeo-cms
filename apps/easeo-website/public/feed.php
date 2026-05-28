@@ -1,11 +1,12 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Blog\BlogEngine;
 /**
  * EASEO CMS — RSS feed
  */
 require_once __DIR__ . '/../vendor/autoload.php';
 header('Content-Type: application/rss+xml; charset=UTF-8');
-$posts = get_published_posts();
+$posts = BlogEngine::getPublishedPosts();
 usort($posts, fn($a, $b) => strcmp($b['datum'] ?? '', $a['datum'] ?? ''));
 $posts = array_slice($posts, 0, 20);
 $baseUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');

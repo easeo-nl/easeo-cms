@@ -1,13 +1,14 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Blog\BlogEngine;
 /**
  * EASEO CMS — Individual blog post with Schema.org
  */
 require_once __DIR__ . '/../vendor/autoload.php';
 ContentRepository::checkSetup();
 $slug = $_GET['slug'] ?? '';
-$post = get_post_by_slug($slug);
+$post = BlogEngine::getPostBySlug($slug);
 if (!$post || ($post['status'] ?? 'concept') !== 'gepubliceerd') {
     http_response_code(404);
     require_once __DIR__ . '/404.php';
