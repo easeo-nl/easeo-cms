@@ -2,6 +2,7 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Blog\BlogEngine;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Blog post editor with media picker
  */
@@ -19,12 +20,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_post'])) {
         } else {
             if ($post) {
                 BlogEngine::updatePost($post['id'], $data);
-                audit_log('blog_bewerkt', "Post: {$data['titel']}");
+                AuditLogger::log('blog_bewerkt', "Post: {$data['titel']}");
                 $_SESSION['flash_success'] = Translator::translate('success_post_updated');
                 header('Location: /beheer/?tab=blog-edit&id=' . $post['id']);
             } else {
                 $newPost = BlogEngine::createPost($data);
-                audit_log('blog_aangemaakt', "Post: {$data['titel']}");
+                AuditLogger::log('blog_aangemaakt', "Post: {$data['titel']}");
                 $_SESSION['flash_success'] = Translator::translate('success_post_created');
                 header('Location: /beheer/?tab=blog-edit&id=' . $newPost['id']);
             }

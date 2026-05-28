@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Page content editor with auto field config
  */
@@ -26,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_content'])) {
             ContentRepository::saveJson('content.json', $pages);
             // Reload
             $content = $pages;
-            audit_log('content_bewerkt', "Pagina: {$pageName}");
+            AuditLogger::log('content_bewerkt', "Pagina: {$pageName}");
             $_SESSION['flash_success'] = Translator::translate('success_content_saved');
         }
     }
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_page'])) {
         if ($newSlug && !isset($pages[$newSlug])) {
             $pages[$newSlug] = ['meta_title' => ucfirst($newSlug), 'meta_description' => '', 'titel' => ucfirst($newSlug), 'intro_tekst' => '', 'inhoud_tekst' => '', 'afbeelding' => ''];
             ContentRepository::saveJson('content.json', $pages);
-            audit_log('pagina_toegevoegd', "Pagina: {$newSlug}");
+            AuditLogger::log('pagina_toegevoegd', "Pagina: {$newSlug}");
             $_SESSION['flash_success'] = Translator::translate('success_page_added');
             $currentPage = $newSlug;
         } else {
@@ -62,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
         if (isset($pages[$delPage]) && !in_array($delPage, $protected)) {
             unset($pages[$delPage]);
             ContentRepository::saveJson('content.json', $pages);
-            audit_log('pagina_verwijderd', "Pagina: {$delPage}");
+            AuditLogger::log('pagina_verwijderd', "Pagina: {$delPage}");
             $_SESSION['flash_success'] = Translator::translate('success_page_deleted');
             $currentPage = 'home';
         } else {

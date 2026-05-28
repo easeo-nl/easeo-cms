@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Media library with drag-drop upload
  */
@@ -29,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['media_file'])) {
                 }
             }
             $_SESSION['flash_success'] = Translator::translate('success_files_uploaded', ['count' => $uploaded, 'total' => $count]);
-            audit_log('media_upload', "{$uploaded} bestanden geüpload");
+            AuditLogger::log('media_upload', "{$uploaded} bestanden geüpload");
         } else {
             $result = upload_media($files);
             if ($result['success']) {
                 $_SESSION['flash_success'] = Translator::translate('success_file_uploaded');
-                audit_log('media_upload', $files['name']);
+                AuditLogger::log('media_upload', $files['name']);
             } else {
                 $_SESSION['flash_error'] = $result['error'];
             }
@@ -50,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_media'])) {
     } else {
         $id = $_POST['media_id'] ?? '';
         if (delete_media($id)) {
-            audit_log('media_verwijderd', "ID: {$id}");
+            AuditLogger::log('media_verwijderd', "ID: {$id}");
             $_SESSION['flash_success'] = Translator::translate('success_file_deleted');
         } else {
             $_SESSION['flash_error'] = Translator::translate('error_file_delete_failed');

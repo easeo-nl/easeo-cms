@@ -2,6 +2,7 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Mail\Mailer;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — E-mail (SMTP) instellingen
  */
@@ -24,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_test'])) {
             $result = Mailer::send($testTo, $subject, $body);
             if ($result === true) {
                 $_SESSION['flash_success'] = Translator::translate('success_test_email_sent') . ' ' . $testTo;
-                audit_log('test_email_verstuurd', "Naar: {$testTo}");
+                AuditLogger::log('test_email_verstuurd', "Naar: {$testTo}");
             } else {
                 $_SESSION['flash_error'] = Translator::translate('error_email_send_failed') . ' ' . $result;
             }
@@ -56,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_smtp'])) {
         }
         $siteData['smtp'] = $newSmtp;
         file_put_contents(EASEO_DATA . '/site.json', json_encode($siteData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-        audit_log('smtp_instellingen_opgeslagen', 'SMTP instellingen bijgewerkt');
+        AuditLogger::log('smtp_instellingen_opgeslagen', 'SMTP instellingen bijgewerkt');
         $_SESSION['flash_success'] = Translator::translate('success_email_settings_saved');
     }
     header('Location: /beheer/?tab=email');

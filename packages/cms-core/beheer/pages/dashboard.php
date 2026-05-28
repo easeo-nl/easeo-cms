@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Dashboard
  */
@@ -29,7 +30,7 @@ foreach ($submissionFiles as $f) {
         $unreadSubmissions++;
     }
 }
-$recentActivity = read_audit_log(10);
+$recentActivity = AuditLogger::read(10);
 // Check welcome screen
 $showWelcome = false;
 $siteRaw = json_decode(file_get_contents(EASEO_DATA . '/site.json'), true);

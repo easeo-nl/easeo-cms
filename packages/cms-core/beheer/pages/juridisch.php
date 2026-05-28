@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Legal text editor with tabs
  */
@@ -21,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_legal'])) {
             $legal[$section]['content'] = $_POST['content'] ?? '';
             $legal[$section]['last_updated'] = date('Y-m-d H:i:s');
             ContentRepository::saveJson('legal.json', $legal);
-            audit_log('juridisch_bewerkt', "Sectie: {$sections[$section]}");
+            AuditLogger::log('juridisch_bewerkt', "Sectie: {$sections[$section]}");
             $_SESSION['flash_success'] = Translator::translate('success_legal_saved');
         }
     }

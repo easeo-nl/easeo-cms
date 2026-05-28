@@ -2,6 +2,7 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Mail\Mailer;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Authentication, session management, CSRF, 2FA, account lockout
  */
@@ -18,7 +19,7 @@ define('SESSION_TIMEOUT', 30 * 60);
 if (is_logged_in_raw()) {
     if (isset($_SESSION['last_activity']) && time() - $_SESSION['last_activity'] > SESSION_TIMEOUT) {
         $name = $_SESSION['easeo_admin']['naam'] ?? 'onbekend';
-        audit_log('sessie_verlopen', "Gebruiker: {$name}");
+        AuditLogger::log('sessie_verlopen', "Gebruiker: {$name}");
         session_unset();
         session_destroy();
         session_start();
@@ -155,7 +156,7 @@ function record_failed_attempt(string $email) : void
     if ($attempts >= 10) {
         $fields['locked_until'] = time() + 15 * 60;
         // 15 minutes
-        audit_log('account_vergrendeld', "Account: {$email} na {$attempts} mislukte pogingen", 'systeem');
+        AuditLogger::log('account_vergrendeld', "Account: {$email} na {$attempts} mislukte pogingen", 'systeem');
     }
     update_user_fields($email, $fields);
 }
@@ -212,7 +213,7 @@ function attempt_login(string $email, string $password) : bool|string
             record_failed_attempt($email);
         }
         $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        audit_log('login_mislukt', "E-mail: {$email}, IP: {$ip}", 'anoniem');
+        AuditLogger::log('login_mislukt', "E-mail: {$email}, IP: {$ip}", 'anoniem');
         $_SESSION['flash_error'] = Translator::translate('error_invalid_credentials');
         return false;
     }
@@ -220,7 +221,7 @@ function attempt_login(string $email, string $password) : bool|string
     if (is_account_locked($user)) {
         $remaining = get_lock_remaining($user);
         $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-        audit_log('login_geblokkeerd', "Account vergrendeld: {$email}, IP: {$ip}", 'anoniem');
+        AuditLogger::log('login_geblokkeerd', "Account vergrendeld: {$email}, IP: {$ip}", 'anoniem');
         $_SESSION['flash_error'] = Translator::translate('error_account_locked', ['minutes' => $remaining]);
         return false;
     }
@@ -236,13 +237,13 @@ function attempt_login(string $email, string $password) : bool|string
         $sent = send_2fa_code($email, $code);
         if (!$sent) {
             $_SESSION['flash_error'] = Translator::translate('error_2fa_send_failed');
-            audit_log('2fa_code_mislukt', "E-mail versturen mislukt voor: {$email}");
+            AuditLogger::log('2fa_code_mislukt', "E-mail versturen mislukt voor: {$email}");
             return false;
         }
         // Store pending login in session
         $_SESSION['2fa_pending'] = ['email' => $email, 'timestamp' => time()];
         $_SESSION['2fa_last_sent'] = time();
-        audit_log('2fa_code_verstuurd', "Naar: " . mask_email($email));
+        AuditLogger::log('2fa_code_verstuurd', "Naar: " . mask_email($email));
         return '2fa';
         // Signal that 2FA is required
     }
@@ -257,7 +258,7 @@ function complete_login(array $user) : void
     $_SESSION['last_activity'] = time();
     clear_failed_attempts($user['email']);
     $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
-    audit_log('login', "Gebruiker: {$user['naam']}, IP: {$ip}");
+    AuditLogger::log('login', "Gebruiker: {$user['naam']}, IP: {$ip}");
 }
 function verify_2fa_code(string $inputCode) : bool
 {
@@ -273,20 +274,20 @@ function verify_2fa_code(string $inputCode) : bool
     // Check expiry
     if (time() > (int) ($user['two_factor_expires'] ?? 0)) {
         $_SESSION['flash_error'] = Translator::translate('error_2fa_code_expired');
-        audit_log('2fa_code_verlopen', "Account: {$email}");
+        AuditLogger::log('2fa_code_verlopen', "Account: {$email}");
         return false;
     }
     // Check attempts
     $attempts = (int) ($user['two_factor_attempts'] ?? 0);
     if ($attempts >= 3) {
         $_SESSION['flash_error'] = Translator::translate('error_2fa_too_many_attempts');
-        audit_log('2fa_te_veel_pogingen', "Account: {$email}");
+        AuditLogger::log('2fa_te_veel_pogingen', "Account: {$email}");
         return false;
     }
     // Verify code
     if (!password_verify($inputCode, $user['two_factor_code'] ?? '')) {
         update_user_field($email, 'two_factor_attempts', $attempts + 1);
-        audit_log('2fa_code_fout', "Account: {$email}, poging " . ($attempts + 1));
+        AuditLogger::log('2fa_code_fout', "Account: {$email}, poging " . ($attempts + 1));
         $_SESSION['flash_error'] = Translator::translate('error_2fa_wrong_code', ['remaining' => 2 - $attempts]);
         return false;
     }
@@ -318,7 +319,7 @@ function resend_2fa_code() : bool
     $sent = send_2fa_code($email, $code);
     if ($sent) {
         $_SESSION['2fa_last_sent'] = time();
-        audit_log('2fa_code_opnieuw_verstuurd', "Naar: " . mask_email($email));
+        AuditLogger::log('2fa_code_opnieuw_verstuurd', "Naar: " . mask_email($email));
         $_SESSION['flash_success'] = Translator::translate('success_2fa_code_resent');
         return true;
     }
@@ -329,7 +330,7 @@ function resend_2fa_code() : bool
 function logout() : void
 {
     $name = $_SESSION['easeo_admin']['naam'] ?? 'onbekend';
-    audit_log('logout', "Gebruiker: {$name}");
+    AuditLogger::log('logout', "Gebruiker: {$name}");
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $params = session_get_cookie_params();

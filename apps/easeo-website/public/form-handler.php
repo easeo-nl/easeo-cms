@@ -3,6 +3,7 @@ use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Mail\Mailer;
 use Easeo\Cms\Form\FormEngine;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Form POST handler
  */
@@ -67,7 +68,7 @@ if (!is_dir($subDir)) {
     mkdir($subDir, 0755, true);
 }
 file_put_contents($subDir . '/' . $submission['id'] . '.json', json_encode($submission, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), LOCK_EX);
-audit_log('formulier_verzonden', "Formulier: {$form['naam']}", 'bezoeker');
+AuditLogger::log('formulier_verzonden', "Formulier: {$form['naam']}", 'bezoeker');
 // Send email notification
 $emailTo = $form['email_naar'] ?? ContentRepository::siteValue('company.email');
 if ($emailTo && filter_var($emailTo, FILTER_VALIDATE_EMAIL)) {

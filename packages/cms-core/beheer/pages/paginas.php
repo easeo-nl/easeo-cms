@@ -1,6 +1,7 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
+use Easeo\Cms\Audit\AuditLogger;
 /**
  * EASEO CMS — Pagina's beheren (overzicht + editor)
  */
@@ -68,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_page'])) {
             $pagesData['pages'] = $pages;
             ContentRepository::saveJson('pages.json', $pagesData);
             if ($deletedPage) {
-                audit_log('pagina_verwijderd', "Pagina: {$deletedPage['title']}");
+                AuditLogger::log('pagina_verwijderd', "Pagina: {$deletedPage['title']}");
                 // Create redirect if requested
                 if (!empty($_POST['create_redirect'])) {
                     $redirects = ContentRepository::loadJson('redirects.json');
@@ -143,13 +144,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_page'])) {
                         break;
                     }
                 }
-                audit_log('pagina_bewerkt', "Pagina: {$title}");
+                AuditLogger::log('pagina_bewerkt', "Pagina: {$title}");
                 $_SESSION['flash_success'] = Translator::translate('success_page_updated');
             } else {
                 // Create new
                 $pageData['created_at'] = date('Y-m-d');
                 $pages[] = $pageData;
-                audit_log('pagina_aangemaakt', "Pagina: {$title}");
+                AuditLogger::log('pagina_aangemaakt', "Pagina: {$title}");
                 $_SESSION['flash_success'] = Translator::translate('success_page_created');
             }
             $pagesData['pages'] = $pages;
