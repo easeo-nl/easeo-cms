@@ -1,0 +1,47 @@
+name: PR check
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate + lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Install dependencies
+        run: composer install --no-progress
+
+      - name: Lint PHP files
+        run: |
+          find public templates -name '*.php' -print0 2>/dev/null \
+            | xargs -0 -n1 -P4 php -l \
+            > /dev/null
+
+      - name: Verify state-files niet getrackt
+        run: |
+          # CMS-state mag NOOIT in git terecht komen — als deze check faalt
+          # is er per ongeluk een data/*.json gestaged. Gitignore is bypassed
+          # of een ontwikkelaar heeft 'git add -f' gedaan.
+          if git ls-files data/ | grep -E '\.json$' | grep -v 'data/\.gitkeep$' > /tmp/leaked.txt; then
+            echo "::error::CMS-state files staan in git:"
+            cat /tmp/leaked.txt
+            exit 1
+          fi
+          echo "OK: geen data/*.json getrackt"
