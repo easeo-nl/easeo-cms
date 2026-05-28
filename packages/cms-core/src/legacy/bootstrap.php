@@ -7,7 +7,6 @@ require_once dirname(__DIR__, 4) . '/tools/legacy-bridge.php';
 $legacyDir = __DIR__;
 $engines = [
     'rate-limiter.php',
-    'legal.php',
     'cookie-consent.php',
     'media-engine.php',
     'navigation.php',
