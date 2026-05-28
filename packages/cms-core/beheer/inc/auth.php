@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Authentication, session management, CSRF, 2FA, account lockout
  */
@@ -123,7 +124,7 @@ function require_admin() : void
 {
     require_login();
     if (!is_admin()) {
-        $_SESSION['flash_error'] = t('error_insufficient_permissions');
+        $_SESSION['flash_error'] = Translator::translate('error_insufficient_permissions');
         header('Location: /beheer/');
         exit;
     }
@@ -200,7 +201,7 @@ function attempt_login(string $email, string $password) : bool|string
 {
     $limiter = new RateLimiter(5, 900);
     if ($limiter->isLimited()) {
-        $_SESSION['flash_error'] = t('error_too_many_login_attempts');
+        $_SESSION['flash_error'] = Translator::translate('error_too_many_login_attempts');
         return false;
     }
     $user = find_user($email);
@@ -211,7 +212,7 @@ function attempt_login(string $email, string $password) : bool|string
         }
         $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
         audit_log('login_mislukt', "E-mail: {$email}, IP: {$ip}", 'anoniem');
-        $_SESSION['flash_error'] = t('error_invalid_credentials');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_credentials');
         return false;
     }
     // Check account lockout
@@ -219,7 +220,7 @@ function attempt_login(string $email, string $password) : bool|string
         $remaining = get_lock_remaining($user);
         $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
         audit_log('login_geblokkeerd', "Account vergrendeld: {$email}, IP: {$ip}", 'anoniem');
-        $_SESSION['flash_error'] = t('error_account_locked', ['minutes' => $remaining]);
+        $_SESSION['flash_error'] = Translator::translate('error_account_locked', ['minutes' => $remaining]);
         return false;
     }
     // Password correct — check 2FA
@@ -233,7 +234,7 @@ function attempt_login(string $email, string $password) : bool|string
         ]);
         $sent = send_2fa_code($email, $code);
         if (!$sent) {
-            $_SESSION['flash_error'] = t('error_2fa_send_failed');
+            $_SESSION['flash_error'] = Translator::translate('error_2fa_send_failed');
             audit_log('2fa_code_mislukt', "E-mail versturen mislukt voor: {$email}");
             return false;
         }
@@ -270,14 +271,14 @@ function verify_2fa_code(string $inputCode) : bool
     }
     // Check expiry
     if (time() > (int) ($user['two_factor_expires'] ?? 0)) {
-        $_SESSION['flash_error'] = t('error_2fa_code_expired');
+        $_SESSION['flash_error'] = Translator::translate('error_2fa_code_expired');
         audit_log('2fa_code_verlopen', "Account: {$email}");
         return false;
     }
     // Check attempts
     $attempts = (int) ($user['two_factor_attempts'] ?? 0);
     if ($attempts >= 3) {
-        $_SESSION['flash_error'] = t('error_2fa_too_many_attempts');
+        $_SESSION['flash_error'] = Translator::translate('error_2fa_too_many_attempts');
         audit_log('2fa_te_veel_pogingen', "Account: {$email}");
         return false;
     }
@@ -285,7 +286,7 @@ function verify_2fa_code(string $inputCode) : bool
     if (!password_verify($inputCode, $user['two_factor_code'] ?? '')) {
         update_user_field($email, 'two_factor_attempts', $attempts + 1);
         audit_log('2fa_code_fout', "Account: {$email}, poging " . ($attempts + 1));
-        $_SESSION['flash_error'] = t('error_2fa_wrong_code', ['remaining' => 2 - $attempts]);
+        $_SESSION['flash_error'] = Translator::translate('error_2fa_wrong_code', ['remaining' => 2 - $attempts]);
         return false;
     }
     // Code correct — clear 2FA data and complete login
@@ -303,7 +304,7 @@ function resend_2fa_code() : bool
     // Rate limit: max 1 per 60 seconds
     $lastSent = $_SESSION['2fa_last_sent'] ?? 0;
     if (time() - $lastSent < 60) {
-        $_SESSION['flash_error'] = t('error_2fa_wait_seconds', ['seconds' => 60 - (time() - $lastSent)]);
+        $_SESSION['flash_error'] = Translator::translate('error_2fa_wait_seconds', ['seconds' => 60 - (time() - $lastSent)]);
         return false;
     }
     $email = $pending['email'];
@@ -317,10 +318,10 @@ function resend_2fa_code() : bool
     if ($sent) {
         $_SESSION['2fa_last_sent'] = time();
         audit_log('2fa_code_opnieuw_verstuurd', "Naar: " . mask_email($email));
-        $_SESSION['flash_success'] = t('success_2fa_code_resent');
+        $_SESSION['flash_success'] = Translator::translate('success_2fa_code_resent');
         return true;
     }
-    $_SESSION['flash_error'] = t('error_2fa_code_not_sent');
+    $_SESSION['flash_error'] = Translator::translate('error_2fa_code_not_sent');
     return false;
 }
 // Logout
@@ -357,7 +358,7 @@ if (isset($_GET['tab']) && $_GET['tab'] === 'logout') {
 // Handle 2FA verification
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_2fa'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $code = trim($_POST['2fa_code'] ?? '');
         if (verify_2fa_code($code)) {
@@ -369,7 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['verify_2fa'])) {
 // Handle 2FA resend
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['resend_2fa'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         resend_2fa_code();
     }
@@ -377,7 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['resend_2fa'])) {
 // Handle login
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['tab'] ?? '') === 'login') {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $email = trim($_POST['email'] ?? '');
         $password = $_POST['wachtwoord'] ?? '';

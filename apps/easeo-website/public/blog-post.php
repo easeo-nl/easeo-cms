@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Individual blog post with Schema.org
  */
@@ -24,11 +25,11 @@ $dateISO = date('c', strtotime($post['datum']));
         <!-- Breadcrumb -->
         <nav class="text-sm text-muted mb-6">
             <a href="/" class="hover:text-primary"><?php 
-echo t('breadcrumb_home');
+echo Translator::translate('breadcrumb_home');
 ?></a>
             <span class="mx-2">/</span>
             <a href="/blog" class="hover:text-primary"><?php 
-echo t('breadcrumb_blog');
+echo Translator::translate('breadcrumb_blog');
 ?></a>
             <span class="mx-2">/</span>
             <span><?php 
@@ -55,7 +56,7 @@ echo ContentRepository::escape($post['titel']);
 if ($post['auteur']) {
     ?>
             <span><?php 
-    echo t('blog_post_author_prefix', ['author' => ContentRepository::escape($post['auteur'])]);
+    echo Translator::translate('blog_post_author_prefix', ['author' => ContentRepository::escape($post['auteur'])]);
     ?></span>
             <span class="text-gray-300">|</span>
             <?php 
@@ -109,7 +110,7 @@ if ($post['tags']) {
         <!-- Back link -->
         <div class="mt-10 pt-6 border-t">
             <a href="/blog" class="text-primary hover:underline">&larr; <?php 
-echo t('blog_post_back_link');
+echo Translator::translate('blog_post_back_link');
 ?></a>
         </div>
     </div>

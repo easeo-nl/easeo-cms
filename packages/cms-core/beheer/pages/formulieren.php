@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Form list in admin
  */
@@ -8,7 +9,7 @@ $forms = get_forms();
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_form'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $fid = $_POST['form_id'] ?? '';
         $newForms = [];
@@ -23,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_form'])) {
         }
         if ($deleted) {
             save_forms($newForms);
-            $_SESSION['flash_success'] = t('success_form_deleted');
+            $_SESSION['flash_success'] = Translator::translate('success_form_deleted');
         }
     }
     header('Location: /beheer/?tab=formulieren');
@@ -34,10 +35,10 @@ $forms = get_forms();
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-white"><?php 
-echo t('forms_list_title');
+echo Translator::translate('forms_list_title');
 ?></h1>
     <a href="/beheer/?tab=formulier-edit" class="btn-admin btn-admin-primary"><?php 
-echo t('button_new_form');
+echo Translator::translate('button_new_form');
 ?></a>
 </div>
 
@@ -46,7 +47,7 @@ echo t('button_new_form');
 if (empty($forms)) {
     ?>
         <p class="text-gray-500"><?php 
-    echo t('forms_no_forms');
+    echo Translator::translate('forms_no_forms');
     ?></p>
     <?php 
 } else {
@@ -55,13 +56,13 @@ if (empty($forms)) {
         <thead>
             <tr>
                 <th><?php 
-    echo t('table_header_name');
+    echo Translator::translate('table_header_name');
     ?></th>
                 <th><?php 
-    echo t('table_header_id');
+    echo Translator::translate('table_header_id');
     ?></th>
                 <th><?php 
-    echo t('table_header_fields');
+    echo Translator::translate('table_header_fields');
     ?></th>
                 <th></th>
             </tr>
@@ -85,16 +86,16 @@ if (empty($forms)) {
                 <td class="text-gray-400"><?php 
         echo count($form['velden'] ?? []);
         ?> <?php 
-        echo t('unit_fields');
+        echo Translator::translate('unit_fields');
         ?></td>
                 <td class="text-right">
                     <a href="/beheer/?tab=formulier-edit&id=<?php 
         echo ContentRepository::escape($id);
         ?>" class="text-blue-400 hover:text-blue-300 text-sm mr-2"><?php 
-        echo t('action_edit');
+        echo Translator::translate('action_edit');
         ?></a>
                     <form method="POST" class="inline" onsubmit="return confirm('<?php 
-        echo t('confirm_delete');
+        echo Translator::translate('confirm_delete');
         ?>')">
                         <?php 
         echo csrf_field();
@@ -103,7 +104,7 @@ if (empty($forms)) {
         echo ContentRepository::escape($id);
         ?>">
                         <button type="submit" name="delete_form" class="text-red-400 hover:text-red-300 text-sm"><?php 
-        echo t('action_delete');
+        echo Translator::translate('action_delete');
         ?></button>
                     </form>
                 </td>

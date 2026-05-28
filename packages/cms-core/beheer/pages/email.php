@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — E-mail (SMTP) instellingen
  */
@@ -10,21 +11,21 @@ $hasPassword = !empty($smtp['password']);
 // Handle test email
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_test'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $testTo = sanitize_input($_POST['test_email'] ?? '');
         if (!filter_var($testTo, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['flash_error'] = t('error_invalid_email');
+            $_SESSION['flash_error'] = Translator::translate('error_invalid_email');
         } else {
             $companyName = ContentRepository::siteValue('company.name', 'EASEO CMS');
             $subject = 'Test e-mail — ' . $companyName;
             $body = '<h2>Test e-mail</h2>' . '<p>Dit is een test e-mail vanuit het EASEO CMS beheerpanel.</p>' . '<p>Als je dit leest, werkt de e-mailconfiguratie correct.</p>' . '<p><small>Verstuurd op ' . date('d-m-Y H:i:s') . '</small></p>';
             $result = send_mail($testTo, $subject, $body);
             if ($result === true) {
-                $_SESSION['flash_success'] = t('success_test_email_sent') . ' ' . $testTo;
+                $_SESSION['flash_success'] = Translator::translate('success_test_email_sent') . ' ' . $testTo;
                 audit_log('test_email_verstuurd', "Naar: {$testTo}");
             } else {
-                $_SESSION['flash_error'] = t('error_email_send_failed') . ' ' . $result;
+                $_SESSION['flash_error'] = Translator::translate('error_email_send_failed') . ' ' . $result;
             }
         }
     }
@@ -34,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_test'])) {
 // Handle save SMTP settings
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_smtp'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $newSmtp = [
             'enabled' => !empty($_POST['smtp_enabled']),
@@ -55,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_smtp'])) {
         $siteData['smtp'] = $newSmtp;
         file_put_contents(EASEO_DATA . '/site.json', json_encode($siteData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         audit_log('smtp_instellingen_opgeslagen', 'SMTP instellingen bijgewerkt');
-        $_SESSION['flash_success'] = t('success_email_settings_saved');
+        $_SESSION['flash_success'] = Translator::translate('success_email_settings_saved');
     }
     header('Location: /beheer/?tab=email');
     exit;
@@ -67,7 +68,7 @@ $hasPassword = !empty($smtp['password']);
 ?>
 
 <h1 class="text-2xl font-bold text-white mb-6"><?php 
-echo t('email_settings_title');
+echo Translator::translate('email_settings_title');
 ?></h1>
 
 <!-- SMTP Settings -->
@@ -77,10 +78,10 @@ echo csrf_field();
 ?>
 
     <h3 class="text-md font-semibold text-white mb-4"><?php 
-echo t('smtp_config_heading');
+echo Translator::translate('smtp_config_heading');
 ?></h3>
     <p class="text-sm text-gray-400 mb-6"><?php 
-echo t('smtp_config_desc');
+echo Translator::translate('smtp_config_desc');
 ?></p>
 
     <div class="mb-4">
@@ -90,9 +91,9 @@ echo t('smtp_config_desc');
 echo !empty($smtp['enabled']) ? 'checked' : '';
 ?> class="w-4 h-4 rounded">
             <span class="text-sm text-gray-300"><?php 
-echo t('smtp_enable_label');
+echo Translator::translate('smtp_enable_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_smtp_enable');
+echo Translator::translate('tooltip_smtp_enable');
 ?>">?</span></span>
         </label>
     </div>
@@ -100,9 +101,9 @@ echo t('tooltip_smtp_enable');
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('smtp_server_label');
+echo Translator::translate('smtp_server_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_smtp_server');
+echo Translator::translate('tooltip_smtp_server');
 ?>">?</span></label>
             <input type="text" name="smtp_host" value="<?php 
 echo ContentRepository::escape($smtp['host'] ?? '');
@@ -111,9 +112,9 @@ echo ContentRepository::escape($smtp['host'] ?? '');
 
         <div>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('smtp_port_label');
+echo Translator::translate('smtp_port_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_smtp_port');
+echo Translator::translate('tooltip_smtp_port');
 ?>">?</span></label>
             <select name="smtp_port" class="admin-input w-full">
                 <option value="465" <?php 
@@ -125,16 +126,16 @@ echo ($smtp['port'] ?? '') === '587' ? 'selected' : '';
                 <option value="25" <?php 
 echo ($smtp['port'] ?? '') === '25' ? 'selected' : '';
 ?>><?php 
-echo t('smtp_port_25_label');
+echo Translator::translate('smtp_port_25_label');
 ?></option>
             </select>
         </div>
 
         <div>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('smtp_encryption_label');
+echo Translator::translate('smtp_encryption_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_smtp_encryption');
+echo Translator::translate('tooltip_smtp_encryption');
 ?>">?</span></label>
             <select name="smtp_encryption" class="admin-input w-full">
                 <option value="ssl" <?php 
@@ -146,16 +147,16 @@ echo ($smtp['encryption'] ?? '') === 'tls' ? 'selected' : '';
                 <option value="none" <?php 
 echo ($smtp['encryption'] ?? '') === 'none' ? 'selected' : '';
 ?>><?php 
-echo t('smtp_encryption_none');
+echo Translator::translate('smtp_encryption_none');
 ?></option>
             </select>
         </div>
 
         <div>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('smtp_username_label');
+echo Translator::translate('smtp_username_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_smtp_username');
+echo Translator::translate('tooltip_smtp_username');
 ?>">?</span></label>
             <input type="text" name="smtp_username" value="<?php 
 echo ContentRepository::escape($smtp['username'] ?? '');
@@ -164,9 +165,9 @@ echo ContentRepository::escape($smtp['username'] ?? '');
 
         <div>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('smtp_password_label');
+echo Translator::translate('smtp_password_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_smtp_password');
+echo Translator::translate('tooltip_smtp_password');
 ?>">?</span></label>
             <input type="password" name="smtp_password" value="" class="admin-input w-full" placeholder="<?php 
 echo $hasPassword ? '••••••••' : '';
@@ -175,7 +176,7 @@ echo $hasPassword ? '••••••••' : '';
 if ($hasPassword) {
     ?>
             <p class="text-xs text-gray-500 mt-1"><?php 
-    echo t('hint_smtp_password_set');
+    echo Translator::translate('hint_smtp_password_set');
     ?></p>
             <?php 
 }
@@ -184,9 +185,9 @@ if ($hasPassword) {
 
         <div>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('smtp_from_email_label');
+echo Translator::translate('smtp_from_email_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_smtp_from_email');
+echo Translator::translate('tooltip_smtp_from_email');
 ?>">?</span></label>
             <input type="email" name="smtp_from_email" value="<?php 
 echo ContentRepository::escape($smtp['from_email'] ?? '');
@@ -195,9 +196,9 @@ echo ContentRepository::escape($smtp['from_email'] ?? '');
 
         <div>
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('smtp_from_name_label');
+echo Translator::translate('smtp_from_name_label');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_smtp_from_name');
+echo Translator::translate('tooltip_smtp_from_name');
 ?>">?</span></label>
             <input type="text" name="smtp_from_name" value="<?php 
 echo ContentRepository::escape($smtp['from_name'] ?? '');
@@ -209,7 +210,7 @@ echo ContentRepository::escape(ContentRepository::siteValue('company.name', 'Bed
 
     <div class="mt-6">
         <button type="submit" name="save_smtp" class="btn-admin btn-admin-primary"><?php 
-echo t('button_save');
+echo Translator::translate('button_save');
 ?></button>
     </div>
 </form>
@@ -221,23 +222,23 @@ echo csrf_field();
 ?>
 
     <h3 class="text-md font-semibold text-white mb-4"><?php 
-echo t('smtp_test_heading');
+echo Translator::translate('smtp_test_heading');
 ?></h3>
     <p class="text-sm text-gray-400 mb-4"><?php 
-echo t('smtp_test_desc');
+echo Translator::translate('smtp_test_desc');
 ?></p>
 
     <div class="flex items-end gap-3">
         <div class="flex-1">
             <label class="block text-sm font-medium text-gray-300 mb-1"><?php 
-echo t('smtp_test_recipient_label');
+echo Translator::translate('smtp_test_recipient_label');
 ?></label>
             <input type="email" name="test_email" value="<?php 
 echo ContentRepository::escape(ContentRepository::siteValue('company.email'));
 ?>" required class="admin-input w-full" placeholder="test@voorbeeld.nl">
         </div>
         <button type="submit" name="send_test" class="btn-admin btn-admin-outline whitespace-nowrap"><?php 
-echo t('smtp_test_send_button');
+echo Translator::translate('smtp_test_send_button');
 ?></button>
     </div>
 </form>
@@ -245,7 +246,7 @@ echo t('smtp_test_send_button');
 <!-- Provider configs -->
 <div class="admin-card">
     <h3 class="text-md font-semibold text-white mb-4"><?php 
-echo t('smtp_common_configs_heading');
+echo Translator::translate('smtp_common_configs_heading');
 ?></h3>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -253,18 +254,18 @@ echo t('smtp_common_configs_heading');
             <h4 class="text-sm font-semibold text-white mb-2">Hostinger</h4>
             <div class="text-xs text-gray-400 space-y-1">
                 <p><?php 
-echo t('smtp_config_server_label');
+echo Translator::translate('smtp_config_server_label');
 ?> <span class="text-gray-300">smtp.hostinger.com</span></p>
                 <p><?php 
-echo t('smtp_config_port_label');
+echo Translator::translate('smtp_config_port_label');
 ?> <span class="text-gray-300">465</span></p>
                 <p><?php 
-echo t('smtp_config_encryption_label');
+echo Translator::translate('smtp_config_encryption_label');
 ?> <span class="text-gray-300">SSL</span></p>
                 <p><?php 
-echo t('smtp_config_username_label');
+echo Translator::translate('smtp_config_username_label');
 ?> <span class="text-gray-300"><?php 
-echo t('smtp_hostinger_username_hint');
+echo Translator::translate('smtp_hostinger_username_hint');
 ?></span></p>
             </div>
         </div>
@@ -273,21 +274,21 @@ echo t('smtp_hostinger_username_hint');
             <h4 class="text-sm font-semibold text-white mb-2">Gmail</h4>
             <div class="text-xs text-gray-400 space-y-1">
                 <p><?php 
-echo t('smtp_config_server_label');
+echo Translator::translate('smtp_config_server_label');
 ?> <span class="text-gray-300">smtp.gmail.com</span></p>
                 <p><?php 
-echo t('smtp_config_port_label');
+echo Translator::translate('smtp_config_port_label');
 ?> <span class="text-gray-300">587</span></p>
                 <p><?php 
-echo t('smtp_config_encryption_label');
+echo Translator::translate('smtp_config_encryption_label');
 ?> <span class="text-gray-300">TLS</span></p>
                 <p><?php 
-echo t('smtp_config_username_label');
+echo Translator::translate('smtp_config_username_label');
 ?> <span class="text-gray-300"><?php 
-echo t('smtp_gmail_username_hint');
+echo Translator::translate('smtp_gmail_username_hint');
 ?></span></p>
                 <p class="text-yellow-500 mt-1"><?php 
-echo t('smtp_gmail_app_password_warning');
+echo Translator::translate('smtp_gmail_app_password_warning');
 ?></p>
             </div>
         </div>
@@ -296,13 +297,13 @@ echo t('smtp_gmail_app_password_warning');
             <h4 class="text-sm font-semibold text-white mb-2">TransIP</h4>
             <div class="text-xs text-gray-400 space-y-1">
                 <p><?php 
-echo t('smtp_config_server_label');
+echo Translator::translate('smtp_config_server_label');
 ?> <span class="text-gray-300">smtp.transip.email</span></p>
                 <p><?php 
-echo t('smtp_config_port_label');
+echo Translator::translate('smtp_config_port_label');
 ?> <span class="text-gray-300">465</span></p>
                 <p><?php 
-echo t('smtp_config_encryption_label');
+echo Translator::translate('smtp_config_encryption_label');
 ?> <span class="text-gray-300">SSL</span></p>
             </div>
         </div>

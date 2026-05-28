@@ -7,6 +7,7 @@
     <testsuites>
         <testsuite name="cms-core">
             <directory>tests/Content</directory>
+            <directory>tests/Lang</directory>
             <file>tests/LegacyLoadTest.php</file>
             <file>tests/SmokeTest.php</file>
         </testsuite>

@@ -1,16 +1,17 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Legal text editor with tabs
  */
 require_once EASEO_ROOT . '/includes/legal.php';
 $legal = ContentRepository::loadJson('legal.json');
 $activeSection = $_GET['sectie'] ?? 'privacy';
-$sections = ['privacy' => t('legal_section_privacy'), 'voorwaarden' => t('legal_section_terms'), 'cookies' => t('legal_section_cookies')];
+$sections = ['privacy' => Translator::translate('legal_section_privacy'), 'voorwaarden' => Translator::translate('legal_section_terms'), 'cookies' => Translator::translate('legal_section_cookies')];
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_legal'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $section = $_POST['section'] ?? '';
         if (isset($sections[$section])) {
@@ -21,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_legal'])) {
             $legal[$section]['last_updated'] = date('Y-m-d H:i:s');
             ContentRepository::saveJson('legal.json', $legal);
             audit_log('juridisch_bewerkt', "Sectie: {$sections[$section]}");
-            $_SESSION['flash_success'] = t('success_legal_saved');
+            $_SESSION['flash_success'] = Translator::translate('success_legal_saved');
         }
     }
     header('Location: /beheer/?tab=juridisch&sectie=' . urlencode($activeSection));
@@ -30,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_legal'])) {
 // Handle reset to default
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_legal'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $section = $_POST['section'] ?? '';
         if (isset($sections[$section])) {
@@ -39,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_legal'])) {
             }
             $legal[$section]['content'] = '';
             ContentRepository::saveJson('legal.json', $legal);
-            $_SESSION['flash_success'] = t('success_legal_reset');
+            $_SESSION['flash_success'] = Translator::translate('success_legal_reset');
         }
     }
     header('Location: /beheer/?tab=juridisch&sectie=' . urlencode($activeSection));
@@ -48,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reset_legal'])) {
 ?>
 
 <h1 class="text-2xl font-bold text-white mb-6"><?php 
-echo t('legal_title');
+echo Translator::translate('legal_title');
 ?></h1>
 
 <!-- Section tabs -->
@@ -85,19 +86,19 @@ echo ContentRepository::escape($sections[$activeSection] ?? '');
 ?></h2>
         <button type="submit" name="reset_legal" class="text-sm text-gray-500 hover:text-red-400"
                 onclick="return confirm('<?php 
-echo t('confirm_restore_legal');
+echo Translator::translate('confirm_restore_legal');
 ?>')">
             <?php 
-echo t('button_restore_default_text');
+echo Translator::translate('button_restore_default_text');
 ?> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_restore_legal');
+echo Translator::translate('tooltip_restore_legal');
 ?>">?</span>
         </button>
     </div>
 
     <p class="text-xs text-gray-500 mb-4">
         <?php 
-echo t('legal_available_variables');
+echo Translator::translate('legal_available_variables');
 ?> <code>{bedrijfsnaam}</code> <code>{email}</code> <code>{telefoon}</code>
         <code>{adres}</code> <code>{postcode}</code> <code>{plaats}</code> <code>{kvk}</code>
         <code>{btw}</code> <code>{website}</code> <code>{datum}</code>
@@ -114,12 +115,12 @@ echo ContentRepository::escape($currentContent);
 ?></textarea>
 
     <p class="text-xs text-gray-500 mt-2"><?php 
-echo t('hint_legal_empty');
+echo Translator::translate('hint_legal_empty');
 ?></p>
 
     <div class="flex justify-end mt-4 pt-4 border-t border-gray-700">
         <button type="submit" name="save_legal" class="btn-admin btn-admin-primary"><?php 
-echo t('button_save');
+echo Translator::translate('button_save');
 ?></button>
     </div>
 </form>

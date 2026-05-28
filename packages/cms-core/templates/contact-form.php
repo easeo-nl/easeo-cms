@@ -1,11 +1,12 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * Template: Contact form section
  * Expects: $data array with titel, tekst, formulier_id
  */
 require_once EASEO_ROOT . '/includes/form-engine.php';
-$titel = ContentRepository::escape($data['titel'] ?? t('contact_form_template_title'));
+$titel = ContentRepository::escape($data['titel'] ?? Translator::translate('contact_form_template_title'));
 $tekst = ContentRepository::escape($data['tekst'] ?? '');
 $formId = $data['formulier_id'] ?? 'contact';
 ?>

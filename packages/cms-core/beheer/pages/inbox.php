@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Submission inbox with read/unread
  */
@@ -26,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_submission']))
         $file = EASEO_DATA . '/submissions/' . basename($sid) . '.json';
         if (file_exists($file)) {
             unlink($file);
-            $_SESSION['flash_success'] = t('success_message_deleted');
+            $_SESSION['flash_success'] = Translator::translate('success_message_deleted');
         }
     }
     header('Location: /beheer/?tab=inbox');
@@ -61,12 +62,12 @@ if ($viewId) {
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-white"><?php 
-echo t('inbox_title');
+echo Translator::translate('inbox_title');
 ?></h1>
     <span class="text-sm text-gray-500"><?php 
 echo count($submissions);
 ?> <?php 
-echo t('inbox_messages_count_unit');
+echo Translator::translate('inbox_messages_count_unit');
 ?></span>
 </div>
 
@@ -87,7 +88,7 @@ if ($viewSub) {
     ?></p>
         </div>
         <a href="/beheer/?tab=inbox" class="btn-admin btn-admin-outline text-sm">&larr; <?php 
-    echo t('button_back');
+    echo Translator::translate('button_back');
     ?></a>
     </div>
 
@@ -115,13 +116,13 @@ if ($viewSub) {
         <a href="mailto:<?php 
         echo ContentRepository::escape($viewSub['data']['email']);
         ?>" class="btn-admin btn-admin-primary text-sm"><?php 
-        echo t('button_reply');
+        echo Translator::translate('button_reply');
         ?></a>
         <?php 
     }
     ?>
         <form method="POST" class="inline" onsubmit="return confirm('<?php 
-    echo t('confirm_delete');
+    echo Translator::translate('confirm_delete');
     ?>')">
             <?php 
     echo csrf_field();
@@ -130,7 +131,7 @@ if ($viewSub) {
     echo ContentRepository::escape($viewSub['id'] ?? '');
     ?>">
             <button type="submit" name="delete_submission" class="btn-admin btn-admin-danger text-sm"><?php 
-    echo t('action_delete');
+    echo Translator::translate('action_delete');
     ?></button>
         </form>
     </div>
@@ -145,7 +146,7 @@ if ($viewSub) {
     if (empty($submissions)) {
         ?>
         <p class="text-gray-500"><?php 
-        echo t('inbox_no_messages');
+        echo Translator::translate('inbox_no_messages');
         ?></p>
     <?php 
     } else {
@@ -155,13 +156,13 @@ if ($viewSub) {
             <tr>
                 <th style="width:20px"></th>
                 <th><?php 
-        echo t('table_header_form');
+        echo Translator::translate('table_header_form');
         ?></th>
                 <th><?php 
-        echo t('table_header_sender');
+        echo Translator::translate('table_header_sender');
         ?></th>
                 <th><?php 
-        echo t('table_header_date');
+        echo Translator::translate('table_header_date');
         ?></th>
                 <th></th>
             </tr>
@@ -181,7 +182,7 @@ if ($viewSub) {
             echo ContentRepository::escape($sub['id']);
             ?>" class="text-white hover:text-blue-400">
                         <?php 
-            echo ContentRepository::escape($sub['formulier_naam'] ?? t('unknown_form_name'));
+            echo ContentRepository::escape($sub['formulier_naam'] ?? Translator::translate('unknown_form_name'));
             ?>
                     </a>
                 </td>
@@ -195,7 +196,7 @@ if ($viewSub) {
             ?></td>
                 <td class="text-right">
                     <form method="POST" class="inline" onsubmit="return confirm('<?php 
-            echo t('confirm_delete');
+            echo Translator::translate('confirm_delete');
             ?>')">
                         <?php 
             echo csrf_field();
@@ -204,7 +205,7 @@ if ($viewSub) {
             echo ContentRepository::escape($sub['id']);
             ?>">
                         <button type="submit" name="delete_submission" class="text-red-400 hover:text-red-300 text-sm"><?php 
-            echo t('action_delete');
+            echo Translator::translate('action_delete');
             ?></button>
                     </form>
                 </td>

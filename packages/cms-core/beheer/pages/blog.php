@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Blog post list in admin
  */
@@ -7,13 +8,13 @@ require_once EASEO_ROOT . '/includes/blog-engine.php';
 // Handle delete
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_post'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $postId = $_POST['post_id'] ?? '';
         $post = get_post_by_id($postId);
         if ($post && delete_post($postId)) {
             audit_log('blog_verwijderd', "Post: {$post['titel']}");
-            $_SESSION['flash_success'] = t('success_post_deleted');
+            $_SESSION['flash_success'] = Translator::translate('success_post_deleted');
         }
     }
     header('Location: /beheer/?tab=blog');
@@ -25,10 +26,10 @@ usort($posts, fn($a, $b) => strcmp($b['datum'] ?? '', $a['datum'] ?? ''));
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-white"><?php 
-echo t('blog_list_title');
+echo Translator::translate('blog_list_title');
 ?></h1>
     <a href="/beheer/?tab=blog-edit" class="btn-admin btn-admin-primary"><?php 
-echo t('blog_new_post_button');
+echo Translator::translate('blog_new_post_button');
 ?></a>
 </div>
 
@@ -37,7 +38,7 @@ echo t('blog_new_post_button');
 if (empty($posts)) {
     ?>
         <p class="text-gray-500"><?php 
-    echo t('blog_no_posts');
+    echo Translator::translate('blog_no_posts');
     ?></p>
     <?php 
 } else {
@@ -46,16 +47,16 @@ if (empty($posts)) {
         <thead>
             <tr>
                 <th><?php 
-    echo t('table_header_title');
+    echo Translator::translate('table_header_title');
     ?></th>
                 <th><?php 
-    echo t('table_header_category');
+    echo Translator::translate('table_header_category');
     ?></th>
                 <th><?php 
-    echo t('table_header_status');
+    echo Translator::translate('table_header_status');
     ?></th>
                 <th><?php 
-    echo t('table_header_date');
+    echo Translator::translate('table_header_date');
     ?></th>
                 <th></th>
             </tr>
@@ -70,7 +71,7 @@ if (empty($posts)) {
         echo ContentRepository::escape($post['id']);
         ?>" class="hover:text-blue-400">
                         <?php 
-        echo ContentRepository::escape($post['titel'] ?? t('post_untitled'));
+        echo ContentRepository::escape($post['titel'] ?? Translator::translate('post_untitled'));
         ?>
                     </a>
                 </td>
@@ -82,13 +83,13 @@ if (empty($posts)) {
         if (($post['status'] ?? '') === 'gepubliceerd') {
             ?>
                         <span class="badge badge-success"><?php 
-            echo t('status_published');
+            echo Translator::translate('status_published');
             ?></span>
                     <?php 
         } else {
             ?>
                         <span class="badge badge-warning"><?php 
-            echo t('status_draft');
+            echo Translator::translate('status_draft');
             ?></span>
                     <?php 
         }
@@ -101,10 +102,10 @@ if (empty($posts)) {
                     <a href="/beheer/?tab=blog-edit&id=<?php 
         echo ContentRepository::escape($post['id']);
         ?>" class="text-blue-400 hover:text-blue-300 text-sm mr-2"><?php 
-        echo t('action_edit');
+        echo Translator::translate('action_edit');
         ?></a>
                     <form method="POST" class="inline" onsubmit="return confirm('<?php 
-        echo t('confirm_delete');
+        echo Translator::translate('confirm_delete');
         ?>')">
                         <?php 
         echo csrf_field();
@@ -113,7 +114,7 @@ if (empty($posts)) {
         echo ContentRepository::escape($post['id']);
         ?>">
                         <button type="submit" name="delete_post" class="text-red-400 hover:text-red-300 text-sm"><?php 
-        echo t('action_delete');
+        echo Translator::translate('action_delete');
         ?></button>
                     </form>
                 </td>

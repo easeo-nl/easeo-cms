@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Form engine: CRUD, rendering, processing
  * Uses forms.json with structure: {forms:[{id, naam, velden, ...}]}
@@ -30,7 +31,7 @@ function render_form(string $id, bool $showTitle = false) : string
 {
     $form = get_form($id);
     if (!$form) {
-        return '<p class="text-muted">' . t('error_form_not_found') . '</p>';
+        return '<p class="text-muted">' . Translator::translate('error_form_not_found') . '</p>';
     }
     $fields = $form['velden'] ?? [];
     $buttonText = $form['knop_tekst'] ?? 'Versturen';
@@ -41,14 +42,8 @@ function render_form(string $id, bool $showTitle = false) : string
     $html = '';
     if ($success) {
         $html .= '<div class="p-4 bg-green-50 border border-green-200 text-green-800 rounded-lg mb-4">' . ContentRepository::escape($success) . '</div>';
-
         if ($successData && ($successData['form_id'] ?? '') === $id) {
-            $payload = json_encode([
-                'event' => 'formulier_verstuurd',
-                'form_id' => $successData['form_id'],
-                'form_name' => $successData['form_name'] ?? '',
-                'form_type' => $successData['form_type'] ?? '',
-            ], JSON_UNESCAPED_UNICODE);
+            $payload = json_encode(['event' => 'formulier_verstuurd', 'form_id' => $successData['form_id'], 'form_name' => $successData['form_name'] ?? '', 'form_type' => $successData['form_type'] ?? ''], JSON_UNESCAPED_UNICODE);
             $html .= '<script>window.dataLayer=window.dataLayer||[];window.dataLayer.push(' . $payload . ');</script>' . "\n";
         }
     }
@@ -79,7 +74,7 @@ function render_form(string $id, bool $showTitle = false) : string
             case 'select':
                 $options = $field['opties'] ?? [];
                 $html .= '    <select id="field-' . $name . '" name="' . $name . '"' . $reqAttr . ' class="w-full border border-gray-300 rounded-md p-2.5">' . "\n";
-                $html .= '      <option value="">' . t('form_select_placeholder') . '</option>' . "\n";
+                $html .= '      <option value="">' . Translator::translate('form_select_placeholder') . '</option>' . "\n";
                 foreach ($options as $opt) {
                     $html .= '      <option value="' . ContentRepository::escape($opt) . '">' . ContentRepository::escape($opt) . '</option>' . "\n";
                 }

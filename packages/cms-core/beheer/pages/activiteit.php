@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Audit log viewer (admin only)
  */
@@ -15,7 +16,7 @@ if ($hasMore) {
 
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold text-white"><?php 
-echo t('activity_log_title');
+echo Translator::translate('activity_log_title');
 ?></h1>
 </div>
 
@@ -24,7 +25,7 @@ echo t('activity_log_title');
 if (empty($entries)) {
     ?>
         <p class="text-gray-500"><?php 
-    echo t('no_activity_found');
+    echo Translator::translate('no_activity_found');
     ?></p>
     <?php 
 } else {
@@ -33,19 +34,19 @@ if (empty($entries)) {
         <thead>
             <tr>
                 <th><?php 
-    echo t('table_header_date');
+    echo Translator::translate('table_header_date');
     ?></th>
                 <th><?php 
-    echo t('table_header_user');
+    echo Translator::translate('table_header_user');
     ?></th>
                 <th><?php 
-    echo t('table_header_ip');
+    echo Translator::translate('table_header_ip');
     ?></th>
                 <th><?php 
-    echo t('table_header_action');
+    echo Translator::translate('table_header_action');
     ?></th>
                 <th><?php 
-    echo t('table_header_details');
+    echo Translator::translate('table_header_details');
     ?></th>
             </tr>
         </thead>
@@ -83,7 +84,7 @@ if (empty($entries)) {
             <a href="/beheer/?tab=activiteit&p=<?php 
         echo $page - 1;
         ?>" class="btn-admin btn-admin-outline text-sm">&laquo; <?php 
-        echo t('pagination_previous');
+        echo Translator::translate('pagination_previous');
         ?></a>
         <?php 
     } else {
@@ -103,7 +104,7 @@ if (empty($entries)) {
             <a href="/beheer/?tab=activiteit&p=<?php 
         echo $page + 1;
         ?>" class="btn-admin btn-admin-outline text-sm"><?php 
-        echo t('pagination_next');
+        echo Translator::translate('pagination_next');
         ?> &raquo;</a>
         <?php 
     } else {

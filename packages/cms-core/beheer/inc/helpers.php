@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Admin UI helpers, auto field config
  */
@@ -85,12 +86,12 @@ function generate_label(string $key) : string
  */
 function get_field_tooltip(string $key, string $type) : string
 {
-    $tooltips = ['meta_title' => t('tooltip_meta_title'), 'meta_description' => t('tooltip_meta_description')];
+    $tooltips = ['meta_title' => Translator::translate('tooltip_meta_title'), 'meta_description' => Translator::translate('tooltip_meta_description')];
     if (isset($tooltips[$key])) {
         return ' <span class="help-tooltip" data-help="' . ContentRepository::escape($tooltips[$key]) . '">?</span>';
     }
     if ($type === 'image') {
-        return ' <span class="help-tooltip" data-help="' . ContentRepository::escape(t('tooltip_image_picker')) . '">?</span>';
+        return ' <span class="help-tooltip" data-help="' . ContentRepository::escape(Translator::translate('tooltip_image_picker')) . '">?</span>';
     }
     return '';
 }
@@ -115,7 +116,7 @@ function render_field(array $config, $value = '', string $prefix = '') : string
             $html .= '  <label class="block text-sm font-medium text-gray-300 mb-1">' . $label . $tooltip . '</label>' . "\n";
             $html .= '  <div class="flex items-center gap-3">' . "\n";
             $html .= '    <input type="text" id="' . $id . '" name="' . $name . '" value="' . $val . '" class="admin-input flex-1" placeholder="/images/uploads/...">' . "\n";
-            $html .= '    <button type="button" onclick="openMediaPicker(\'' . $id . '\')" class="btn-admin-sm">' . t('button_choose_media') . '</button>' . "\n";
+            $html .= '    <button type="button" onclick="openMediaPicker(\'' . $id . '\')" class="btn-admin-sm">' . Translator::translate('button_choose_media') . '</button>' . "\n";
             if ($value) {
                 $html .= '    <img src="' . $val . '" class="h-10 w-10 object-cover rounded" alt="">' . "\n";
             }

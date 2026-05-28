@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Contact page with dynamic form
  */
@@ -40,7 +41,7 @@ echo render_form($formId);
             <div>
                 <div class="bg-light rounded-lg p-8">
                     <h2 class="text-xl font-display font-bold text-dark mb-6"><?php 
-echo t('contact_info_heading');
+echo Translator::translate('contact_info_heading');
 ?></h2>
 
                     <div class="space-y-4">
@@ -99,7 +100,7 @@ if (ContentRepository::siteValue('company.kvk')) {
     ?>
                         <div class="flex items-center gap-3 text-sm text-muted">
                             <span><?php 
-    echo t('contact_kvk_label');
+    echo Translator::translate('contact_kvk_label');
     ?> <?php 
     echo ContentRepository::escape(ContentRepository::siteValue('company.kvk'));
     ?></span>

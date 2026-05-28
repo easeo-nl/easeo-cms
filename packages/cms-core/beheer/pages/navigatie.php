@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Menu editor (main + footer)
  */
@@ -7,7 +8,7 @@ $nav = ContentRepository::loadJson('navigation.json');
 // Handle save
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_nav'])) {
     if (!verify_csrf()) {
-        $_SESSION['flash_error'] = t('error_invalid_csrf');
+        $_SESSION['flash_error'] = Translator::translate('error_invalid_csrf');
     } else {
         $menuType = $_POST['menu_type'] ?? 'main';
         $labels = $_POST['label'] ?? [];
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_nav'])) {
         $nav[$menuType] = $items;
         ContentRepository::saveJson('navigation.json', $nav);
         audit_log('navigatie_bewerkt', "Menu: {$menuType}");
-        $_SESSION['flash_success'] = t('success_navigation_saved');
+        $_SESSION['flash_success'] = Translator::translate('success_navigation_saved');
     }
     header('Location: /beheer/?tab=navigatie&menu=' . urlencode($_POST['menu_type'] ?? 'main'));
     exit;
@@ -52,19 +53,19 @@ $menuItems = $nav[$activeMenu] ?? [];
 ?>
 
 <h1 class="text-2xl font-bold text-white mb-6"><?php 
-echo t('navigation_title');
+echo Translator::translate('navigation_title');
 ?></h1>
 
 <p class="text-sm text-gray-400 mb-4">
     <strong><?php 
-echo t('nav_label_heading');
+echo Translator::translate('nav_label_heading');
 ?></strong> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_nav_label');
+echo Translator::translate('tooltip_nav_label');
 ?>">?</span> &mdash;
     <strong><?php 
-echo t('nav_url_heading');
+echo Translator::translate('nav_url_heading');
 ?></strong> <span class="help-tooltip" data-help="<?php 
-echo t('tooltip_nav_url');
+echo Translator::translate('tooltip_nav_url');
 ?>">?</span>
 </p>
 
@@ -73,12 +74,12 @@ echo t('tooltip_nav_url');
     <a href="/beheer/?tab=navigatie&menu=main" class="admin-tab <?php 
 echo $activeMenu === 'main' ? 'active' : '';
 ?>"><?php 
-echo t('nav_main_menu_tab');
+echo Translator::translate('nav_main_menu_tab');
 ?></a>
     <a href="/beheer/?tab=navigatie&menu=footer" class="admin-tab <?php 
 echo $activeMenu === 'footer' ? 'active' : '';
 ?>"><?php 
-echo t('nav_footer_menu_tab');
+echo Translator::translate('nav_footer_menu_tab');
 ?></a>
 </div>
 
@@ -100,12 +101,12 @@ foreach ($menuItems as $i => $item) {
                 <input type="text" name="label[]" value="<?php 
     echo ContentRepository::escape($item['label'] ?? '');
     ?>" placeholder="Label" class="admin-input flex-1" title="<?php 
-    echo t('tooltip_nav_label');
+    echo Translator::translate('tooltip_nav_label');
     ?>">
                 <input type="text" name="url[]" value="<?php 
     echo ContentRepository::escape($item['url'] ?? '');
     ?>" placeholder="URL" class="admin-input flex-1" title="<?php 
-    echo t('tooltip_nav_url');
+    echo Translator::translate('tooltip_nav_url');
     ?>">
                 <button type="button" onclick="removeMenuItem(this)" class="text-red-400 hover:text-red-300 text-lg">&times;</button>
             </div>
@@ -138,7 +139,7 @@ foreach ($menuItems as $i => $item) {
             <button type="button" onclick="addChild(this, <?php 
         echo $i;
         ?>)" class="ml-8 mt-2 text-xs text-blue-400 hover:text-blue-300"><?php 
-        echo t('button_add_sub_item');
+        echo Translator::translate('button_add_sub_item');
         ?></button>
             <?php 
     }
@@ -151,10 +152,10 @@ foreach ($menuItems as $i => $item) {
 
     <div class="flex items-center gap-3 mt-4">
         <button type="button" onclick="addMenuItem()" class="btn-admin btn-admin-outline text-sm"><?php 
-echo t('button_add_menu_item');
+echo Translator::translate('button_add_menu_item');
 ?></button>
         <button type="submit" name="save_nav" class="btn-admin btn-admin-primary"><?php 
-echo t('button_save');
+echo Translator::translate('button_save');
 ?></button>
     </div>
 </form>
@@ -167,10 +168,10 @@ if (!empty($autoMenuPages)) {
     ?>
 <div class="admin-card mt-6">
     <h3 class="text-md font-semibold text-white mb-2"><?php 
-    echo t('nav_auto_items_heading');
+    echo Translator::translate('nav_auto_items_heading');
     ?></h3>
     <p class="text-sm text-gray-400 mb-3"><?php 
-    echo t('nav_auto_items_desc');
+    echo Translator::translate('nav_auto_items_desc');
     ?></p>
     <ul class="space-y-1">
         <?php 
@@ -187,7 +188,7 @@ if (!empty($autoMenuPages)) {
             <a href="/beheer/?tab=paginas&action=edit&id=<?php 
         echo ContentRepository::escape($ap['id']);
         ?>" class="text-blue-400 hover:text-blue-300 text-xs ml-auto"><?php 
-        echo t('action_edit');
+        echo Translator::translate('action_edit');
         ?></a>
         </li>
         <?php 
@@ -220,7 +221,7 @@ function addMenuItem() {
     if (isHoofdmenu) {
         html += '<div class="ml-8 mt-2 space-y-2 children-container"></div>' +
             '<button type="button" onclick="addChild(this, ' + menuItemCount + ')" class="ml-8 mt-2 text-xs text-blue-400 hover:text-blue-300"><?php 
-echo t('button_add_sub_item');
+echo Translator::translate('button_add_sub_item');
 ?></button>';
     }
     div.innerHTML = html;

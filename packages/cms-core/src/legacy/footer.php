@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Site footer
  */
@@ -38,7 +39,7 @@ if (ContentRepository::siteValue('company.address') || ContentRepository::siteVa
 
                 <div>
                     <h3 class="text-white font-display font-bold text-lg mb-3"><?php 
-echo t('footer_contact_heading');
+echo Translator::translate('footer_contact_heading');
 ?></h3>
                     <div class="space-y-1 text-sm text-gray-400">
                         <?php 
@@ -68,7 +69,7 @@ if (ContentRepository::siteValue('company.phone')) {
 
                 <div>
                     <h3 class="text-white font-display font-bold text-lg mb-3"><?php 
-echo t('footer_links_heading');
+echo Translator::translate('footer_links_heading');
 ?></h3>
                     <div class="flex flex-col space-y-1">
                         <?php 
@@ -84,7 +85,7 @@ echo ContentRepository::escape(ContentRepository::siteValue('company.copyright_y
 ?> <?php 
 echo ContentRepository::escape(ContentRepository::siteValue('company.name', 'EASEO'));
 ?>. <?php 
-echo t('footer_all_rights_reserved');
+echo Translator::translate('footer_all_rights_reserved');
 ?></p>
 
                 <?php 
@@ -127,7 +128,7 @@ if ($hasSocials) {
             <div class="text-center mt-4">
                 <p class="text-xs" style="color: var(--color-muted); opacity: 0.5;">
                     <a href="https://easeo.nl" target="_blank" rel="noopener" style="color: inherit; text-decoration: underline;"><?php 
-echo t('footer_powered_by');
+echo Translator::translate('footer_powered_by');
 ?></a>
                 </p>
             </div>

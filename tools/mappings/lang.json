@@ -5,8 +5,7 @@
     "namespace": "Easeo\\Cms\\Lang",
     "functions": {
         "t": "translate",
-        "lang_current": "currentLocale",
-        "lang_set": "setLocale",
-        "lang_available": "availableLocales"
+        "available_locales": "availableLocales",
+        "locale_name": "localeName"
     }
 }

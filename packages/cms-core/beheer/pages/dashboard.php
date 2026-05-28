@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Dashboard
  */
@@ -44,12 +45,12 @@ if ($showWelcome) {
 
   <h2 style="color:#f8fafc;font-size:22px;font-weight:700;margin:0 0 8px 0;">
     <?php 
-    echo t('welcome_title');
+    echo Translator::translate('welcome_title');
     ?>
   </h2>
   <p style="color:#94a3b8;font-size:14px;margin:0 0 32px 0;">
     <?php 
-    echo t('welcome_subtitle');
+    echo Translator::translate('welcome_subtitle');
     ?>
   </p>
 
@@ -58,30 +59,30 @@ if ($showWelcome) {
     <a href="/beheer/?tab=blog-edit" style="display:block;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:24px;text-decoration:none;transition:border-color 0.15s;">
       <div style="font-size:28px;margin-bottom:12px;">&#9997;&#65039;</div>
       <div style="color:#f8fafc;font-size:15px;font-weight:600;margin-bottom:6px;"><?php 
-    echo t('welcome_action_write_post');
+    echo Translator::translate('welcome_action_write_post');
     ?></div>
       <div style="color:#64748b;font-size:13px;"><?php 
-    echo t('welcome_action_write_post_desc');
+    echo Translator::translate('welcome_action_write_post_desc');
     ?></div>
     </a>
 
     <a href="/beheer/?tab=content" style="display:block;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:24px;text-decoration:none;transition:border-color 0.15s;">
       <div style="font-size:28px;margin-bottom:12px;">&#128221;</div>
       <div style="color:#f8fafc;font-size:15px;font-weight:600;margin-bottom:6px;"><?php 
-    echo t('welcome_action_edit_content');
+    echo Translator::translate('welcome_action_edit_content');
     ?></div>
       <div style="color:#64748b;font-size:13px;"><?php 
-    echo t('welcome_action_edit_content_desc');
+    echo Translator::translate('welcome_action_edit_content_desc');
     ?></div>
     </a>
 
     <a href="/beheer/?tab=media" style="display:block;background:#0f172a;border:1px solid #334155;border-radius:8px;padding:24px;text-decoration:none;transition:border-color 0.15s;">
       <div style="font-size:28px;margin-bottom:12px;">&#128248;</div>
       <div style="color:#f8fafc;font-size:15px;font-weight:600;margin-bottom:6px;"><?php 
-    echo t('welcome_action_upload_image');
+    echo Translator::translate('welcome_action_upload_image');
     ?></div>
       <div style="color:#64748b;font-size:13px;"><?php 
-    echo t('welcome_action_upload_image_desc');
+    echo Translator::translate('welcome_action_upload_image_desc');
     ?></div>
     </a>
 
@@ -89,7 +90,7 @@ if ($showWelcome) {
 
   <button onclick="dismissWelcome()" style="background:#334155;color:#94a3b8;border:none;padding:10px 20px;border-radius:6px;font-size:13px;cursor:pointer;font-family:inherit;">
     <?php 
-    echo t('welcome_dismiss_button');
+    echo Translator::translate('welcome_dismiss_button');
     ?>
   </button>
 
@@ -108,7 +109,7 @@ function dismissWelcome() {
 ?>
 
 <h1 class="text-2xl font-bold text-white mb-6"><?php 
-echo t('dashboard_title');
+echo Translator::translate('dashboard_title');
 ?></h1>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -117,7 +118,7 @@ echo t('dashboard_title');
 echo count($pages);
 ?></div>
         <div class="stat-label"><?php 
-echo t('stat_pages');
+echo Translator::translate('stat_pages');
 ?></div>
     </div>
     <div class="stat-card">
@@ -125,7 +126,7 @@ echo t('stat_pages');
 echo count($posts);
 ?></div>
         <div class="stat-label"><?php 
-echo t('stat_blogposts');
+echo Translator::translate('stat_blogposts');
 ?></div>
     </div>
     <div class="stat-card">
@@ -133,7 +134,7 @@ echo t('stat_blogposts');
 echo count($media);
 ?></div>
         <div class="stat-label"><?php 
-echo t('stat_media_files');
+echo Translator::translate('stat_media_files');
 ?></div>
     </div>
     <div class="stat-card">
@@ -143,7 +144,7 @@ echo $unreadSubmissions;
 echo $totalSubmissions;
 ?></span></div>
         <div class="stat-label"><?php 
-echo t('stat_unread_messages');
+echo Translator::translate('stat_unread_messages');
 ?></div>
     </div>
 </div>
@@ -152,21 +153,21 @@ echo t('stat_unread_messages');
     <!-- Quick actions -->
     <div class="admin-card">
         <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('dashboard_quick_actions');
+echo Translator::translate('dashboard_quick_actions');
 ?></h2>
         <div class="grid grid-cols-2 gap-3">
             <a href="/beheer/?tab=content" class="btn-admin btn-admin-outline w-full justify-center"><?php 
-echo t('quick_action_edit_content');
+echo Translator::translate('quick_action_edit_content');
 ?></a>
             <a href="/beheer/?tab=blog-edit" class="btn-admin btn-admin-outline w-full justify-center"><?php 
-echo t('quick_action_new_post');
+echo Translator::translate('quick_action_new_post');
 ?></a>
             <a href="/beheer/?tab=media" class="btn-admin btn-admin-outline w-full justify-center"><?php 
-echo t('quick_action_upload_media');
+echo Translator::translate('quick_action_upload_media');
 ?></a>
             <a href="/beheer/?tab=inbox" class="btn-admin btn-admin-outline w-full justify-center">
                 <?php 
-echo t('quick_action_inbox');
+echo Translator::translate('quick_action_inbox');
 ?>
                 <?php 
 if ($unreadSubmissions > 0) {
@@ -184,13 +185,13 @@ if ($unreadSubmissions > 0) {
     <!-- Recent activity -->
     <div class="admin-card">
         <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('dashboard_recent_activity');
+echo Translator::translate('dashboard_recent_activity');
 ?></h2>
         <?php 
 if (empty($recentActivity)) {
     ?>
             <p class="text-gray-500 text-sm"><?php 
-    echo t('no_activity_found');
+    echo Translator::translate('no_activity_found');
     ?></p>
         <?php 
 } else {
@@ -234,12 +235,12 @@ if (empty($recentActivity)) {
 <!-- Site info -->
 <div class="admin-card mt-6">
     <h2 class="text-lg font-semibold text-white mb-4"><?php 
-echo t('dashboard_site_info');
+echo Translator::translate('dashboard_site_info');
 ?></h2>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
         <div>
             <span class="text-gray-500"><?php 
-echo t('site_info_company_name');
+echo Translator::translate('site_info_company_name');
 ?></span>
             <span class="text-white ml-1"><?php 
 echo ContentRepository::escape(ContentRepository::siteValue('company.name', '—'));
@@ -247,7 +248,7 @@ echo ContentRepository::escape(ContentRepository::siteValue('company.name', '—
         </div>
         <div>
             <span class="text-gray-500"><?php 
-echo t('site_info_email');
+echo Translator::translate('site_info_email');
 ?></span>
             <span class="text-white ml-1"><?php 
 echo ContentRepository::escape(ContentRepository::siteValue('company.email', '—'));
@@ -255,7 +256,7 @@ echo ContentRepository::escape(ContentRepository::siteValue('company.email', '�
         </div>
         <div>
             <span class="text-gray-500"><?php 
-echo t('site_info_php_version');
+echo Translator::translate('site_info_php_version');
 ?></span>
             <span class="text-white ml-1"><?php 
 echo phpversion();
