@@ -2,6 +2,7 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Mail\Mailer;
+use Easeo\Cms\Form\FormEngine;
 /**
  * EASEO CMS — Form POST handler
  */
@@ -11,13 +12,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 $formId = $_POST['form_id'] ?? '';
-$form = get_form($formId);
+$form = FormEngine::getForm($formId);
 if (!$form) {
     http_response_code(400);
     exit(Translator::translate('error_form_not_found'));
 }
 // CSRF check
-if (!verify_csrf_frontend()) {
+if (!FormEngine::verifyCsrf()) {
     $_SESSION['form_error'] = Translator::translate('error_security_csrf');
     header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? '/'));
     exit;

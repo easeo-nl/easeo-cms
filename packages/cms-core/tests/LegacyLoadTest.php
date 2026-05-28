@@ -11,6 +11,6 @@ class LegacyLoadTest extends TestCase {
 
         $this->assertTrue(class_exists(\Easeo\Cms\Branding\BrandConfig::class), 'BrandConfig PSR-4 klasse moet beschikbaar zijn');
         $this->assertTrue(class_exists(\Easeo\Cms\Mail\Mailer::class), 'Mailer PSR-4 klasse moet beschikbaar zijn');
-        $this->assertTrue(function_exists('get_forms'), 'form-engine.php moet geladen zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Form\FormEngine::class), 'FormEngine PSR-4 klasse moet beschikbaar zijn');
     }
 }

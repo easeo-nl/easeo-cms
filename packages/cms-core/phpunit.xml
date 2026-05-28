@@ -8,7 +8,9 @@
         <testsuite name="cms-core">
             <directory>tests/Branding</directory>
             <directory>tests/Content</directory>
+            <directory>tests/Form</directory>
             <directory>tests/Lang</directory>
+            <directory>tests/Mail</directory>
             <file>tests/LegacyLoadTest.php</file>
             <file>tests/SmokeTest.php</file>
         </testsuite>
