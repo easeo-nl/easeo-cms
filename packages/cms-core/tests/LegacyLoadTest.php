@@ -16,6 +16,13 @@ class LegacyLoadTest extends TestCase {
         $this->assertTrue(class_exists(\Easeo\Cms\Security\RateLimiter::class), 'RateLimiter PSR-4 klasse moet beschikbaar zijn');
     }
 
+    public function testPlan07MigrationKlassenBeschikbaar(): void {
+        $this->assertTrue(interface_exists(\Easeo\Cms\Migration\MigrationInterface::class), 'MigrationInterface moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Migration\SchemaVersion::class), 'SchemaVersion PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Migration\Runner::class), 'Runner PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Bootstrap\Bootstrapper::class), 'Bootstrapper PSR-4 klasse moet beschikbaar zijn');
+    }
+
     public function testConstantsBootstrapDefinesConstants(): void {
         // Constants are already defined by tests/bootstrap.php; just verify they exist.
         $this->assertTrue(defined('EASEO_APP'), 'EASEO_APP moet gedefinieerd zijn na Constants::bootstrap()');

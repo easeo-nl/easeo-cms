@@ -7,6 +7,15 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added — Plan 07 batch 1
+- `Easeo\Cms\Migration\Runner` runs forward-only migrations at first request after upgrade. Reads `data/.schema-version`, scans `packages/cms-core/migrations/`, applies pending migrations with `flock` concurrency-guard.
+- `Easeo\Cms\Migration\MigrationInterface` contract for individual migrations.
+- `Easeo\Cms\Migration\SchemaVersion` read/write helper for `data/.schema-version` (atomic tmp+rename writes).
+- `Easeo\Cms\Bootstrap\Bootstrapper` initializes `data/` on first deploy from `site.template.json`. Idempotent.
+- `bin/easeo-bootstrap` CLI wrapper for first-deploy data initialization.
+- Initial migration `0001_initial_skeleton.php` as safety-net baseline.
+- `App::boot()` now runs pending migrations automatically (no-op if `EASEO_DATA` is unwritable, e.g. in CLI/tests where bootstrap has not run).
+
 ## [0.2.0-rc1] - 2026-05-29
 
 ### Added

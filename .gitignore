@@ -11,6 +11,10 @@ data/submissions/
 # Login attempts
 data/login_attempts.json
 
+# Migration runtime files
+data/.schema-version
+data/.migration.lock
+
 # Uploaded media
 images/uploads/*
 images/thumbs/*
