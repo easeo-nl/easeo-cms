@@ -18,6 +18,7 @@
             <directory>tests/Navigation</directory>
             <directory>tests/Security</directory>
             <directory>tests/Seo</directory>
+            <file>tests/AppTest.php</file>
             <file>tests/LegacyLoadTest.php</file>
             <file>tests/SmokeTest.php</file>
         </testsuite>
