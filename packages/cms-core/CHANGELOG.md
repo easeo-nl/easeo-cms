@@ -7,6 +7,13 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Changed — Plan 02 batch 2 (Mailer SMTP from env)
+- `Mailer::send()` now reads SMTP config from environment variables when `SMTP_HOST` is set (12-factor). Falls back to legacy `site.json["smtp"]` (with crypto-decrypted password) when env is unset, so existing klant-sites continue to send mail until they run the (later) site.json → .env migration script.
+- New env vars consumed: `SMTP_HOST`, `SMTP_PORT` (default 465), `SMTP_USERNAME`, `SMTP_PASSWORD` (plaintext), `SMTP_FROM_EMAIL` (defaults to username), `SMTP_FROM_NAME` (defaults to company name from site.json or `"Website"`), `SMTP_ENCRYPTION` (default `ssl`).
+- `Mailer::sendSmtp()` now takes a pre-resolved, normalized config array — password is always plaintext at this point (env path: never encrypted; site.json path: decrypted by `resolveSmtpConfig`). No in-method decryption.
+- Internal `resolveSmtpConfig()` returns a normalized config array with a `source` field (`'env'` or `'site.json'`) indicating which config path was used.
+- `Mailer::encryptSmtpPassword()` and `Mailer::decryptSmtpPassword()` are unchanged — still needed for the BC fallback path and the (later) site.json → .env migration script.
+
 ### Added — Plan 02 batch 1 (12-factor config-split foundation)
 - `Easeo\Cms\Config\Environment` — vlucas/phpdotenv wrapper with type-cast accessors (`get`/`has`/`bool`/`int`/`require`).
 - `Easeo\Cms\Config\SiteConfig` — JSON wrapper for `data/site.config.json` with dot-notation get/set/save. Falls back to `site.template.json` then legacy `site.json` so existing klant-sites continue to render during the transition.
