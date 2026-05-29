@@ -6,16 +6,21 @@ namespace Easeo\Cms\Mail;
 final class Mailer
 {
     /**
-     * Send an email — auto-selects SMTP or native mail() based on site.json config.
+     * Send an email — auto-selects SMTP or native mail() based on env / site.json config.
+     *
+     * Resolution order (12-factor):
+     *  1. Environment variables (SMTP_HOST, …) — set in .env or server config.
+     *  2. Legacy site.json["smtp"] — backwards-compat for existing klant-sites.
+     *  3. Native PHP mail() — ultimate fallback.
      *
      * @return true|string  true on success, error message on failure
      */
     public static function send(string $to, string $subject, string $body, string $replyTo = ''): bool|string
     {
-        $siteData = json_decode((string) file_get_contents(EASEO_DATA . '/site.json'), true) ?: [];
-        $smtp = $siteData['smtp'] ?? [];
+        $siteData = json_decode((string) @file_get_contents(EASEO_DATA . '/site.json'), true) ?: [];
+        $smtp = self::resolveSmtpConfig($siteData);
 
-        if (!empty($smtp['enabled']) && !empty($smtp['host']) && !empty($smtp['username'])) {
+        if ($smtp !== null) {
             $result = self::sendSmtp($to, $subject, $body, $replyTo, $smtp, $siteData);
             if ($result === true) {
                 return true;
@@ -24,6 +29,54 @@ final class Mailer
         }
 
         return self::sendNative($to, $subject, $body, $replyTo, $siteData);
+    }
+
+    /**
+     * Resolve SMTP config — env vars take precedence over legacy site.json.
+     *
+     * @param  array<string,mixed> $siteData
+     * @return array{enabled:bool,host:string,port:int,username:string,password:string,from_email:string,from_name:string,encryption:string,source:string}|null
+     *         null when no usable config exists.
+     */
+    private static function resolveSmtpConfig(array $siteData): ?array
+    {
+        // 1. Prefer environment (12-factor)
+        $envHost = \Easeo\Cms\Config\Environment::get('SMTP_HOST');
+        if ($envHost !== null && $envHost !== '') {
+            $username = \Easeo\Cms\Config\Environment::get('SMTP_USERNAME', '');
+            if ($username === '' || $username === null) {
+                return null; // SMTP host without username — can't authenticate
+            }
+            return [
+                'enabled'    => true,
+                'host'       => $envHost,
+                'port'       => \Easeo\Cms\Config\Environment::int('SMTP_PORT', 465),
+                'username'   => $username,
+                'password'   => \Easeo\Cms\Config\Environment::get('SMTP_PASSWORD', '') ?? '',
+                'from_email' => \Easeo\Cms\Config\Environment::get('SMTP_FROM_EMAIL', $username) ?? $username,
+                'from_name'  => \Easeo\Cms\Config\Environment::get('SMTP_FROM_NAME', $siteData['company']['name'] ?? 'Website') ?? ($siteData['company']['name'] ?? 'Website'),
+                'encryption' => \Easeo\Cms\Config\Environment::get('SMTP_ENCRYPTION', 'ssl') ?? 'ssl',
+                'source'     => 'env',
+            ];
+        }
+
+        // 2. Fall back to legacy site.json
+        $smtp = $siteData['smtp'] ?? [];
+        if (empty($smtp['enabled']) || empty($smtp['host']) || empty($smtp['username'])) {
+            return null;
+        }
+        return [
+            'enabled'    => true,
+            'host'       => (string) $smtp['host'],
+            'port'       => (int) (($smtp['port'] ?? 0) ?: 465),
+            'username'   => (string) $smtp['username'],
+            // Legacy passwords are AES-256-CBC encrypted; decrypt them.
+            'password'   => self::decryptSmtpPassword((string) ($smtp['password'] ?? '')),
+            'from_email' => (string) (($smtp['from_email'] ?? '') ?: $smtp['username']),
+            'from_name'  => (string) (($smtp['from_name'] ?? '') ?: ($siteData['company']['name'] ?? 'Website')),
+            'encryption' => (string) ($smtp['encryption'] ?? 'ssl'),
+            'source'     => 'site.json',
+        ];
     }
 
     /**
@@ -84,7 +137,7 @@ final class Mailer
      * PHPMailer lives in vendor-legacy/phpmailer/ (vendored library, intentionally not
      * PSR-4 migrated). Required via relative path from the package root.
      *
-     * @param array<string,mixed> $smtp
+     * @param array{enabled:bool,host:string,port:int,username:string,password:string,from_email:string,from_name:string,encryption:string,source:string} $smtp  Pre-resolved config from resolveSmtpConfig()
      * @param array<string,mixed> $siteData
      * @return true|string  true on success, error message on failure
      */
@@ -96,13 +149,13 @@ final class Mailer
 
         try {
             $mail->isSMTP();
-            $mail->Host = $smtp['host'];
-            $mail->Port = (int) ($smtp['port'] ?: 465);
+            $mail->Host     = $smtp['host'];
+            $mail->Port     = $smtp['port'];
             $mail->SMTPAuth = true;
             $mail->Username = $smtp['username'];
-            $mail->Password = self::decryptSmtpPassword($smtp['password'] ?? '');
+            $mail->Password = $smtp['password']; // already plaintext (env) or decrypted (site.json)
 
-            $encryption = $smtp['encryption'] ?? 'ssl';
+            $encryption = $smtp['encryption'];
             if ($encryption === 'ssl') {
                 $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
             } elseif ($encryption === 'tls') {
@@ -112,9 +165,7 @@ final class Mailer
                 $mail->SMTPAutoTLS = false;
             }
 
-            $fromEmail = $smtp['from_email'] ?: $smtp['username'];
-            $fromName = $smtp['from_name'] ?: ($siteData['company']['name'] ?? 'Website');
-            $mail->setFrom($fromEmail, $fromName);
+            $mail->setFrom($smtp['from_email'], $smtp['from_name']);
             $mail->addAddress($to);
 
             if ($replyTo !== '') {
@@ -124,7 +175,7 @@ final class Mailer
             $mail->isHTML(true);
             $mail->CharSet = 'UTF-8';
             $mail->Subject = $subject;
-            $mail->Body = $body;
+            $mail->Body    = $body;
             $mail->AltBody = strip_tags(str_replace(['<br>', '<br/>', '<br />'], "\n", $body));
 
             $mail->send();
