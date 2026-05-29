@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+// Resolve autoload — works both as composer-installed bin and as
+// in-monorepo dev script.
+$autoload = [
+    __DIR__ . '/../../../autoload.php',     // composer-installed (vendor/easeo/cms-core/bin/X → vendor/autoload.php)
+    __DIR__ . '/../../../../vendor/autoload.php', // monorepo dev
+    __DIR__ . '/../vendor/autoload.php',
+];
+foreach ($autoload as $candidate) {
+    if (is_file($candidate)) {
+        require $candidate;
+        break;
+    }
+}
+
+if (($argv[1] ?? null) === '--help' || empty($argv[1])) {
+    fwrite(STDERR, "Usage: easeo-bootstrap <app-root>\n\n");
+    fwrite(STDERR, "Initialises data/ on first deploy. Idempotent.\n");
+    exit(2);
+}
+
+$appRoot = rtrim($argv[1], '/');
+if (!is_dir($appRoot)) {
+    fwrite(STDERR, "ERROR: app-root '$appRoot' does not exist\n");
+    exit(3);
+}
+
+$created = (new \Easeo\Cms\Bootstrap\Bootstrapper($appRoot))->bootstrap();
+
+if (empty($created)) {
+    echo "No files created (already bootstrapped).\n";
+} else {
+    echo "Created " . count($created) . " file(s) in $appRoot/data:\n";
+    foreach ($created as $file) {
+        echo "  - $file\n";
+    }
+}
+exit(0);

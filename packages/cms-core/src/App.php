@@ -34,9 +34,27 @@ final class App
         $appRoot = rtrim($appRoot, '/');
 
         Constants::bootstrap($appRoot);
+        self::runPendingMigrations();
         self::secureSession();
 
         return new self($appRoot);
+    }
+
+    private static function runPendingMigrations(): void
+    {
+        if (!defined('EASEO_DATA')) {
+            return;
+        }
+        $dataDir = constant('EASEO_DATA');
+        if (!is_dir($dataDir) || !is_writable($dataDir)) {
+            return;
+        }
+        $migrationsDir = dirname(__DIR__) . '/migrations';
+        try {
+            (new Migration\Runner($dataDir, $migrationsDir))->runPending();
+        } catch (\RuntimeException $e) {
+            error_log('[easeo/cms-core] Migration failed: ' . $e->getMessage());
+        }
     }
 
     /**
