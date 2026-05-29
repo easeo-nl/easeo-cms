@@ -4,11 +4,11 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "easeo/cms-core": "^0.1"
+        "easeo/cms-core": "^0.2.0-rc1"
     },
     "config": {
         "sort-packages": true
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
