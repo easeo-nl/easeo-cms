@@ -48,18 +48,9 @@ class ContentRepository
         self::$_cache = [];
     }
 
-    public static function siteValue(string $key, $default = '')
+    public static function siteValue(string $key, mixed $default = ''): mixed
     {
-        $site = self::loadJson('site.json');
-        $keys = explode('.', $key);
-        $value = $site;
-        foreach ($keys as $k) {
-            if (!is_array($value) || !isset($value[$k])) {
-                return $default;
-            }
-            $value = $value[$k];
-        }
-        return $value;
+        return \Easeo\Cms\Config\SiteConfig::get($key, $default);
     }
 
     public static function pageContent(string $page, string $key = null, $default = '')

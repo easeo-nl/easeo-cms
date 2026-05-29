@@ -7,6 +7,16 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added — Plan 02 batch 1 (12-factor config-split foundation)
+- `Easeo\Cms\Config\Environment` — vlucas/phpdotenv wrapper with type-cast accessors (`get`/`has`/`bool`/`int`/`require`).
+- `Easeo\Cms\Config\SiteConfig` — JSON wrapper for `data/site.config.json` with dot-notation get/set/save. Falls back to `site.template.json` then legacy `site.json` so existing klant-sites continue to render during the transition.
+- `Easeo\Cms\Config\SecretStatus` — beheer-UI helper that reports which environment-backed secrets are configured (status-only, no values).
+- `App::boot()` now loads `.env` (and `.env.local` override) from `$appRoot/` before `runPendingMigrations` so migrations see env vars.
+- `apps/easeo-website/.env.example` and `apps/_skeleton/.env.example` templates.
+
+### Changed — Plan 02 batch 1
+- `ContentRepository::siteValue()` delegates to `SiteConfig::get()` — same API, same dot-notation, same default-on-missing semantics. All existing callers continue to work.
+
 ### Added — Plan 07 batch 1
 - `Easeo\Cms\Migration\Runner` runs forward-only migrations at first request after upgrade. Reads `data/.schema-version`, scans `packages/cms-core/migrations/`, applies pending migrations with `flock` concurrency-guard.
 - `Easeo\Cms\Migration\MigrationInterface` contract for individual migrations.

@@ -34,6 +34,7 @@ final class App
         $appRoot = rtrim($appRoot, '/');
 
         Constants::bootstrap($appRoot);
+        Config\Environment::load($appRoot);
         self::runPendingMigrations();
         self::secureSession();
 
