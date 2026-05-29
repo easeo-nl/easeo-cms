@@ -7,6 +7,12 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+## [0.2.0-rc1] - 2026-05-29
+
+### Added
+- `Easeo\Cms\App::boot($appRoot)->run()` entry-aggregator. Klant-sites kunnen vanaf één regel booten; `boot()` wraps `Constants::bootstrap` + secure session defaults (httponly + samesite=Strict + strict_mode + cookie_secure indien HTTPS) + `session_start()`. `run()` is een no-op placeholder voor toekomstige front-controller routing.
+- 4 PHPUnit tests voor `App` (boot retourtype, trailing-slash strip, constants definitie, run no-op).
+
 ### Changed — Plan 01 Fase B complete (PSR-4 refactor)
 - **BREAKING** Procedurele `includes/` engines hernoemd naar PSR-4 classes onder namespace `Easeo\Cms\`:
   - `content.php` → `Easeo\Cms\Content\ContentRepository`
