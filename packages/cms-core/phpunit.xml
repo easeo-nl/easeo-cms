@@ -8,6 +8,7 @@
         <testsuite name="cms-core">
             <directory>tests/Audit</directory>
             <directory>tests/Branding</directory>
+            <directory>tests/Config</directory>
             <directory>tests/Content</directory>
             <directory>tests/Form</directory>
             <directory>tests/Lang</directory>

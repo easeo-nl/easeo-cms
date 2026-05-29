@@ -3,31 +3,41 @@ declare(strict_types=1);
 
 namespace Easeo\Cms\Tests\Legal;
 
+use Easeo\Cms\Config\SiteConfig;
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Legal\LegalPages;
 use PHPUnit\Framework\TestCase;
 
 final class LegalPagesTest extends TestCase
 {
-    private string $tmpDataDir;
+    private string $tmpDataDir = '';
+    private string $tmpAppDir  = '';
 
     protected function setUp(): void
     {
-        $this->tmpDataDir = sys_get_temp_dir() . '/legal-test-' . uniqid('', true);
+        $this->tmpDataDir = sys_get_temp_dir() . '/legal-data-' . uniqid('', true);
+        $this->tmpAppDir  = sys_get_temp_dir() . '/legal-app-'  . uniqid('', true);
         mkdir($this->tmpDataDir, 0755, true);
+        mkdir($this->tmpAppDir,  0755, true);
+
         putenv("EASEO_DATA={$this->tmpDataDir}");
+        // Point EASEO_APP to empty tmp dir so site.template.json fallback finds nothing
+        putenv("EASEO_APP={$this->tmpAppDir}");
         ContentRepository::resetCache();
+        SiteConfig::resetCache();
     }
 
     protected function tearDown(): void
     {
         putenv('EASEO_DATA');
+        putenv('EASEO_APP');
         ContentRepository::resetCache();
-        if (is_dir($this->tmpDataDir)) {
-            foreach (glob($this->tmpDataDir . '/*') ?: [] as $f) {
-                if (is_file($f)) unlink($f);
-            }
-            rmdir($this->tmpDataDir);
+        SiteConfig::resetCache();
+        if ($this->tmpDataDir !== '' && is_dir($this->tmpDataDir)) {
+            shell_exec('rm -rf ' . escapeshellarg($this->tmpDataDir));
+        }
+        if ($this->tmpAppDir !== '' && is_dir($this->tmpAppDir)) {
+            shell_exec('rm -rf ' . escapeshellarg($this->tmpAppDir));
         }
     }
 

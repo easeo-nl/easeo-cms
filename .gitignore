@@ -42,6 +42,8 @@ composer.lock
 
 # Env
 /apps/*/.env
+/apps/*/.env.local
+/apps/*/site.config.json
 
 # Build / tests
 .phpunit.result.cache

@@ -16,6 +16,12 @@ class LegacyLoadTest extends TestCase {
         $this->assertTrue(class_exists(\Easeo\Cms\Security\RateLimiter::class), 'RateLimiter PSR-4 klasse moet beschikbaar zijn');
     }
 
+    public function testPlan02ConfigKlassenBeschikbaar(): void {
+        $this->assertTrue(class_exists(\Easeo\Cms\Config\Environment::class), 'Environment PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Config\SiteConfig::class), 'SiteConfig PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Config\SecretStatus::class), 'SecretStatus PSR-4 klasse moet beschikbaar zijn');
+    }
+
     public function testPlan07MigrationKlassenBeschikbaar(): void {
         $this->assertTrue(interface_exists(\Easeo\Cms\Migration\MigrationInterface::class), 'MigrationInterface moet beschikbaar zijn');
         $this->assertTrue(class_exists(\Easeo\Cms\Migration\SchemaVersion::class), 'SchemaVersion PSR-4 klasse moet beschikbaar zijn');
