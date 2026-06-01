@@ -7,6 +7,13 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added — Plan 03 batch 6 (shop-module skeleton)
+- **packages/shop-module/** — Shop-module skelet. Registreert alleen een geparkeerde beheer-tab. Payment-provider abstractie beschikbaar via `Easeo\Shop\Payment\PaymentProviderFactory::make()`.
+- `Easeo\Shop\Payment\{PaymentProvider, PaymentStatus, RefundResult, NotImplementedException}` — public API.
+- 3 stub adapters: `MollieProvider`, `StripeProvider`, `AdyenProvider` — alle methods werpen `NotImplementedException`. Echte implementaties komen bij eurolight-webshop kickoff.
+- `PaymentProviderFactory` leest `PAYMENT_PROVIDER` env + bijbehorende API-key env. Throws RuntimeException als config ontbreekt.
+- ~20 nieuwe tests via dataProvider-style stub-coverage.
+
 ### Added — Plan 03 batches 3+4+5 (router-integration + nav-merge + hello-module)
 - `apps/easeo-website/public/module-router.php` — fallback entry that dispatches module-registered routes via `App::registry()->routes()->match()`. Boots App if not already booted; 404-safe on no match, 500-safe on handler exception.
 - `apps/easeo-website/public/beheer-entry.php` — beheer-UI entry-point that calls `App::boot()` before including `cms-core/beheer/index.php`, ensuring modules are registered before the admin UI renders.
