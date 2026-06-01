@@ -97,4 +97,35 @@ final class AppTest extends TestCase
             @rmdir($appRoot);
         }
     }
+
+    public function test_current_returns_the_latest_booted_instance(): void
+    {
+        $appRoot = sys_get_temp_dir() . '/app-test-current-' . uniqid('', true);
+        mkdir($appRoot, 0755, true);
+
+        try {
+            $app = App::boot($appRoot);
+            $this->assertSame($app, App::current());
+        } finally {
+            @rmdir($appRoot);
+        }
+    }
+
+    public function test_current_is_updated_on_subsequent_boot(): void
+    {
+        $appRoot1 = sys_get_temp_dir() . '/app-test-curr1-' . uniqid('', true);
+        $appRoot2 = sys_get_temp_dir() . '/app-test-curr2-' . uniqid('', true);
+        mkdir($appRoot1, 0755, true);
+        mkdir($appRoot2, 0755, true);
+
+        try {
+            App::boot($appRoot1);
+            $app2 = App::boot($appRoot2);
+            $this->assertSame($app2, App::current());
+            $this->assertSame($appRoot2, App::current()->appRoot());
+        } finally {
+            @rmdir($appRoot1);
+            @rmdir($appRoot2);
+        }
+    }
 }

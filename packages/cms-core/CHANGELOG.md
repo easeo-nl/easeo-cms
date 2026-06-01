@@ -7,6 +7,16 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added — Plan 03 batches 3+4+5 (router-integration + nav-merge + hello-module)
+- `apps/easeo-website/public/module-router.php` — fallback entry that dispatches module-registered routes via `App::registry()->routes()->match()`. Boots App if not already booted; 404-safe on no match, 500-safe on handler exception.
+- `apps/easeo-website/public/beheer-entry.php` — beheer-UI entry-point that calls `App::boot()` before including `cms-core/beheer/index.php`, ensuring modules are registered before the admin UI renders.
+- Updated PHP dev-router (`router.php`) to consult the module RouteTable before falling through to the pagina-router catch-all; core routes always win.
+- `packages/cms-core/beheer/index.php` now dispatches module-registered tabs: expands the allowed-tab check to include `App::registry()->beheerPages()` entries, enforces `admin_only` flag (403 for non-admins), invokes the renderer callable, and fails soft on renderer exceptions.
+- `packages/cms-core/beheer/inc/layout-top.php` merges module beheer-pages into `$navItems` (appended after core items, separated by a divider), honouring the `admin_only` flag for nav visibility.
+- `App::current()` — static accessor returning the most-recently-booted App instance (null before first boot). Lets cross-file includes like `beheer/index.php` access the Registry without re-booting.
+- **packages/hello-module/** — first concrete cms-core module package. Registers `GET /hello`, a `hello` beheer-tab, and a `cms.footer.before` hook subscriber. Wired into `apps/easeo-website` via composer path-repo symlink.
+- Smoke verified: `php -S localhost:8000 router.php` → `curl /hello` returns "Hallo wereld".
+
 ### Added — Plan 03 batch 2 (ModuleLoader + App integration)
 - `Easeo\Cms\Module\ModuleLoader` — reads `site.config.json.modules`, resolves each package to a `composer.json` (klant-site vendor/ or monorepo packages/ path), reads `extra.easeo.module-class`, instantiates, and calls `register($registry)`.
 - `Easeo\Cms\Module\{ModuleNotFoundException, InvalidModuleException}` for clear failure paths.

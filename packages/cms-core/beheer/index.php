@@ -3,10 +3,19 @@ use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 /**
  * EASEO CMS — Admin router
+ *
+ * Entry-point assumption: App::boot() has already been called by the parent
+ * entry-file (e.g. apps/easeo-website/public/beheer-entry.php) so that
+ * App::current() is non-null and modules are registered in the Registry.
+ * If this file is included without a prior boot, module tabs are simply
+ * unavailable (graceful degradation — the core tabs still work).
  */
 require_once __DIR__ . '/inc/auth.php';
 require_once __DIR__ . '/inc/helpers.php';
 $tab = $_GET['tab'] ?? 'dashboard';
+// Retrieve module-registered beheer-pages (may be empty if App not booted yet)
+$_easeoApp = \Easeo\Cms\App::current();
+$_modulePages = $_easeoApp !== null ? $_easeoApp->registry()->beheerPages()->all() : [];
 // 2FA verification page
 if (!empty($_SESSION['2fa_pending']) && !is_logged_in()) {
     $maskedEmail = mask_email($_SESSION['2fa_pending']['email']);
@@ -174,16 +183,55 @@ if ($tab === 'login') {
 }
 // All other tabs require login
 require_login();
-// Route to pages
+// Core tab whitelist
 $allowedTabs = ['dashboard', 'content', 'paginas', 'blog', 'blog-edit', 'media', 'formulieren', 'formulier-edit', 'inbox', 'navigatie', 'huisstijl', 'redirects', 'juridisch', 'tracking', 'email', 'gebruikers', 'activiteit', 'backup', 'geheimen'];
-if (!in_array($tab, $allowedTabs)) {
-    $tab = 'dashboard';
-}
-// Admin-only tabs
+// Admin-only core tabs
 $adminTabs = ['gebruikers', 'activiteit', 'backup', 'geheimen'];
+
+// Check if the requested tab is a module-registered beheer-page
+$_isModuleTab = isset($_modulePages[$tab]);
+
+if (!in_array($tab, $allowedTabs) && !$_isModuleTab) {
+    // Unknown tab: redirect to dashboard (avoids a confusing blank page)
+    $tab = 'dashboard';
+    $_isModuleTab = false;
+}
+
 if (in_array($tab, $adminTabs)) {
     require_admin();
 }
+
+// Module tab: enforce admin-only flag, then invoke its renderer
+if ($_isModuleTab) {
+    $_page = $_modulePages[$tab];
+    if (!empty($_page['admin_only']) && !is_admin()) {
+        http_response_code(403);
+        $adminPageTitle = 'Geen toegang';
+        require_once __DIR__ . '/inc/layout-top.php';
+        echo '<div class="admin-card"><p class="text-gray-400">Geen toegang — deze pagina is uitsluitend beschikbaar voor beheerders.</p></div>';
+        require_once __DIR__ . '/inc/layout-bottom.php';
+        exit;
+    }
+    $adminPageTitle = $_page['label'];
+    require_once __DIR__ . '/inc/layout-top.php';
+    ob_start();
+    try {
+        $result = ($_page['renderer'])();
+        $output = ob_get_clean();
+        echo $output;
+        if ($result !== null) {
+            echo is_string($result) ? $result : (string) $result;
+        }
+    } catch (\Throwable $e) {
+        ob_end_clean();
+        error_log('[easeo/cms-core beheer] module tab renderer for "' . $tab . '" threw: ' . $e->getMessage());
+        echo '<div class="admin-card"><p class="text-red-400">Fout bij het laden van deze module-pagina.</p></div>';
+    }
+    require_once __DIR__ . '/inc/layout-bottom.php';
+    exit;
+}
+
+// Core tab dispatch
 $adminPageTitle = ucfirst($tab);
 require_once __DIR__ . '/inc/layout-top.php';
 $pageFile = __DIR__ . '/pages/' . $tab . '.php';

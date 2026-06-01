@@ -1,0 +1,27 @@
+{
+    "name": "easeo/hello-module",
+    "description": "Reference implementation of an easeo/cms-core module. Registers a /hello route, a beheer-tab, and a hook subscriber.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.1",
+        "easeo/cms-core": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Easeo\\Hello\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Easeo\\Hello\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "easeo": {
+            "module-class": "Easeo\\Hello\\Module"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

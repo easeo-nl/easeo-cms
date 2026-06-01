@@ -39,12 +39,10 @@ $routes = [
     '#^/voorwaarden/?$#' => '/voorwaarden.php',
     '#^/cookiebeleid/?$#' => '/cookiebeleid.php',
     '#^/contact/?$#' => '/contact.php',
-    '#^/beheer/?(.*)$#' => null, // Pass through
 ];
 
 foreach ($routes as $pattern => $target) {
     if (preg_match($pattern, $uri, $matches)) {
-        if ($target === null) return false;
         $resolved = preg_replace($pattern, $target, $uri);
         $parts = explode('?', $resolved, 2);
         if (isset($parts[1])) {
@@ -52,6 +50,44 @@ foreach ($routes as $pattern => $target) {
             $_GET = array_merge($_GET, $params);
         }
         require __DIR__ . $parts[0];
+        return true;
+    }
+}
+
+// Beheer (admin UI): boot App first so modules are registered, then hand off.
+if (preg_match('#^/beheer(/.*)?$#', $uri)) {
+    require __DIR__ . '/beheer-entry.php';
+    return true;
+}
+
+// Homepage
+if ($uri === '/') {
+    require __DIR__ . '/index.php';
+    return true;
+}
+
+// Module routes: try to match against registry BEFORE falling back to the pagina-router.
+// Boot App here (or reuse the already-booted instance) to consult the RouteTable.
+// This must happen after core routes (above) so core routes always win.
+if (!class_exists(\Easeo\Cms\App::class, false)) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+$_devRouterApp = \Easeo\Cms\App::current();
+if ($_devRouterApp === null) {
+    try {
+        $_devRouterApp = \Easeo\Cms\App::boot(__DIR__ . '/..');
+    } catch (\Throwable $e) {
+        // Boot failure → skip module routing, fall through to pagina-router / 404.
+        error_log('[easeo router.php] App::boot failed: ' . $e->getMessage());
+        $_devRouterApp = null;
+    }
+}
+if ($_devRouterApp !== null) {
+    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    $_devRoute = $_devRouterApp->registry()->routes()->match($method, $uri);
+    if ($_devRoute !== null) {
+        // Module route matched — hand off to module-router.php to dispatch it.
+        require __DIR__ . '/module-router.php';
         return true;
     }
 }
@@ -67,12 +103,6 @@ if (preg_match('#^/([a-z0-9-]+)/([a-z0-9-]+)/?$#', $uri, $matches)) {
 if (preg_match('#^/([a-z0-9-]+)/?$#', $uri, $matches)) {
     $_GET['slug'] = $matches[1];
     require __DIR__ . '/pagina-router.php';
-    return true;
-}
-
-// Homepage
-if ($uri === '/') {
-    require __DIR__ . '/index.php';
     return true;
 }
 
