@@ -7,9 +7,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SITE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 if [ ! -x "$SITE_ROOT/vendor/bin/easeo-doctor" ]; then
-  echo "easeo-doctor not installed yet — run 'composer install' first."
-  echo "(Doctor will be shipped by easeo/cms-core in Plan 12.)"
+  echo "easeo-doctor not installed — run 'composer install' first."
   exit 1
 fi
 
-exec "$SITE_ROOT/vendor/bin/easeo-doctor" "$@"
+exec "$SITE_ROOT/vendor/bin/easeo-doctor" --app="$SITE_ROOT" "$@"

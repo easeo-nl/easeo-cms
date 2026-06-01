@@ -1,0 +1,67 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+// Resolve autoload — works both as composer-installed bin and monorepo dev.
+$candidates = [
+    __DIR__ . '/../../../autoload.php',          // vendor/easeo/cms-core/bin/X -> vendor/autoload.php
+    __DIR__ . '/../../../../vendor/autoload.php', // monorepo root
+    __DIR__ . '/../vendor/autoload.php',          // standalone
+];
+foreach ($candidates as $c) {
+    if (is_file($c)) {
+        require $c;
+        break;
+    }
+}
+
+$args   = array_slice($argv, 1);
+$appRoot = null;
+$remote  = null;
+
+foreach ($args as $a) {
+    if (str_starts_with($a, '--app=')) {
+        $appRoot = substr($a, 6);
+    } elseif (str_starts_with($a, '--remote=')) {
+        $remote = substr($a, 9);
+    } elseif ($a === '--help' || $a === '-h') {
+        fwrite(STDERR, "Usage: easeo-doctor [--app=path] [--remote=user@host:port]\n");
+        exit(2);
+    }
+}
+
+if ($remote !== null) {
+    // SSH-remote mode: re-run this script on the remote server
+    $parts    = explode(':', $remote, 2);
+    $userHost = $parts[0];
+    $port     = $parts[1] ?? '22';
+    $cmd      = sprintf(
+        'ssh -p %s %s "cd \$HOME/domains/*/public_html 2>/dev/null || cd \$HOME; php vendor/bin/easeo-doctor 2>&1"',
+        escapeshellarg($port),
+        escapeshellarg($userHost)
+    );
+    passthru($cmd, $code);
+    exit($code);
+}
+
+if ($appRoot === null) {
+    // Walk up from cwd looking for a site-root with composer.json
+    $appRoot = getcwd() ?: '.';
+}
+
+$diagnostics = \Easeo\Cms\Doctor\Diagnostics::default($appRoot);
+$results     = $diagnostics->run();
+
+$renderer = new \Easeo\Cms\Doctor\Renderer();
+echo "\nEASEO CMS doctor — $appRoot\n";
+echo str_repeat('=', 40) . "\n";
+echo $renderer->render($results);
+echo "\n";
+
+// Exit 0 unless any check is an error
+foreach ($results as $r) {
+    if ($r->status === \Easeo\Cms\Doctor\CheckStatus::Error) {
+        exit(1);
+    }
+}
+exit(0);

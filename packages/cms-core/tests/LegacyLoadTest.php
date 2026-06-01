@@ -59,4 +59,24 @@ class LegacyLoadTest extends TestCase {
         $this->assertStringEndsWith('/packages/cms-core', EASEO_CORE);
         $this->assertDirectoryExists(EASEO_CORE);
     }
+
+    public function testPlan12DoctorKlassenBeschikbaar(): void {
+        $this->assertTrue(interface_exists(\Easeo\Cms\Doctor\CheckInterface::class), 'CheckInterface moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Doctor\CheckResult::class), 'CheckResult PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Doctor\Diagnostics::class), 'Diagnostics PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Doctor\Renderer::class), 'Renderer PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Doctor\Checks\SchemaVersionCheck::class), 'SchemaVersionCheck PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Doctor\Checks\DataDirWritableCheck::class), 'DataDirWritableCheck PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Doctor\Checks\CmsCoreVersionCheck::class), 'CmsCoreVersionCheck PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Doctor\Checks\EnvFileCheck::class), 'EnvFileCheck PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Doctor\Checks\SiteHealthCheck::class), 'SiteHealthCheck PSR-4 klasse moet beschikbaar zijn');
+    }
+
+    public function testPlan12ExplainKlassenBeschikbaar(): void {
+        $this->assertTrue(class_exists(\Easeo\Cms\Explain\Explainer::class), 'Explainer PSR-4 klasse moet beschikbaar zijn');
+    }
+
+    public function testPlan12HealthcheckKlasseBeschikbaar(): void {
+        $this->assertTrue(class_exists(\Easeo\Cms\Routes\Healthcheck::class), 'Healthcheck PSR-4 klasse moet beschikbaar zijn');
+    }
 }

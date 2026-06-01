@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+declare(strict_types=1);
+
+// Resolve autoload — works both as composer-installed bin and monorepo dev.
+$candidates = [
+    __DIR__ . '/../../../autoload.php',          // vendor/easeo/cms-core/bin/X -> vendor/autoload.php
+    __DIR__ . '/../../../../vendor/autoload.php', // monorepo root
+    __DIR__ . '/../vendor/autoload.php',          // standalone
+];
+foreach ($candidates as $c) {
+    if (is_file($c)) {
+        require $c;
+        break;
+    }
+}
+
+$topic    = $argv[1] ?? null;
+$explainer = new \Easeo\Cms\Explain\Explainer();
+
+if ($topic === null || $topic === '--help' || $topic === '-h') {
+    echo "Usage: easeo-explain <topic>\n\nAvailable topics:\n";
+    foreach ($explainer->topics() as $t) {
+        echo "  - $t\n";
+    }
+    exit(0);
+}
+
+echo $explainer->render($topic);

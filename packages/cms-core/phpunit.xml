@@ -22,6 +22,9 @@
             <directory>tests/Bootstrap</directory>
             <directory>tests/Migration</directory>
             <directory>tests/Module</directory>
+            <directory>tests/Doctor</directory>
+            <directory>tests/Explain</directory>
+            <directory>tests/Routes</directory>
             <file>tests/AppTest.php</file>
             <file>tests/LegacyLoadTest.php</file>
             <file>tests/SmokeTest.php</file>
