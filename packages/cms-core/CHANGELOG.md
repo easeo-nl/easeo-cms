@@ -7,6 +7,9 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Changed
+- **PHPMailer dependency** — Migrated from vendored `packages/cms-core/vendor-legacy/phpmailer/` to Composer dependency `phpmailer/phpmailer:^6.9`. PHPMailer is now autoloaded via PSR-4; no functional changes to `Easeo\Cms\Mail\Mailer`. Requires-only the Composer dependency; no code changes to mail-sending behavior (still SSL/TLS, still SMTP password decryption, still PHPMailer internal).
+
 ### Added — Plan 07 batches 2+3+4 (audit-log + OPcache + integration)
 - `Migration\Runner` writes an `audit_log` entry per successfully-applied migration via `Easeo\Cms\Audit\AuditLogger::log()`. Audit failure is logged via `error_log` and does NOT crash the runner (fail-soft).
 - `Easeo\Cms\Migration\VersionTracker` — tracks last-seen cms-core version in `data/.cms-core-version`. Used by `App::boot()` to call `opcache_reset()` when the version changes (mitigates stale OPcache paths after Capistrano-style symlink deploys).
