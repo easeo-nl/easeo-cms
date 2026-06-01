@@ -7,6 +7,14 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added — Plan 03 batch 2 (ModuleLoader + App integration)
+- `Easeo\Cms\Module\ModuleLoader` — reads `site.config.json.modules`, resolves each package to a `composer.json` (klant-site vendor/ or monorepo packages/ path), reads `extra.easeo.module-class`, instantiates, and calls `register($registry)`.
+- `Easeo\Cms\Module\{ModuleNotFoundException, InvalidModuleException}` for clear failure paths.
+- `App::boot()` now creates a `Registry`, loads modules into it, and exposes it via `App::registry()`. Fail-soft: bad modules log via `error_log` and are skipped — boot continues.
+- `App::loadedModules()` returns the list of successfully-loaded module names.
+
+No router-integration with module routes yet (batch 3 wires them into entry-files), no beheer-nav merge yet (batch 4).
+
 ### Added — Plan 03 batch 1 (Module extension-point infrastructure)
 - `Easeo\Cms\Module\ModuleInterface` — contract for cms-core module packages.
 - `Easeo\Cms\Module\Registry` — aggregator that modules call into during `register()` to declare routes, beheer-pages, hooks, and config-schemas.

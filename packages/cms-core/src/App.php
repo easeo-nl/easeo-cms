@@ -23,10 +23,16 @@ use Easeo\Cms\Content\ContentRepository;
 final class App
 {
     private string $appRoot;
+    private Module\Registry $registry;
 
-    private function __construct(string $appRoot)
+    /** @var list<string> */
+    private array $loadedModules;
+
+    private function __construct(string $appRoot, Module\Registry $registry, array $loadedModules)
     {
         $this->appRoot = $appRoot;
+        $this->registry = $registry;
+        $this->loadedModules = $loadedModules;
     }
 
     public static function boot(string $appRoot): self
@@ -38,7 +44,23 @@ final class App
         self::runPendingMigrations();
         self::secureSession();
 
-        return new self($appRoot);
+        $registry = new Module\Registry();
+        $loaded = Module\ModuleLoader::loadFromConfig($appRoot, $registry);
+
+        return new self($appRoot, $registry, $loaded);
+    }
+
+    public function registry(): Module\Registry
+    {
+        return $this->registry;
+    }
+
+    /**
+     * @return list<string>
+     */
+    public function loadedModules(): array
+    {
+        return $this->loadedModules;
     }
 
     private static function runPendingMigrations(): void

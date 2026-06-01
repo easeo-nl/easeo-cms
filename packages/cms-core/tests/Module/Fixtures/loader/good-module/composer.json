@@ -1,0 +1,8 @@
+{
+    "name": "easeo/good-module",
+    "extra": {
+        "easeo": {
+            "module-class": "Easeo\\Cms\\Tests\\Module\\Fixtures\\loader\\GoodModule"
+        }
+    }
+}

@@ -37,6 +37,12 @@ class LegacyLoadTest extends TestCase {
         $this->assertTrue(class_exists(\Easeo\Cms\Module\Hook::class));
     }
 
+    public function testPlan03Batch2ModuleLoaderKlassenBeschikbaar(): void {
+        $this->assertTrue(class_exists(\Easeo\Cms\Module\ModuleLoader::class), 'ModuleLoader moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Module\ModuleNotFoundException::class), 'ModuleNotFoundException moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Module\InvalidModuleException::class), 'InvalidModuleException moet beschikbaar zijn');
+    }
+
     public function testConstantsBootstrapDefinesConstants(): void {
         // Constants are already defined by tests/bootstrap.php; just verify they exist.
         $this->assertTrue(defined('EASEO_APP'), 'EASEO_APP moet gedefinieerd zijn na Constants::bootstrap()');
