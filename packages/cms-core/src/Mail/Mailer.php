@@ -134,8 +134,7 @@ final class Mailer
     /**
      * Send via SMTP using PHPMailer.
      *
-     * PHPMailer lives in vendor-legacy/phpmailer/ (vendored library, intentionally not
-     * PSR-4 migrated). Required via relative path from the package root.
+     * PHPMailer is installed as a Composer dependency and autoloaded via PSR-4.
      *
      * @param array{enabled:bool,host:string,port:int,username:string,password:string,from_email:string,from_name:string,encryption:string,source:string} $smtp  Pre-resolved config from resolveSmtpConfig()
      * @param array<string,mixed> $siteData
@@ -143,8 +142,6 @@ final class Mailer
      */
     private static function sendSmtp(string $to, string $subject, string $body, string $replyTo, array $smtp, array $siteData): bool|string
     {
-        require_once dirname(__DIR__, 2) . '/vendor-legacy/phpmailer/load.php';
-
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
         try {
