@@ -68,4 +68,33 @@ final class AppTest extends TestCase
             @rmdir($appRoot);
         }
     }
+
+    public function test_registry_returns_empty_registry_by_default(): void
+    {
+        $appRoot = sys_get_temp_dir() . '/app-test-registry-' . uniqid('', true);
+        mkdir($appRoot, 0755, true);
+
+        try {
+            $app = App::boot($appRoot);
+            $registry = $app->registry();
+            $this->assertInstanceOf(\Easeo\Cms\Module\Registry::class, $registry);
+            // No modules in site.config.json → no routes registered
+            $this->assertSame(0, $registry->routes()->count());
+        } finally {
+            @rmdir($appRoot);
+        }
+    }
+
+    public function test_loaded_modules_returns_empty_list_by_default(): void
+    {
+        $appRoot = sys_get_temp_dir() . '/app-test-modules-' . uniqid('', true);
+        mkdir($appRoot, 0755, true);
+
+        try {
+            $app = App::boot($appRoot);
+            $this->assertSame([], $app->loadedModules());
+        } finally {
+            @rmdir($appRoot);
+        }
+    }
 }

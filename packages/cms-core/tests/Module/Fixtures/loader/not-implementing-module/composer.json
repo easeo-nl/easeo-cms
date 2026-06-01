@@ -1,0 +1,8 @@
+{
+    "name": "easeo/not-implementing-module",
+    "extra": {
+        "easeo": {
+            "module-class": "Easeo\\Cms\\Tests\\Module\\Fixtures\\loader\\NotImplementingModule"
+        }
+    }
+}
