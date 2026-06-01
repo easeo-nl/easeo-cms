@@ -7,6 +7,16 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added — Plan 03 batch 1 (Module extension-point infrastructure)
+- `Easeo\Cms\Module\ModuleInterface` — contract for cms-core module packages.
+- `Easeo\Cms\Module\Registry` — aggregator that modules call into during `register()` to declare routes, beheer-pages, hooks, and config-schemas.
+- `Easeo\Cms\Module\RouteTable` — internal route collection with duplicate-pattern detection and `match()` lookup.
+- `Easeo\Cms\Module\BeheerPages` — admin-menu entry collection with kebab-case slug validation.
+- `Easeo\Cms\Module\Hook` — named-hook dispatcher with priority-ordered subscribers and fail-soft error handling.
+- `Easeo\Cms\Module\{DuplicateRouteException, DuplicateBeheerPageException}` for clear failure paths.
+
+No loader, router-integration, or beheer-nav-merge yet — those come in later batches with the first real consumer (hello-module).
+
 ## [0.2.0-rc2] - 2026-06-01
 
 Brings Plan 02 (12-factor config-split) and Plan 07 batch 1 (lazy migrations runtime) to a tagged release. Klant-sites kunnen vanaf nu `composer require easeo/cms-core: ^0.2.0-rc2` om `Environment`, `SiteConfig`, `SecretStatus`, `Migration\Runner`, `Bootstrap\Bootstrapper`, en de Mailer-SMTP-from-env logica te krijgen. Volledig backwards-compatible voor sites die nog op site.json[smtp] draaien — Mailer valt automatisch terug.

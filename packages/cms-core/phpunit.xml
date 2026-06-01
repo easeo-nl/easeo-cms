@@ -21,6 +21,7 @@
             <directory>tests/Seo</directory>
             <directory>tests/Bootstrap</directory>
             <directory>tests/Migration</directory>
+            <directory>tests/Module</directory>
             <file>tests/AppTest.php</file>
             <file>tests/LegacyLoadTest.php</file>
             <file>tests/SmokeTest.php</file>

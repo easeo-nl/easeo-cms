@@ -29,6 +29,14 @@ class LegacyLoadTest extends TestCase {
         $this->assertTrue(class_exists(\Easeo\Cms\Bootstrap\Bootstrapper::class), 'Bootstrapper PSR-4 klasse moet beschikbaar zijn');
     }
 
+    public function testPlan03ModuleKlassenBeschikbaar(): void {
+        $this->assertTrue(interface_exists(\Easeo\Cms\Module\ModuleInterface::class));
+        $this->assertTrue(class_exists(\Easeo\Cms\Module\Registry::class));
+        $this->assertTrue(class_exists(\Easeo\Cms\Module\RouteTable::class));
+        $this->assertTrue(class_exists(\Easeo\Cms\Module\BeheerPages::class));
+        $this->assertTrue(class_exists(\Easeo\Cms\Module\Hook::class));
+    }
+
     public function testConstantsBootstrapDefinesConstants(): void {
         // Constants are already defined by tests/bootstrap.php; just verify they exist.
         $this->assertTrue(defined('EASEO_APP'), 'EASEO_APP moet gedefinieerd zijn na Constants::bootstrap()');
