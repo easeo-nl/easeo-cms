@@ -48,6 +48,17 @@ final class Runner
                     $migration->up($this->dataDir);
                     $this->version->set($migration->version());
                     $applied[] = $migration->version();
+
+                    try {
+                        \Easeo\Cms\Audit\AuditLogger::log(
+                            'migration_applied',
+                            sprintf('v%d: %s', $migration->version(), $migration->description()),
+                            'systeem'
+                        );
+                    } catch (\Throwable $e) {
+                        error_log('[easeo/cms-core Runner] audit-log failure: ' . $e->getMessage());
+                        // continue — audit failure must not kill the runner
+                    }
                 }
             } finally {
                 flock($lock, LOCK_UN);

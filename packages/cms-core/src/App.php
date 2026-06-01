@@ -44,6 +44,7 @@ final class App
 
         Constants::bootstrap($appRoot);
         Config\Environment::load($appRoot);
+        self::resetOpcacheOnVersionChange($appRoot);
         self::runPendingMigrations();
         self::secureSession();
 
@@ -76,6 +77,32 @@ final class App
     public function loadedModules(): array
     {
         return $this->loadedModules;
+    }
+
+    private static function resetOpcacheOnVersionChange(string $appRoot): void
+    {
+        if (!defined('EASEO_DATA')) {
+            return;
+        }
+        $dataDir = constant('EASEO_DATA');
+        if (!is_dir($dataDir) || !is_writable($dataDir)) {
+            return;
+        }
+        $tracker = new Migration\VersionTracker($dataDir);
+        $current = Migration\VersionTracker::detectCurrentVersion($appRoot);
+        if ($tracker->hasChanged($current)) {
+            if (function_exists('opcache_reset')) {
+                @opcache_reset();
+            }
+        }
+        // Record current (creates marker on first boot if not present)
+        if ($tracker->lastSeen() !== $current) {
+            try {
+                $tracker->record($current);
+            } catch (\Throwable $e) {
+                error_log('[easeo/cms-core] VersionTracker write failed: ' . $e->getMessage());
+            }
+        }
     }
 
     private static function runPendingMigrations(): void
