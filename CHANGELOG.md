@@ -6,6 +6,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · Versionering
 
 ## [Unreleased]
 
+### Added — Plan 03 batches 3+4+5 (router + nav-merge + hello-module)
+- `packages/hello-module/` — first concrete module package: `easeo/hello-module`. Wired into `apps/easeo-website` via composer path-repo.
+- `apps/easeo-website/public/module-router.php` + `beheer-entry.php` — router integration entry-points.
+- `apps/easeo-website/composer.json` now requires `easeo/hello-module: *` (path symlink in dev).
+- Root `composer.json` gains `@test:hello-module` script and `Easeo\Hello\` in both autoload maps.
+
 ### Plan-status
 
 - [x] **Plan 01** — Monorepo-skelet + PSR-4 namespace-refactor (alle Fase A + B tasks compleet, behalve `vendor-legacy/phpmailer/` cleanup die naar een latere plan verschuift)

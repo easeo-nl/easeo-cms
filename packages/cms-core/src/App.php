@@ -28,6 +28,9 @@ final class App
     /** @var list<string> */
     private array $loadedModules;
 
+    /** Holds the most-recently-booted App instance for cross-file access. */
+    private static ?self $current = null;
+
     private function __construct(string $appRoot, Module\Registry $registry, array $loadedModules)
     {
         $this->appRoot = $appRoot;
@@ -47,7 +50,19 @@ final class App
         $registry = new Module\Registry();
         $loaded = Module\ModuleLoader::loadFromConfig($appRoot, $registry);
 
-        return new self($appRoot, $registry, $loaded);
+        $instance = new self($appRoot, $registry, $loaded);
+        self::$current = $instance;
+        return $instance;
+    }
+
+    /**
+     * Returns the most-recently-booted App instance, or null if boot() has
+     * not been called yet. Useful for files that are included after boot
+     * (e.g. beheer/index.php, module-router.php).
+     */
+    public static function current(): ?self
+    {
+        return self::$current;
     }
 
     public function registry(): Module\Registry
