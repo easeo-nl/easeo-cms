@@ -15,16 +15,19 @@
         "test": [
             "@test:core",
             "@test:tools",
-            "@test:hello-module"
+            "@test:hello-module",
+            "@test:shop-module"
         ],
         "test:core": "phpunit --configuration packages/cms-core/phpunit.xml --testsuite cms-core",
         "test:tools": "phpunit --configuration tools/phpunit.xml",
-        "test:hello-module": "phpunit --configuration packages/hello-module/phpunit.xml"
+        "test:hello-module": "phpunit --configuration packages/hello-module/phpunit.xml",
+        "test:shop-module": "phpunit --configuration packages/shop-module/phpunit.xml"
     },
     "autoload": {
         "psr-4": {
             "Easeo\\Cms\\": "packages/cms-core/src/",
-            "Easeo\\Hello\\": "packages/hello-module/src/"
+            "Easeo\\Hello\\": "packages/hello-module/src/",
+            "Easeo\\Shop\\": "packages/shop-module/src/"
         }
     },
     "autoload-dev": {
@@ -32,7 +35,8 @@
             "Easeo\\Tools\\": "tools/src/",
             "Easeo\\Tools\\Tests\\": "tools/tests/",
             "Easeo\\Cms\\Tests\\": "packages/cms-core/tests/",
-            "Easeo\\Hello\\Tests\\": "packages/hello-module/tests/"
+            "Easeo\\Hello\\Tests\\": "packages/hello-module/tests/",
+            "Easeo\\Shop\\Tests\\": "packages/shop-module/tests/"
         }
     }
 }
