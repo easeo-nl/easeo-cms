@@ -533,5 +533,19 @@
     "pricing_popular_badge": "Popular",
 
     "language_setting_label": "Language",
-    "tooltip_language_setting": "The language of the admin panel and website interface."
+    "tooltip_language_setting": "The language of the admin panel and website interface.",
+
+    "nav_secrets": "Secrets",
+    "admin_secrets_title": "Secrets",
+    "admin_secrets_intro": "Status of environment variables this installation expects. Values are never shown here — only whether they're configured. Change them in the .env file on the server.",
+    "admin_secrets_missing_required": "The following required secrets are missing:",
+    "admin_secrets_col_key": "Env key",
+    "admin_secrets_col_label": "Purpose",
+    "admin_secrets_col_status": "Status",
+    "admin_secrets_col_hint": "Example",
+    "admin_secrets_configured": "Configured",
+    "admin_secrets_missing": "Missing",
+    "admin_secrets_not_set": "Not set",
+    "admin_secrets_how_to_set": "How do I set secrets?",
+    "admin_secrets_env_explanation": "Add the following lines to apps/<site>/.env on the server (this file is gitignored):"
 }
