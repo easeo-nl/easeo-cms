@@ -7,6 +7,10 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+## [0.2.0-rc2] - 2026-06-01
+
+Brings Plan 02 (12-factor config-split) and Plan 07 batch 1 (lazy migrations runtime) to a tagged release. Klant-sites kunnen vanaf nu `composer require easeo/cms-core: ^0.2.0-rc2` om `Environment`, `SiteConfig`, `SecretStatus`, `Migration\Runner`, `Bootstrap\Bootstrapper`, en de Mailer-SMTP-from-env logica te krijgen. Volledig backwards-compatible voor sites die nog op site.json[smtp] draaien — Mailer valt automatisch terug.
+
 ### Added — Plan 02 batch 3 (migration tooling + beheer)
 - `Easeo\Cms\Config\SiteJsonMigrator` — splits legacy `data/site.json` into `data/site.config.json` (branding) + `.env` template (secrets, commented out for operator review) + timestamped backup. Idempotent.
 - `tools/migrate-site-json-to-split.php` CLI — dry-run by default, `--apply` to commit. Takes `--app=path` to target a klant-site app-root.
