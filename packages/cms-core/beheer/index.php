@@ -175,12 +175,12 @@ if ($tab === 'login') {
 // All other tabs require login
 require_login();
 // Route to pages
-$allowedTabs = ['dashboard', 'content', 'paginas', 'blog', 'blog-edit', 'media', 'formulieren', 'formulier-edit', 'inbox', 'navigatie', 'huisstijl', 'redirects', 'juridisch', 'tracking', 'email', 'gebruikers', 'activiteit', 'backup'];
+$allowedTabs = ['dashboard', 'content', 'paginas', 'blog', 'blog-edit', 'media', 'formulieren', 'formulier-edit', 'inbox', 'navigatie', 'huisstijl', 'redirects', 'juridisch', 'tracking', 'email', 'gebruikers', 'activiteit', 'backup', 'geheimen'];
 if (!in_array($tab, $allowedTabs)) {
     $tab = 'dashboard';
 }
 // Admin-only tabs
-$adminTabs = ['gebruikers', 'activiteit', 'backup'];
+$adminTabs = ['gebruikers', 'activiteit', 'backup', 'geheimen'];
 if (in_array($tab, $adminTabs)) {
     require_admin();
 }

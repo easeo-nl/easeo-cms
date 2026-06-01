@@ -7,6 +7,13 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added — Plan 02 batch 3 (migration tooling + beheer)
+- `Easeo\Cms\Config\SiteJsonMigrator` — splits legacy `data/site.json` into `data/site.config.json` (branding) + `.env` template (secrets, commented out for operator review) + timestamped backup. Idempotent.
+- `tools/migrate-site-json-to-split.php` CLI — dry-run by default, `--apply` to commit. Takes `--app=path` to target a klant-site app-root.
+- `beheer/pages/geheimen.php` — admin-only read-only status overview of environment-backed secrets via `SecretStatus::summary()`. Never shows values, only configured/not-configured. Includes copy-paste `.env` example.
+- Sidebar nav item "Geheimen" (admin-only), tab whitelisted in `beheer/index.php`.
+- Dutch + English lang strings for the secrets-management UI.
+
 ### Changed — Plan 02 batch 2 (Mailer SMTP from env)
 - `Mailer::send()` now reads SMTP config from environment variables when `SMTP_HOST` is set (12-factor). Falls back to legacy `site.json["smtp"]` (with crypto-decrypted password) when env is unset, so existing klant-sites continue to send mail until they run the (later) site.json → .env migration script.
 - New env vars consumed: `SMTP_HOST`, `SMTP_PORT` (default 465), `SMTP_USERNAME`, `SMTP_PASSWORD` (plaintext), `SMTP_FROM_EMAIL` (defaults to username), `SMTP_FROM_NAME` (defaults to company name from site.json or `"Website"`), `SMTP_ENCRYPTION` (default `ssl`).

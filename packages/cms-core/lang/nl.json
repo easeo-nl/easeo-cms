@@ -533,5 +533,19 @@
     "pricing_popular_badge": "Populair",
 
     "language_setting_label": "Taal",
-    "tooltip_language_setting": "De taal van het beheerpanel en de website-interface."
+    "tooltip_language_setting": "De taal van het beheerpanel en de website-interface.",
+
+    "nav_secrets": "Geheimen",
+    "admin_secrets_title": "Geheimen",
+    "admin_secrets_intro": "Status van environment-variabelen die door deze installatie verwacht worden. Waarden worden hier nooit getoond — alleen of ze geconfigureerd zijn. Wijzig via het .env-bestand op de server.",
+    "admin_secrets_missing_required": "De volgende verplichte geheimen ontbreken:",
+    "admin_secrets_col_key": "Env-key",
+    "admin_secrets_col_label": "Doel",
+    "admin_secrets_col_status": "Status",
+    "admin_secrets_col_hint": "Voorbeeld",
+    "admin_secrets_configured": "Ingesteld",
+    "admin_secrets_missing": "Ontbreekt",
+    "admin_secrets_not_set": "Niet ingesteld",
+    "admin_secrets_how_to_set": "Hoe stel ik geheimen in?",
+    "admin_secrets_env_explanation": "Voeg de volgende regels toe aan apps/<site>/.env op de server (deze file is gitignored):"
 }
