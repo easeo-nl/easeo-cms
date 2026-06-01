@@ -128,4 +128,30 @@ final class AppTest extends TestCase
             @rmdir($appRoot2);
         }
     }
+
+    public function test_opcache_reset_step_does_not_crash_when_opcache_unavailable(): void
+    {
+        // EASEO_DATA is a PHP constant defined once in the bootstrap — we cannot
+        // redirect it per-test. What we CAN verify is that App::boot() completes
+        // without throwing, and that the VersionTracker wrote the marker file in
+        // whatever EASEO_DATA directory the test-suite is using.
+        $appRoot = sys_get_temp_dir() . '/app-opcache-' . uniqid('', true);
+        mkdir($appRoot, 0755, true);
+
+        try {
+            $app = App::boot($appRoot);
+            $this->assertNotNull($app);
+            // VersionTracker writes to EASEO_DATA (the constant, not the per-boot appRoot).
+            // The constant is set to apps/easeo-website/data by tests/bootstrap.php.
+            $dataDir = defined('EASEO_DATA') ? constant('EASEO_DATA') : null;
+            if ($dataDir !== null && is_dir($dataDir) && is_writable($dataDir)) {
+                $this->assertFileExists($dataDir . '/.cms-core-version');
+            } else {
+                // No writable data dir available — just assert boot didn't crash.
+                $this->assertInstanceOf(App::class, $app);
+            }
+        } finally {
+            @rmdir($appRoot);
+        }
+    }
 }

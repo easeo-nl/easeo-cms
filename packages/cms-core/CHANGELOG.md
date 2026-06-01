@@ -7,6 +7,12 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added — Plan 07 batches 2+3+4 (audit-log + OPcache + integration)
+- `Migration\Runner` writes an `audit_log` entry per successfully-applied migration via `Easeo\Cms\Audit\AuditLogger::log()`. Audit failure is logged via `error_log` and does NOT crash the runner (fail-soft).
+- `Easeo\Cms\Migration\VersionTracker` — tracks last-seen cms-core version in `data/.cms-core-version`. Used by `App::boot()` to call `opcache_reset()` when the version changes (mitigates stale OPcache paths after Capistrano-style symlink deploys).
+- `App::boot()` now resets OPcache (if available) when cms-core version changes between boots. Skip silently in CLI or when opcache extension is unavailable.
+- End-to-end `IntegrationTest` validates that migrations apply, version bumps, and audit-log entry appears in `data/audit.log`.
+
 ### Added — Plan 03 batch 6 (shop-module skeleton)
 - **packages/shop-module/** — Shop-module skelet. Registreert alleen een geparkeerde beheer-tab. Payment-provider abstractie beschikbaar via `Easeo\Shop\Payment\PaymentProviderFactory::make()`.
 - `Easeo\Shop\Payment\{PaymentProvider, PaymentStatus, RefundResult, NotImplementedException}` — public API.

@@ -27,6 +27,7 @@ class LegacyLoadTest extends TestCase {
         $this->assertTrue(class_exists(\Easeo\Cms\Migration\SchemaVersion::class), 'SchemaVersion PSR-4 klasse moet beschikbaar zijn');
         $this->assertTrue(class_exists(\Easeo\Cms\Migration\Runner::class), 'Runner PSR-4 klasse moet beschikbaar zijn');
         $this->assertTrue(class_exists(\Easeo\Cms\Bootstrap\Bootstrapper::class), 'Bootstrapper PSR-4 klasse moet beschikbaar zijn');
+        $this->assertTrue(class_exists(\Easeo\Cms\Migration\VersionTracker::class), 'VersionTracker PSR-4 klasse moet beschikbaar zijn');
     }
 
     public function testPlan03ModuleKlassenBeschikbaar(): void {
