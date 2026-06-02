@@ -7,6 +7,18 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-06-02
+
+Eerste **stable** release na de Plan 01 PSR-4 refactor. Bundelt alles vanaf v0.1.x:
+
+- **Plan 02 compleet** (12-factor config-split): `Easeo\Cms\Config\{Environment, SiteConfig, SecretStatus}`, Mailer reads SMTP from env (BC fallback to site.json), `SiteJsonMigrator` + `tools/migrate-site-json-to-split.php` CLI, admin "Geheimen" page (read-only secret status).
+- **Plan 03 compleet** (Module-systeem): `Easeo\Cms\Module\{ModuleInterface, Registry, RouteTable, BeheerPages, Hook, ModuleLoader}`. `App::boot()` laadt modules automatisch uit `site.config.json.modules`. Eerste consumer: `packages/hello-module/`. Skelet voor `packages/shop-module/` met `PaymentProvider` interface en 3 stub adapters (Mollie/Stripe/Adyen, parked tot eurolight-kickoff).
+- **Plan 07 compleet** (Lazy migrations): `Easeo\Cms\Migration\{Runner, SchemaVersion, MigrationInterface, VersionTracker}` + `Easeo\Cms\Bootstrap\Bootstrapper` + `bin/easeo-bootstrap`. Runner logt naar `data/audit.log`, App::boot reset OPcache bij version-change (Capistrano-safe).
+- **Plan 12 compleet** (Operational tooling): `bin/easeo-doctor` met 5 checks + `--remote=` SSH mode, `bin/easeo-explain <topic>` met 7 markdown topics, `/healthcheck.php` endpoint (basic + extended-with-secret), `tools/check-client-versions.php`, `docs/runbooks/uptimerobot-setup.md`.
+- **PHPMailer cleanup**: vendor-legacy/phpmailer/ vervangen door `composer require phpmailer/phpmailer: ^6.9`.
+
+API-stabiliteit: klant-sites pinned op `^0.2.0-rc1` of later upgraden zonder code-changes. Klant-sites op `^0.1.x` moeten `Constants::bootstrap($appRoot)` (of `App::boot($appRoot)`) callen in entry-files — zie de skeleton-template als referentie.
+
 ### Added — Plan 12 (operational tooling for jr-devs + monitoring)
 - `bin/easeo-doctor` — diagnostic CLI: cms-core version, schema-version, data-writability, .env presence, site-health. ANSI-coloured output, TTY auto-detect. Supports `--app=path` and `--remote=user@host:port`.
 - `Easeo\Cms\Doctor\{CheckInterface, CheckResult, CheckStatus, Diagnostics, Renderer}` — diagnostic infrastructure.
