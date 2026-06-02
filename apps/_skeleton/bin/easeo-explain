@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Convenience wrapper for vendor/bin/easeo-explain (provided by easeo/cms-core).
+# Run this from the site root: ./bin/easeo-explain [topic]
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SITE_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+if [ ! -x "$SITE_ROOT/vendor/bin/easeo-explain" ]; then
+  echo "easeo-explain not installed — run 'composer install' first."
+  exit 1
+fi
+
+exec "$SITE_ROOT/vendor/bin/easeo-explain" "$@"

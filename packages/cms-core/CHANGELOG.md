@@ -7,6 +7,17 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+### Added — Plan 12 (operational tooling for jr-devs + monitoring)
+- `bin/easeo-doctor` — diagnostic CLI: cms-core version, schema-version, data-writability, .env presence, site-health. ANSI-coloured output, TTY auto-detect. Supports `--app=path` and `--remote=user@host:port`.
+- `Easeo\Cms\Doctor\{CheckInterface, CheckResult, CheckStatus, Diagnostics, Renderer}` — diagnostic infrastructure.
+- `Easeo\Cms\Doctor\Checks\{CmsCoreVersionCheck, SchemaVersionCheck, DataDirWritableCheck, EnvFileCheck, SiteHealthCheck, DependabotPrsCheck}` — individual check implementations. DependabotPrsCheck skips gracefully when `gh` CLI is absent.
+- `bin/easeo-explain <topic>` — concept-uitleg CLI cat'ed from `packages/cms-core/explain/*.md`. 7 topics: `deploys`, `migrations`, `backups`, `dependabot`, `state`, `rollback`, `troubleshooting`. Suggests closest match for unknown topics via Levenshtein.
+- `Easeo\Cms\Explain\Explainer` — topic rendering + Levenshtein topic suggestion.
+- `Easeo\Cms\Routes\Healthcheck` + `apps/easeo-website/public/healthcheck.php` + `apps/_skeleton/public/healthcheck.php` — public JSON endpoint: basic `{"status":"ok"}` always. Extended payload (version, schema, writable, php, timestamp) when `?secret=<HEALTHCHECK_SECRET>` matches env. Never throws.
+- `tools/check-client-versions.php` — admin CLI: vergelijkt klant-repo composer.lock pins met Packagist's huidige cms-core stable. Ondersteunt `CLIENT_REPOS` env-override.
+- `docs/runbooks/uptimerobot-setup.md` — eenmalige UptimeRobot-setup runbook voor alle klant-sites.
+- `apps/_skeleton/bin/easeo-doctor` (updated) + `apps/_skeleton/bin/easeo-explain` (new) — bash wrappers die `vendor/bin/X` exec'en.
+
 ### Changed
 - **PHPMailer dependency** — Migrated from vendored `packages/cms-core/vendor-legacy/phpmailer/` to Composer dependency `phpmailer/phpmailer:^6.9`. PHPMailer is now autoloaded via PSR-4; no functional changes to `Easeo\Cms\Mail\Mailer`. Requires-only the Composer dependency; no code changes to mail-sending behavior (still SSL/TLS, still SMTP password decryption, still PHPMailer internal).
 
