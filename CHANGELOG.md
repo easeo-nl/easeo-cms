@@ -6,6 +6,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) · Versionering
 
 ## [Unreleased]
 
+### Security — setup-wizard (apps/easeo-website)
+- `public/setup.php`: CSRF-token op alle stappen (403 zonder geldig token); wizard weigert zodra setup voltooid is of er een admin bestaat; stap-5-bevestiging alleen nog voor de installatiesessie zelf. Hoort bij cms-core v0.2.1.
+
 ### Added — Plan 03 batches 3+4+5 (router + nav-merge + hello-module)
 - `packages/hello-module/` — first concrete module package: `easeo/hello-module`. Wired into `apps/easeo-website` via composer path-repo.
 - `apps/easeo-website/public/module-router.php` + `beheer-entry.php` — router integration entry-points.

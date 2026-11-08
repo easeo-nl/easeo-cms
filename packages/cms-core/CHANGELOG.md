@@ -7,6 +7,15 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-08
+
+### Security
+- **Setup-wizard bleef open na installatie (unauthenticated admin takeover).** `SiteConfig` las `site.template.json` (met `setup_complete: false`) vóór `data/site.json`, waardoor `isSetupComplete()` na de wizard `false` bleef en iedereen stap 4 opnieuw kon draaien en `users.json` kon overschrijven. Gemeld door kta1kri (https://github.com/kta1kri). Upgraden wordt sterk aanbevolen.
+
+### Fixed
+- `SiteConfig`: legacy `data/site.json` heeft nu voorrang op `site.template.json` (volgorde: `site.config.json` → `data/site.json` → template).
+- `ContentRepository::isSetupComplete()` is ook `true` zodra `users.json` een admin bevat (nieuw: `ContentRepository::hasAdmin()`).
+
 ## [0.2.0] - 2026-06-02
 
 Eerste **stable** release na de Plan 01 PSR-4 refactor. Bundelt alles vanaf v0.1.x:
