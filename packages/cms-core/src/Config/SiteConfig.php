@@ -98,10 +98,11 @@ final class SiteConfig
             }
         }
 
-        // 2. Fall back to site.template.json (first deploy, before Bootstrapper ran)
-        $template = self::templatePath();
-        if ($template !== null && is_file($template)) {
-            $raw = file_get_contents($template);
+        // 2. Legacy: data/site.json (before migration script has split it).
+        //    Must win over the template: the setup wizard writes here.
+        $legacy = self::legacyPath();
+        if ($legacy !== null && is_file($legacy)) {
+            $raw = file_get_contents($legacy);
             $data = json_decode((string) $raw, true);
             if (is_array($data)) {
                 self::$cache = $data;
@@ -110,10 +111,10 @@ final class SiteConfig
             }
         }
 
-        // 3. Legacy fallback: data/site.json (before migration script has split it)
-        $legacy = self::legacyPath();
-        if ($legacy !== null && is_file($legacy)) {
-            $raw = file_get_contents($legacy);
+        // 3. Fall back to site.template.json (first deploy, before install/Bootstrapper ran)
+        $template = self::templatePath();
+        if ($template !== null && is_file($template)) {
+            $raw = file_get_contents($template);
             $data = json_decode((string) $raw, true);
             if (is_array($data)) {
                 self::$cache = $data;

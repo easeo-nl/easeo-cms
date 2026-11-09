@@ -134,6 +134,16 @@ class SiteConfigTest extends TestCase
         $this->assertSame('#LEGACY', $result);
     }
 
+    public function testLegacySiteJsonTakesPriorityOverTemplate(): void
+    {
+        // Setup wizard writes data/site.json; the shipped template must not shadow it.
+        file_put_contents($this->tmpApp . '/site.template.json', json_encode(['setup_complete' => false]));
+        file_put_contents($this->tmpData . '/site.json', json_encode(['setup_complete' => true]));
+        SiteConfig::resetCache();
+
+        $this->assertTrue(SiteConfig::get('setup_complete'));
+    }
+
     public function testResetCacheClearsInMemoryState(): void
     {
         SiteConfig::set('foo', 'bar');

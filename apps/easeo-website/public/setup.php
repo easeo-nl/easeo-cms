@@ -2,21 +2,27 @@
 use Easeo\Cms\Content\ContentRepository;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Audit\AuditLogger;
+use Easeo\Cms\Form\FormEngine;
 /**
  * EASEO CMS — Setup Wizard (first-run)
  * 5 steps: company info, branding, pages, admin account, confirmation
  */
 require_once __DIR__ . '/../vendor/autoload.php';
 \Easeo\Cms\Constants::bootstrap(dirname(__DIR__));
-// Redirect if already set up
-if (ContentRepository::isSetupComplete()) {
+session_start();
+$step = max(1, min(5, (int) ($_GET['step'] ?? $_POST['step'] ?? 1)));
+// Redirect if already set up; only the installer's own session may see the step-5 confirmation (GET only)
+$showConfirmation = $step === 5 && $_SERVER['REQUEST_METHOD'] === 'GET' && !empty($_SESSION['setup_finished']);
+if (ContentRepository::isSetupComplete() && !$showConfirmation) {
     header('Location: /');
     exit;
 }
-session_start();
-$step = max(1, min(5, (int) ($_GET['step'] ?? $_POST['step'] ?? 1)));
 $errors = [];
 // Process form submissions
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !FormEngine::verifyCsrf()) {
+    http_response_code(403);
+    exit;
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     // Step 1: Company info
@@ -99,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ContentRepository::saveJson('site.json', $siteData);
             // audit loaded via autoload/bootstrap
             AuditLogger::log('setup_voltooid', "Admin: {$naam} ({$email})", $naam);
+            $_SESSION['setup_finished'] = true;
             header('Location: /setup.php?step=5');
             exit;
         }
@@ -184,6 +191,7 @@ if ($step === 1) {
     ?></p>
 
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo FormEngine::csrfToken(); ?>">
             <input type="hidden" name="action" value="step1">
             <input type="hidden" name="step" value="1">
 
@@ -283,6 +291,7 @@ if ($step === 1) {
     ?></p>
 
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo FormEngine::csrfToken(); ?>">
             <input type="hidden" name="action" value="step2">
             <input type="hidden" name="step" value="2">
 
@@ -393,6 +402,7 @@ if ($step === 1) {
     $contentData = ContentRepository::loadJson('content.json');
     ?>
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo FormEngine::csrfToken(); ?>">
             <input type="hidden" name="action" value="step3">
             <input type="hidden" name="step" value="3">
 
@@ -445,6 +455,7 @@ if ($step === 1) {
     ?></p>
 
         <form method="POST">
+            <input type="hidden" name="csrf_token" value="<?php echo FormEngine::csrfToken(); ?>">
             <input type="hidden" name="action" value="step4">
             <input type="hidden" name="step" value="4">
 

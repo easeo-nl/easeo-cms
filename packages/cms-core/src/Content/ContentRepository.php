@@ -76,7 +76,14 @@ class ContentRepository
     public static function isSetupComplete() : bool
     {
         $setupFlag = self::siteValue('setup_complete', false);
-        return $setupFlag === true || $setupFlag === 'true' || $setupFlag === 1;
+        return $setupFlag === true || $setupFlag === 'true' || $setupFlag === 1 || self::hasAdmin();
+    }
+
+    /** Any admin user means setup already ran; the wizard must never run again. */
+    public static function hasAdmin() : bool
+    {
+        $users = self::loadJson('users.json')['users'] ?? [];
+        return in_array('admin', array_column($users, 'rol'), true);
     }
 
     public static function handleRedirects() : void

@@ -46,4 +46,26 @@ class ContentRepositoryTest extends TestCase {
         $fallback = ContentRepository::siteValue('nonexistent.key', 'fallback');
         $this->assertSame('fallback', $fallback);
     }
+
+    public function testSetupIsCompleteOnceAnAdminExists(): void {
+        file_put_contents($this->tmpApp . '/site.template.json', json_encode(['setup_complete' => false]));
+        file_put_contents($this->tmp . '/users.json', json_encode([
+            'users' => [['email' => 'a@b.nl', 'rol' => 'admin']],
+        ]));
+        putenv('EASEO_DATA=' . $this->tmp);
+        putenv('EASEO_APP='  . $this->tmpApp);
+        SiteConfig::resetCache();
+
+        $this->assertTrue(ContentRepository::isSetupComplete());
+    }
+
+    public function testSetupIsNotCompleteOnFreshInstall(): void {
+        file_put_contents($this->tmpApp . '/site.template.json', json_encode(['setup_complete' => false]));
+        file_put_contents($this->tmp . '/users.json', json_encode(['users' => []]));
+        putenv('EASEO_DATA=' . $this->tmp);
+        putenv('EASEO_APP='  . $this->tmpApp);
+        SiteConfig::resetCache();
+
+        $this->assertFalse(ContentRepository::isSetupComplete());
+    }
 }
