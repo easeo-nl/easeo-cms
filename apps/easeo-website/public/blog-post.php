@@ -1,5 +1,6 @@
 <?php
 use Easeo\Cms\Content\ContentRepository;
+use Easeo\Cms\Content\VideoEmbed;
 use Easeo\Cms\Lang\Translator;
 use Easeo\Cms\Blog\BlogEngine;
 use Easeo\Cms\Seo\StructuredData;
@@ -86,7 +87,11 @@ if ($post['afbeelding']) {
 
         <div class="content-area text-dark leading-relaxed">
             <?php 
-echo nl2br(ContentRepository::escape($post['inhoud'] ?? ''));
+$body = VideoEmbed::render(nl2br(ContentRepository::escape($post['inhoud'] ?? '')));
+echo $body;
+if (str_contains($body, 'data-video')) {
+    echo VideoEmbed::assets();
+}
 ?>
         </div>
 

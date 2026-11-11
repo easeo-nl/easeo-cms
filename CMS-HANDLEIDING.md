@@ -47,6 +47,7 @@ Ga naar **Blog** en klik op **Nieuw artikel**.
   - `<strong>Vet</strong>` voor vetgedrukte tekst
   - `<a href="https://...">Linktekst</a>` voor links
   - `<ul><li>Item</li></ul>` voor opsommingen
+  - Een YouTube-link (ook Shorts) **op een eigen regel** voor een video in het artikel. Shorts verschijnen staand, gewone video's liggend.
 - **Categorie** — Kies een categorie.
 - **Afbeelding** — De uitgelichte afbeelding bij het artikel.
 - **Status** — Concept is alleen zichtbaar in het beheerpanel. Gepubliceerd is zichtbaar voor bezoekers.
