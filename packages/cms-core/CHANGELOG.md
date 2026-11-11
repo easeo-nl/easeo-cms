@@ -7,6 +7,8 @@ Versionering: [SemVer](https://semver.org/lang/nl/).
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-11-11
+
 ### Added
 - `Easeo\Cms\Content\VideoEmbed` — YouTube in content zonder HTML-codes. Een losse YouTube-link op een eigen regel (ook Shorts en `youtu.be`) of een bestaande YouTube-`<iframe>` wordt een voorvertoning; de speler laadt pas na een klik via `youtube-nocookie.com` (geen YouTube-JS of -cookies voor wie niet kijkt). Shorts 9:16, de rest 16:9. Gebruik: `VideoEmbed::render($html)` + eenmaal per pagina `VideoEmbed::assets()`. Vereist in de CSP: `frame-src https://www.youtube-nocookie.com`. Eerst gebouwd voor farahtravelmagazine.com.
 
